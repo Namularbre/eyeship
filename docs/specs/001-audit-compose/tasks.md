@@ -45,22 +45,22 @@ Conventions :
 
 Une tâche par règle : module `rules/rNNN.rs`, tests unitaires positifs et négatifs, `RuleDoc` (scénario, correction, exemples), fixtures `tests/fixtures/compose/RNNN/{bad,good}.yaml` et snapshot. Toutes parallélisables une fois la phase 1 terminée.
 
-- [ ] **T021** [P] R001 `depends_on` sans condition de santé
-- [ ] **T022** [P] R002 `depends_on` vers un service sans healthcheck
-- [ ] **T023** [P] R003 Dépendance invalide (service inexistant, cycle)
-- [ ] **T024** [P] R004 Healthcheck incohérent
-- [ ] **T025** [P] R005 Pas de politique de redémarrage (exception `service_completed_successfully`)
-- [ ] **T026** [P] R006 Pas de limite mémoire
-- [ ] **T027** [P] R007 Logs sans rotation
-- [ ] **T028** [P] R009 Conflit de ports publiés (IP, protocole, plages)
-- [ ] **T029** [P] R010 Réseau non déclaré
-- [ ] **T030** [P] R011 Volume non déclaré ou malformé
-- [ ] **T031** [P] R012 Chemin hôte introuvable
-- [ ] **T032** [P] R013 Variable d'environnement non définie
-- [ ] **T033** [P] R014 Nom de conteneur invalide
-- [ ] **T034** [P] R015 Nom de conteneur fixe
-- [ ] **T035** [P] R016 Nom de conteneur hors kebab-case
-- [ ] **T036** [P] R017 Clé `version` obsolète
+- [x] **T021** [P] R001 `depends_on` sans condition de santé
+- [x] **T022** [P] R002 `depends_on` vers un service sans healthcheck
+- [x] **T023** [P] R003 Dépendance invalide (service inexistant, cycle)
+- [x] **T024** [P] R004 Healthcheck incohérent
+- [x] **T025** [P] R005 Pas de politique de redémarrage (exception `service_completed_successfully`)
+- [x] **T026** [P] R006 Pas de limite mémoire
+- [x] **T027** [P] R007 Logs sans rotation
+- [x] **T028** [P] R009 Conflit de ports publiés (IP, protocole, plages)
+- [x] **T029** [P] R010 Réseau non déclaré
+- [x] **T030** [P] R011 Volume non déclaré ou malformé
+- [x] **T031** [P] R012 Chemin hôte introuvable
+- [x] **T032** [P] R013 Variable d'environnement non définie
+- [x] **T033** [P] R014 Nom de conteneur invalide
+- [x] **T034** [P] R015 Nom de conteneur fixe
+- [x] **T035** [P] R016 Nom de conteneur hors kebab-case
+- [x] **T036** [P] R017 Clé `version` obsolète
 
 ## Phase 3 : CI et documentation des règles (P1)
 
