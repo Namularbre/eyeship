@@ -16,6 +16,7 @@ serde_json = "1"
 clap = { version = "4", default-features = false, features = ["std", "derive", "help", "usage", "error-context"] }
 insta = "1"
 assert_cmd = "2"
+serde-saphyr = { version = "2.1", default-features = false, features = ["deserialize"] }
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
