@@ -73,7 +73,7 @@ Une tâche par règle : module `rules/rNNN.rs`, tests unitaires positifs et nég
 
 - [x] **T041** Option `--ignore`, constats ignorés comptés dans le résumé. [US4]
 - [x] **T042** Fichier `.eyeship.toml` (ignore global et par service, seuil). Selon décision D4. [US4]
-- [ ] **T043** `-f` répétable et fusion selon les règles de Compose, positions conservées par fichier d'origine. [US5]
+- [x] **T043** `-f` répétable et fusion selon les règles de Compose, positions conservées par fichier d'origine. [US5]
 - [x] **T044** Option `--env-file`. [US5]
 
 ## Phase 5 : Sortie du MVP
