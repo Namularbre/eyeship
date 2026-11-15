@@ -1,0 +1,10 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+api
+  warning R006 bad.yaml:2:3
+          service has no memory limit and can exhaust the host memory
+          fix: Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage.
+
+0 errors, 1 warning, 0 info

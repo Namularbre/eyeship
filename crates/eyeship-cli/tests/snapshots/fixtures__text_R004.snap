@@ -1,0 +1,13 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+api
+  warning R004 bad.yaml:15:16
+          healthcheck timeout 30s is not shorter than its interval 10s
+          fix: Set the healthcheck `timeout` strictly below its `interval`.
+  warning R004 bad.yaml:16:16
+          healthcheck retries is 0
+          fix: Set the healthcheck `retries` to at least 1 (3 is common).
+
+0 errors, 2 warnings, 0 info

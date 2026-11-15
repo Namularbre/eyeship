@@ -178,6 +178,8 @@ dependencies = [
  "eyeship-compose",
  "eyeship-domain",
  "eyeship-report",
+ "insta",
+ "serde_json",
 ]
 
 [[package]]

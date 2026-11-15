@@ -1,0 +1,13 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+web
+  warning R012 bad.yaml:11:9
+          env_file './missing.env' does not exist on the host
+          fix: Create './missing.env' before deploying, or fix the path (relative paths start from the Compose file's directory).
+  warning R012 bad.yaml:13:9
+          bind mount source './missing-nginx.conf' does not exist on the host
+          fix: Create './missing-nginx.conf' before deploying, or fix the path (relative paths start from the Compose file's directory).
+
+0 errors, 2 warnings, 0 info

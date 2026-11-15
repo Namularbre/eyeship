@@ -1,0 +1,10 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+db
+  error   R011 bad.yaml:11:9
+          named volume 'pgdata' is not declared in the root 'volumes' section
+          fix: Declare 'pgdata' under the root 'volumes' key (add 'external: true' if it is created outside this project), or fix the volume name.
+
+1 error, 0 warnings, 0 info

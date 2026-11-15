@@ -1,0 +1,10 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+api
+  warning R005 bad.yaml:4:14
+          restart policy 'no' leaves the service down after a crash
+          fix: Add `restart: unless-stopped` to the service.
+
+0 errors, 1 warning, 0 info

@@ -1,0 +1,46 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "bad.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R014",
+      "severity": "error",
+      "service": "api",
+      "location": {
+        "file": "bad.yaml",
+        "line": 4,
+        "column": 21
+      },
+      "message": "container_name 'acme api' is not a valid Docker container name",
+      "fix": "use only letters, digits, '_', '.' and '-', starting with a letter or a digit, or remove container_name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "api",
+      "location": {
+        "file": "bad.yaml",
+        "line": 4,
+        "column": 21
+      },
+      "message": "container_name 'acme api' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 1,
+    "warning": 0,
+    "info": 1
+  }
+}

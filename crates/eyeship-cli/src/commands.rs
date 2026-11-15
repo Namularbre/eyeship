@@ -1,29 +1,77 @@
 //! Execution of each subcommand. Each one returns the process exit code.
 
 use std::io::{self, Write};
+use std::path::PathBuf;
 
-use eyeship_domain::{RULES, Rule, rules};
-use eyeship_report::{render_explain, render_rules};
+use eyeship_compose::{Env, FileSystem, LoadRequest, load};
+use eyeship_domain::{AuditConfig, RULES, Rule, audit, rules};
+use eyeship_report::{Format, render, render_explain, render_rules};
 
-use crate::cli::{Command, ComposeArgs};
+use crate::cli::{Command, ComposeArgs, OutputFormat};
 
 /// No finding at or above the threshold.
 pub const SUCCESS: u8 = 0;
 /// Usage or read error.
 pub const USAGE_ERROR: u8 = 2;
 
+/// What the commands need from the outside world.
+pub struct Context<'a> {
+    pub fs: &'a dyn FileSystem,
+    pub env: &'a dyn Env,
+    pub working_dir: PathBuf,
+    /// Whether text output may use colors.
+    pub color: bool,
+}
+
 /// Runs a parsed command, writing results to `out` and errors to `err`.
-pub fn run(command: &Command, out: &mut dyn Write, err: &mut dyn Write) -> u8 {
+pub fn run(command: &Command, context: &Context, out: &mut dyn Write, err: &mut dyn Write) -> u8 {
     match command {
-        Command::Compose(args) => run_compose(args, err),
+        Command::Compose(args) => run_compose(args, context, out, err),
         Command::Rules => run_rules(RULES, out, err),
         Command::Explain { id } => run_explain(rules::find(id), id, out, err),
     }
 }
 
-/// Audits a Compose project. Not wired to the loader yet.
-pub fn run_compose(_args: &ComposeArgs, err: &mut dyn Write) -> u8 {
-    report_error(err, "compose loading is not implemented yet")
+/// Audits a Compose project: load, audit, render, then the exit code.
+pub fn run_compose(
+    args: &ComposeArgs,
+    context: &Context,
+    out: &mut dyn Write,
+    err: &mut dyn Write,
+) -> u8 {
+    let files: Vec<&PathBuf> = args.file.iter().chain(&args.files).collect();
+    if files.len() > 1 {
+        return report_error(err, "auditing several merged files is not supported yet");
+    }
+    let request = LoadRequest {
+        file: files.first().map(|file| (*file).clone()),
+        env_file: args.env_file.clone(),
+        working_dir: context.working_dir.clone(),
+    };
+    match load(&request, context.fs, context.env) {
+        Err(error) => report_error(err, &error.to_string()),
+        Ok(project) => {
+            let config = AuditConfig {
+                ignored_rules: args
+                    .ignore
+                    .iter()
+                    .map(|id| id.trim().to_uppercase())
+                    .collect(),
+                ..AuditConfig::default()
+            };
+            let report = audit(&project, RULES, &config);
+            let format = match args.format {
+                OutputFormat::Text => Format::Text {
+                    color: context.color,
+                },
+                OutputFormat::Json => Format::Json,
+            };
+            match render(&report, format, env!("CARGO_PKG_VERSION"), out) {
+                Ok(()) => report.exit_code(args.fail_on.into()),
+                Err(error) => report_error(err, &format!("cannot write the output: {error}")),
+            }
+        }
+    }
 }
 
 fn run_rules(rules: &[Rule], out: &mut dyn Write, err: &mut dyn Write) -> u8 {
@@ -57,6 +105,10 @@ fn report_error(err: &mut dyn Write, message: &str) -> u8 {
 mod tests {
     use super::*;
     use eyeship_domain::{Finding, Project, RuleDoc, RuleId, Severity};
+
+    use std::path::PathBuf;
+
+    use eyeship_compose::{MemoryEnv, MemoryFileSystem};
 
     use crate::cli::{OutputFormat, Threshold};
 
@@ -110,7 +162,7 @@ mod tests {
 
     #[test]
     fn explain_rejects_an_unknown_rule_on_stderr() {
-        let output = capture(|out, err| run(&Command::Explain { id: "R999".into() }, out, err));
+        let output = capture(|out, err| run_explain(None, "R999", out, err));
         assert_eq!(output.code, USAGE_ERROR);
         assert!(output.out.is_empty());
         assert_eq!(
@@ -119,23 +171,81 @@ mod tests {
         );
     }
 
-    #[test]
-    fn compose_is_not_implemented_yet() {
-        let args = ComposeArgs {
-            file: None,
+    const CLEAN: &str = "services:\n  web:\n    image: nginx:1.27\n    restart: unless-stopped\n    mem_limit: 256m\n    logging:\n      driver: json-file\n      options:\n        max-size: 10m\n";
+    const CONFLICT: &str = "services:\n  a:\n    image: nginx:1.27\n    ports: [\"80:80\"]\n  b:\n    image: nginx:1.27\n    ports: [\"80:8080\"]\n";
+
+    fn compose_args(file: Option<&str>) -> ComposeArgs {
+        ComposeArgs {
+            file: file.map(PathBuf::from),
             files: Vec::new(),
             env_file: None,
             format: OutputFormat::Text,
             fail_on: Threshold::Error,
             ignore: Vec::new(),
+        }
+    }
+
+    fn run_on(content: &str, args: &ComposeArgs) -> Output {
+        let fs = MemoryFileSystem::new([("/work/compose.yaml", content)]);
+        let env = MemoryEnv::new(Vec::<(String, String)>::new());
+        let context = Context {
+            fs: &fs,
+            env: &env,
+            working_dir: PathBuf::from("/work"),
+            color: false,
         };
-        let output = capture(|out, err| run(&Command::Compose(args), out, err));
+        capture(|out, err| run(&Command::Compose(args.clone()), &context, out, err))
+    }
+
+    #[test]
+    fn a_clean_project_passes() {
+        let output = run_on(CLEAN, &compose_args(None));
+        assert_eq!(output.code, SUCCESS, "{}", output.out);
+        assert!(output.out.contains("No issues found."));
+    }
+
+    #[test]
+    fn an_error_finding_fails_by_default() {
+        let output = run_on(CONFLICT, &compose_args(None));
+        assert_eq!(output.code, 1);
+        assert!(output.out.contains("R009"));
+    }
+
+    #[test]
+    fn fail_on_none_never_fails() {
+        let args = ComposeArgs {
+            fail_on: Threshold::None,
+            ..compose_args(None)
+        };
+        assert_eq!(run_on(CONFLICT, &args).code, SUCCESS);
+    }
+
+    #[test]
+    fn ignored_rules_are_counted_not_failed() {
+        let args = ComposeArgs {
+            ignore: vec!["r009".into()],
+            ..compose_args(None)
+        };
+        let output = run_on(CONFLICT, &args);
+        assert_eq!(output.code, SUCCESS);
+        assert!(output.out.contains("ignored by configuration"));
+    }
+
+    #[test]
+    fn a_missing_file_is_a_usage_error() {
+        let output = run_on(CLEAN, &compose_args(Some("missing.yaml")));
         assert_eq!(output.code, USAGE_ERROR);
-        assert!(
-            output
-                .err
-                .contains("compose loading is not implemented yet")
-        );
+        assert!(output.out.is_empty());
+        assert!(output.err.starts_with("error: "));
+    }
+
+    #[test]
+    fn several_files_are_not_supported_yet() {
+        let args = ComposeArgs {
+            files: vec![PathBuf::from("a.yaml"), PathBuf::from("b.yaml")],
+            ..compose_args(None)
+        };
+        assert_eq!(run_on(CLEAN, &args).code, USAGE_ERROR);
     }
 
     struct Broken;

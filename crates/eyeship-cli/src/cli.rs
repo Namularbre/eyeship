@@ -26,7 +26,7 @@ pub enum Command {
     },
 }
 
-#[derive(Debug, PartialEq, Eq, Args)]
+#[derive(Debug, Clone, PartialEq, Eq, Args)]
 pub struct ComposeArgs {
     /// Compose file to audit (default: the Compose lookup in the current directory).
     #[arg(value_name = "FILE")]

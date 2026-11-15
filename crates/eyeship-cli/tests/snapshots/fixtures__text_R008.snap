@@ -1,0 +1,10 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+db
+  warning R008 bad.yaml:3:12
+          image 'postgres:latest' is not pinned to a version and may change on the next pull
+          fix: Pin 'postgres' to an explicit version tag or a digest (@sha256:...).
+
+0 errors, 1 warning, 0 info

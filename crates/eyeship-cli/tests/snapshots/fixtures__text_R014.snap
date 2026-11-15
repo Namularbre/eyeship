@@ -1,0 +1,13 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+api
+  error   R014 bad.yaml:4:21
+          container_name 'acme api' is not a valid Docker container name
+          fix: use only letters, digits, '_', '.' and '-', starting with a letter or a digit, or remove container_name
+  info    R015 bad.yaml:4:21
+          container_name 'acme api' prevents scaling the service and collides between projects on the same host
+          fix: remove container_name and reach the service by its service name
+
+1 error, 0 warnings, 1 info

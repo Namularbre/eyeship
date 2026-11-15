@@ -47,12 +47,3 @@ fn a_missing_subcommand_is_a_usage_error() {
     assert_eq!(output.status.code(), Some(2));
 }
 
-#[test]
-fn compose_is_not_wired_yet() {
-    let output = eyeship()
-        .args(["compose", "compose.yaml"])
-        .output()
-        .expect("eyeship runs");
-    assert_eq!(output.status.code(), Some(2));
-    assert!(String::from_utf8_lossy(&output.stderr).contains("not implemented yet"));
-}

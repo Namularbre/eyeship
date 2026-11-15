@@ -1,0 +1,46 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "bad.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "api",
+      "location": {
+        "file": "bad.yaml",
+        "line": 15,
+        "column": 16
+      },
+      "message": "healthcheck timeout 30s is not shorter than its interval 10s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "api",
+      "location": {
+        "file": "bad.yaml",
+        "line": 16,
+        "column": 16
+      },
+      "message": "healthcheck retries is 0",
+      "fix": "Set the healthcheck `retries` to at least 1 (3 is common)."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 2,
+    "info": 0
+  }
+}
