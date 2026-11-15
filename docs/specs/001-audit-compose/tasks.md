@@ -19,10 +19,10 @@ Conventions :
 ## Phase 1 : Fondations (bloque toutes les règles)
 
 ### Domaine
-- [ ] **T004** `Severity`, `Location`, `Located<T>`, `RuleId`, `Finding`. Tests : ordre des sévérités, affichage des IDs.
-- [ ] **T005** Modèle `Project` / `Service` et sous-types du plan (§3.1). Builders de test dans un module `test_support`.
-- [ ] **T006** Structure `Rule`, registre `RULES`, moteur `audit()` avec tri déterministe. Tests : ordre stable, règle désactivée, constats ignorés comptés.
-- [ ] **T007** `Report::exit_code(fail_on)`. Tests : chaque seuil (`error`, `warning`, `info`, `none`).
+- [x] **T004** `Severity`, `Location`, `Located<T>`, `RuleId`, `Finding`. Tests : ordre des sévérités, affichage des IDs.
+- [x] **T005** Modèle `Project` / `Service` et sous-types du plan (§3.1). Builders de test dans un module `test_support`.
+- [x] **T006** Structure `Rule`, registre `RULES`, moteur `audit()` avec tri déterministe. Tests : ordre stable, règle désactivée, constats ignorés comptés.
+- [x] **T007** `Report::exit_code(fail_on)`. Tests : chaque seuil (`error`, `warning`, `info`, `none`).
 
 ### Adaptateur Compose
 - [ ] **T008** Traits `FileSystem` et `Env`, implémentations réelle et en mémoire.
