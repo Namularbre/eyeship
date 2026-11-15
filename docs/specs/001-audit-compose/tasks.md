@@ -25,15 +25,15 @@ Conventions :
 - [x] **T007** `Report::exit_code(fail_on)`. Tests : chaque seuil (`error`, `warning`, `info`, `none`).
 
 ### Adaptateur Compose
-- [ ] **T008** Traits `FileSystem` et `Env`, implémentations réelle et en mémoire.
-- [ ] **T009** Découverte du fichier Compose par défaut (ordre de priorité Docker). [US1]
+- [x] **T008** Traits `FileSystem` et `Env`, implémentations réelle et en mémoire.
+- [x] **T009** Découverte du fichier Compose par défaut (ordre de priorité Docker). [US1]
 - [ ] **T010** Lecture YAML et mapping des champs simples : `services`, `image` (parsing registre/nom/tag/digest), `build`, `container_name`, `restart`, clé `version`, avec positions.
 - [ ] **T011** [P] Normalisation `depends_on` (liste et map, conditions).
 - [ ] **T012** [P] Normalisation `ports` (syntaxe courte avec IP, plages, protocole ; syntaxe longue).
 - [ ] **T013** [P] Normalisation volumes et mounts (court, long, nommé, bind, malformé) et `HostPath::exists`.
 - [ ] **T014** [P] Normalisation `mem_limit` / `deploy.resources.limits.memory` avec unités, `logging`, `healthcheck` (durées Compose : `1m30s`).
 - [ ] **T015** [P] Réseaux, `env_file`, secrets et configs (déclarés et référencés).
-- [ ] **T016** Interpolation des variables (`${VAR}`, `:-`, `-`, `:?`, `$$`), lecture de `.env`, production des `UnresolvedVar`.
+- [x] **T016** Interpolation des variables (`${VAR}`, `:-`, `-`, `:?`, `$$`), lecture de `.env`, production des `UnresolvedVar`.
 - [ ] **T017** Erreurs de chargement explicites (fichier absent, YAML invalide) avec position.
 
 ### Sortie et CLI : première tranche de bout en bout
