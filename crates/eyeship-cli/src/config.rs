@@ -178,10 +178,10 @@ mod tests {
         let fs = MemoryFileSystem::new([("/work/.eyeship.toml", "ignore = [")]);
         let error = load_config(&fs, Path::new("/work")).unwrap_err();
         assert_eq!(error.path, PathBuf::from("/work/.eyeship.toml"));
-        assert!(
-            error
-                .to_string()
-                .starts_with("invalid configuration file /work/.eyeship.toml: ")
+        let expected = format!(
+            "invalid configuration file {}: ",
+            Path::new("/work").join(".eyeship.toml").display()
         );
+        assert!(error.to_string().starts_with(&expected), "{error}");
     }
 }

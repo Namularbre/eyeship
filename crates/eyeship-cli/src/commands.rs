@@ -313,7 +313,12 @@ mod tests {
         let output = run_with_config(CLEAN, Some("ignore = [\"R999\"]\n"), &compose_args(None));
         assert_eq!(output.code, USAGE_ERROR);
         assert!(output.out.is_empty());
-        assert!(output.err.contains("/work/.eyeship.toml"), "{}", output.err);
+        let path = PathBuf::from("/work").join(".eyeship.toml");
+        assert!(
+            output.err.contains(&path.display().to_string()),
+            "{}",
+            output.err
+        );
         assert!(output.err.contains("R999"), "{}", output.err);
     }
 
