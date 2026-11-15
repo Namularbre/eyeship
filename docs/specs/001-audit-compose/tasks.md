@@ -13,8 +13,8 @@ Conventions :
 ## Phase 0 : Mise en place
 
 - [ ] **T001** Transformer le projet en workspace Cargo avec les 4 crates (`eyeship-domain`, `eyeship-compose`, `eyeship-report`, `eyeship-cli`), `#![forbid(unsafe_code)]` partout, profil release du plan. Renommer le package `audit` en `eyeship` et migrer `src/main.rs` dans `eyeship-cli`.
-- [ ] **T002** [P] CI GitHub Actions : fmt, clippy, tests sur Linux, macOS, Windows.
-- [ ] **T003** [P] Spike `serde-saphyr` (décision D1) : désérialiser un Compose avec ancres et `<<`, vérifier qu'on obtient la ligne et la colonne de chaque valeur utile aux règles. Si ce n'est pas possible, repli sur `saphyr` seul. Conclure dans `plan.md`.
+- [x] **T002** [P] CI GitHub Actions : fmt, clippy, tests sur Linux, macOS, Windows.
+- [x] **T003** [P] Spike `serde-saphyr` (décision D1) : désérialiser un Compose avec ancres et `<<`, vérifier qu'on obtient la ligne et la colonne de chaque valeur utile aux règles. Si ce n'est pas possible, repli sur `saphyr` seul. Conclure dans `plan.md`.
 
 ## Phase 1 : Fondations (bloque toutes les règles)
 

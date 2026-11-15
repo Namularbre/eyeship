@@ -217,7 +217,7 @@ CI (GitHub Actions) : `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo
 
 | # | Décision | Recommandation | Alternative |
 |---|---|---|---|
-| D1 | Bibliothèque YAML | **Validé : `serde-saphyr`**, sous réserve du spike T003 (positions fiables, ancres et fusions `<<` gérées) | `saphyr` seul si les positions manquent |
+| D1 | Bibliothèque YAML | **Validé et confirmé par le spike T003 : `serde-saphyr` 2.1** (voir §12) | `saphyr` seul si les positions manquent |
 | D2 | Parsing des arguments | **Validé** : `clap` derive, features réduites | `lexopt`, plus léger mais aide écrite à la main |
 | D3 | Découpage | **Validé** : 4 crates dans un workspace dès le départ | Un seul crate avec des modules, découpé plus tard |
 | D4 | Format du fichier de config | **Validé** : TOML (`.eyeship.toml`) pour le MVP, YAML possible plus tard | YAML (`.eyeship.yml`), cohérent avec Compose |
@@ -229,3 +229,19 @@ CI (GitHub Actions) : `cargo fmt --check`, `cargo clippy -- -D warnings`, `cargo
 | Positions YAML imprécises après interpolation ou fusion | Garder la position du nœud source ; spike T003 avant de s'engager. |
 | Les formes de Compose sont nombreuses (syntaxe courte et longue) | Normalisation testée forme par forme ; référence : la spécification Compose. |
 | Faux positifs sur des usages légitimes | Corpus réel, sévérités prudentes, `--ignore`. |
+
+## 12. Résultat du spike T003 (serde-saphyr)
+
+Conclusion : **`serde-saphyr` 2.1 convient**, pas de repli sur `saphyr`.
+
+Vérifié sur un Compose avec ancre (`x-defaults: &defaults`), fusion `<<: *defaults`, `depends_on` en liste et en map, `ports` court et long :
+
+- `Spanned<T>` donne ligne et colonne (1-indexées) de chaque valeur. Pour une valeur héritée par `<<`, `referenced` pointe sur la ligne du `<<` dans le service et `defined` sur la ligne de l'ancre : les constats utilisent `referenced`, qui désigne le service fautif.
+- Les erreurs de syntaxe ou de type portent une position (`Error::location()`), utile pour T017.
+
+Contraintes d'implémentation retenues :
+
+1. **Pas de `#[serde(untagged)]` autour d'une valeur dont on veut la position interne** : serde met la valeur en tampon et perd les positions. On place `Spanned<…>` *autour* de l'`enum` (ex. `Vec<Spanned<PortEntry>>`), ou on écrit un `Visitor` à la main (`visit_seq` / `visit_map`) quand les éléments internes doivent garder leur position (`depends_on`).
+2. **Clés de map avec position** : `Spanned<String>` n'implémente pas `Ord`, donc pas de `BTreeMap<Spanned<String>, _>`. Un petit type `Entries<V>(Vec<(Spanned<String>, V)>)` avec un `visit_map` manuel garde l'ordre du fichier et la position de chaque clé (nom de service, de réseau, de volume).
+3. **Pas de `#[serde(flatten)]`** (même raison que 1) ; les clés inconnues et les extensions `x-*` sont simplement ignorées par défaut.
+4. Les scalaires Compose peuvent être des nombres ou des chaînes (`mem_limit: 512`, `published: 8080`) : un type `Scalar` accepte les deux et produit une chaîne, interpolée ensuite.
