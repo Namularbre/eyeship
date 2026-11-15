@@ -1,0 +1,322 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "docker-compose.yml"
+  ],
+  "findings": [
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "immich-server",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 21,
+        "column": 9
+      },
+      "message": "variable 'UPLOAD_LOCATION' is not set and has no default",
+      "fix": "define UPLOAD_LOCATION in the environment or in .env, or use ${UPLOAD_LOCATION:-default} or ${UPLOAD_LOCATION:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "database",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 63,
+        "column": 26
+      },
+      "message": "variable 'DB_PASSWORD' is not set and has no default",
+      "fix": "define DB_PASSWORD in the environment or in .env, or use ${DB_PASSWORD:-default} or ${DB_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "database",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 64,
+        "column": 22
+      },
+      "message": "variable 'DB_USERNAME' is not set and has no default",
+      "fix": "define DB_USERNAME in the environment or in .env, or use ${DB_USERNAME:-default} or ${DB_USERNAME:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "database",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 65,
+        "column": 20
+      },
+      "message": "variable 'DB_DATABASE_NAME' is not set and has no default",
+      "fix": "define DB_DATABASE_NAME in the environment or in .env, or use ${DB_DATABASE_NAME:-default} or ${DB_DATABASE_NAME:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "database",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 71,
+        "column": 9
+      },
+      "message": "variable 'DB_DATA_LOCATION' is not set and has no default",
+      "fix": "define DB_DATA_LOCATION in the environment or in .env, or use ${DB_DATA_LOCATION:-default} or ${DB_DATA_LOCATION:?message}"
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "immich-server",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 13,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "immich-server",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 13,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "immich-server",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 24,
+        "column": 9
+      },
+      "message": "env_file '.env' does not exist on the host",
+      "fix": "Create '.env' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "immich-server",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 28,
+        "column": 9
+      },
+      "message": "depends_on 'redis' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'redis' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "immich-server",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 29,
+        "column": 9
+      },
+      "message": "depends_on 'database' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'database' and give it a healthcheck."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "immich-machine-learning",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 34,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "immich-machine-learning",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 34,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "immich-machine-learning",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 45,
+        "column": 9
+      },
+      "message": "env_file '.env' does not exist on the host",
+      "fix": "Create '.env' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 52,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 52,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "database",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 59,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "database",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 59,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "immich-server",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 14,
+        "column": 21
+      },
+      "message": "container_name 'immich_server' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R016",
+      "severity": "info",
+      "service": "immich-server",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 14,
+        "column": 21
+      },
+      "message": "container_name 'immich_server' is not in kebab-case",
+      "fix": "rename it in kebab-case, e.g. 'immich-server'"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "immich-machine-learning",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 35,
+        "column": 21
+      },
+      "message": "container_name 'immich_machine_learning' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R016",
+      "severity": "info",
+      "service": "immich-machine-learning",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 35,
+        "column": 21
+      },
+      "message": "container_name 'immich_machine_learning' is not in kebab-case",
+      "fix": "rename it in kebab-case, e.g. 'immich-machine-learning'"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 53,
+        "column": 21
+      },
+      "message": "container_name 'immich_redis' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R016",
+      "severity": "info",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 53,
+        "column": 21
+      },
+      "message": "container_name 'immich_redis' is not in kebab-case",
+      "fix": "rename it in kebab-case, e.g. 'immich-redis'"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "database",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 60,
+        "column": 21
+      },
+      "message": "container_name 'immich_postgres' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R016",
+      "severity": "info",
+      "service": "database",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 60,
+        "column": 21
+      },
+      "message": "container_name 'immich_postgres' is not in kebab-case",
+      "fix": "rename it in kebab-case, e.g. 'immich-postgres'"
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 5,
+    "warning": 12,
+    "info": 8
+  }
+}

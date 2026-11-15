@@ -147,8 +147,19 @@ fn read_dotenv(
     .map(|content| parse_dotenv(&content))
 }
 
+/// Default parser budget, minus the alias/anchor ratio heuristic: Compose
+/// files legitimately reuse a few `x-` anchors hundreds of times. The absolute
+/// caps (aliases, nodes, depth) still guard against alias bombs.
+fn yaml_options() -> serde_saphyr::Options {
+    serde_saphyr::options! {
+        budget: serde_saphyr::budget! {
+            enforce_alias_anchor_ratio: false,
+        },
+    }
+}
+
 fn parse<'de, T: Deserialize<'de>>(content: &'de str, shown: &Path) -> Result<T, LoadError> {
-    serde_saphyr::from_str(content).map_err(|error| {
+    serde_saphyr::from_str_with_options(content, yaml_options()).map_err(|error| {
         let (line, column) = error.location().map_or((1, 1), |location| {
             (
                 u32::try_from(location.line()).unwrap_or(u32::MAX),
@@ -489,5 +500,18 @@ volumes:
         );
         let error = load_files(&files, &files_request(&["a.yaml", "c.yaml"]), &[]).unwrap_err();
         assert!(matches!(error, LoadError::NotFound { path } if path == Path::new("c.yaml")));
+    }
+
+    #[test]
+    fn loads_files_reusing_few_anchors_many_times() {
+        // Real-world files (Sentry self-hosted) reuse a handful of anchors
+        // through hundreds of `<<: *defaults` aliases: valid YAML, not a bomb.
+        let services: String = (0..120)
+            .map(|index| format!("  s{index}:\n    <<: *defaults\n"))
+            .collect();
+        let content = format!("x-defaults: &defaults\n  image: nginx:1\nservices:\n{services}");
+        let files = [("/work/compose.yaml", content.as_str())];
+        let project = load_files(&files, &request(None), &[]).unwrap();
+        assert_eq!(project.services.len(), 120);
     }
 }

@@ -30,6 +30,19 @@ impl Context<'_> {
         interpolate(raw, &|name| self.vars.lookup(name)).value
     }
 
+    /// Whether `raw` references a variable with no value and no default.
+    pub fn has_unresolved(&self, raw: &str) -> bool {
+        !interpolate(raw, &|name| self.vars.lookup(name))
+            .unresolved
+            .is_empty()
+    }
+
+    /// Like [`Context::text`], but `None` when an unresolved variable broke
+    /// the value: R013 reports the variable, rules must not judge the rest.
+    pub fn resolved_text(&self, text: &Text) -> Option<Located<String>> {
+        (!self.has_unresolved(text.value.as_str())).then(|| self.text(text))
+    }
+
     /// Interpolates a located scalar, keeping its location.
     pub fn text(&self, text: &Text) -> Located<String> {
         Located::new(

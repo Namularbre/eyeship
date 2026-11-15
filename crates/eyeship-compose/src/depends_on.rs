@@ -13,10 +13,11 @@ pub(crate) fn map_depends_on(
     match depends_on {
         ListOrMap::List(names) => names
             .iter()
+            .filter_map(|name| ctx.resolved_text(name))
             .map(|name| Dependency {
-                service: ctx.interpolate(name.value.as_str()),
+                service: name.value,
                 condition: Condition::Started,
-                location: ctx.location(&name.referenced),
+                location: name.location,
             })
             .collect(),
         ListOrMap::Map(entries) => entries
@@ -99,6 +100,14 @@ mod tests {
                 dep("d", Condition::Started, 8, 3),
                 dep("e", Condition::Started, 10, 3),
             ]
+        );
+    }
+
+    #[test]
+    fn names_with_an_unresolved_variable_are_left_to_r013() {
+        assert_eq!(
+            deps("depends_on: [\"${UNSET}\", db]"),
+            [dep("db", Condition::Started, 1, 26)]
         );
     }
 }

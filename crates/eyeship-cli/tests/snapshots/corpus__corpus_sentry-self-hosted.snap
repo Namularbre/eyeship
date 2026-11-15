@@ -1,0 +1,3754 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "docker-compose.yml"
+  ],
+  "findings": [
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "smtp",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 125,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "smtp",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 125,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "smtp",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 127,
+        "column": 12
+      },
+      "message": "image 'registry.gitlab.com/egos-tech/smtp' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'egos-tech/smtp' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "memcached",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 137,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "memcached",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 137,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "memcached",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 142,
+        "column": 11
+      },
+      "message": "healthcheck timeout 90s is not shorter than its interval 30s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 145,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 145,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 149,
+        "column": 11
+      },
+      "message": "healthcheck timeout 90s is not shorter than its interval 30s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 153,
+        "column": 9
+      },
+      "message": "bind mount source './redis.conf' does not exist on the host",
+      "fix": "Create './redis.conf' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 162,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 162,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 166,
+        "column": 11
+      },
+      "message": "healthcheck timeout 90s is not shorter than its interval 30s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "pgbouncer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 176,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "pgbouncer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 176,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "pgbouncer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 180,
+        "column": 11
+      },
+      "message": "healthcheck timeout 90s is not shorter than its interval 30s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "kafka",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 195,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "kafka",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 195,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "kafka",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 234,
+        "column": 16
+      },
+      "message": "healthcheck timeout 10s is not shorter than its interval 10s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "clickhouse",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 236,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "clickhouse",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 236,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "clickhouse",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 238,
+        "column": 12
+      },
+      "message": "image 'clickhouse-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'clickhouse-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "clickhouse",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 250,
+        "column": 9
+      },
+      "message": "bind mount source './clickhouse/config.xml' does not exist on the host",
+      "fix": "Create './clickhouse/config.xml' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "clickhouse",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 254,
+        "column": 9
+      },
+      "message": "bind mount source './clickhouse/default-password.xml' does not exist on the host",
+      "fix": "Create './clickhouse/default-password.xml' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "clickhouse",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 272,
+        "column": 16
+      },
+      "message": "healthcheck timeout 10s is not shorter than its interval 10s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "seaweedfs",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 274,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "seaweedfs",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 274,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-api",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 308,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-api",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 308,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "snuba-api",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 311,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "snuba-api",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 313,
+        "column": 11
+      },
+      "message": "healthcheck timeout 90s is not shorter than its interval 30s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-errors-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 316,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-errors-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 316,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-outcomes-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 324,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-outcomes-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 324,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-outcomes-accepted-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 329,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-outcomes-accepted-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 329,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-outcomes-billing-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 334,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-outcomes-billing-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 334,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-group-attributes-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 339,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-group-attributes-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 339,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-replacer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 344,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-replacer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 344,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-subscription-consumer-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 349,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-subscription-consumer-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 349,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 358,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 358,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-replays-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 365,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-replays-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 365,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-issue-occurrence-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 372,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-issue-occurrence-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 372,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 379,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 379,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-subscription-consumer-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 386,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-subscription-consumer-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 386,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-subscription-consumer-metrics",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 393,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-subscription-consumer-metrics",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 393,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-profiling-profiles-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 400,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-profiling-profiles-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 400,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-profiling-functions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 407,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-profiling-functions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 407,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-profiling-profile-chunks-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 414,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-profiling-profile-chunks-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 414,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-eap-items-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 421,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-eap-items-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 421,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "snuba-subscription-consumer-eap-items",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 428,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "snuba-subscription-consumer-eap-items",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 428,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "symbolicator",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 433,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "symbolicator",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 433,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "symbolicator",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 441,
+        "column": 9
+      },
+      "message": "bind mount source './symbolicator' does not exist on the host",
+      "fix": "Create './symbolicator' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "symbolicator",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 446,
+        "column": 11
+      },
+      "message": "healthcheck timeout 90s is not shorter than its interval 30s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "symbolicator-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 448,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "symbolicator-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 448,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "symbolicator-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 456,
+        "column": 9
+      },
+      "message": "bind mount source './symbolicator' does not exist on the host",
+      "fix": "Create './symbolicator' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 460,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 460,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 461,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 461,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 461,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 461,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 461,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 461,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 461,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 461,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 461,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 461,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 467,
+        "column": 11
+      },
+      "message": "healthcheck timeout 90s is not shorter than its interval 30s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 470,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 470,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 471,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 471,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 471,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 471,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 471,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 471,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 471,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 471,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 471,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "events-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 471,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 475,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 475,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 476,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 476,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 476,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 476,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 476,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 476,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 476,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 476,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 476,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "attachments-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 476,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 480,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 480,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 481,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 481,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 481,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 481,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 481,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 481,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 481,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 481,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 481,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-errors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 481,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 488,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 488,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 489,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 489,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 489,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 489,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 489,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 489,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 489,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 489,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 489,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "transactions-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 489,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 495,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 495,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 496,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 496,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 496,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 496,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 496,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 496,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 496,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 496,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 496,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "metrics-consumer",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 496,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 502,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 502,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 503,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 503,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 503,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 503,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 503,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 503,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 503,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 503,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 503,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-occurrences",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 503,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 509,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 509,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 510,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 510,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 510,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 510,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 510,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 510,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 510,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 510,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 510,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-monitors",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 510,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 516,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 516,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 517,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 517,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 517,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 517,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 517,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 517,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 517,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 517,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 517,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "ingest-feedback-events",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 517,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 523,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 523,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 524,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 524,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 524,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 524,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 524,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 524,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 524,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 524,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 524,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "process-spans",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 524,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 530,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 530,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 531,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 531,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 531,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 531,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 531,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 531,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 531,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 531,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 531,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "monitors-clock-tick",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 531,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 537,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 537,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 538,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 538,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 538,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 538,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 538,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 538,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 538,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 538,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 538,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "monitors-clock-tasks",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 538,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 544,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 544,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 545,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 545,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 545,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 545,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 545,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 545,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 545,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 545,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 545,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "uptime-results",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 545,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 551,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 551,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 552,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 552,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 552,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 552,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 552,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 552,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 552,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 552,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 552,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-transactions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 552,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 558,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 558,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 559,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 559,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 559,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 559,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 559,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 559,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 559,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 559,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 559,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "post-process-forwarder-issue-platform",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 559,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 565,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 565,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "sentry-cleanup",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 567,
+        "column": 12
+      },
+      "message": "image 'sentry-cleanup-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-cleanup-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "nginx",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 574,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "nginx",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 574,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "nginx",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 580,
+        "column": 9
+      },
+      "message": "bind mount source './nginx.conf' does not exist on the host",
+      "fix": "Create './nginx.conf' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "nginx",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 587,
+        "column": 11
+      },
+      "message": "healthcheck timeout 90s is not shorter than its interval 30s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "nginx",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 596,
+        "column": 7
+      },
+      "message": "depends_on 'relay' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'relay' and give it a healthcheck."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "relay",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 599,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "relay",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 599,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "relay",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 605,
+        "column": 9
+      },
+      "message": "bind mount source './relay' does not exist on the host",
+      "fix": "Create './relay' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "relay",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 609,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "taskbroker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 620,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "taskbroker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 620,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "taskbroker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 634,
+        "column": 9
+      },
+      "message": "bind mount source './taskbroker' does not exist on the host",
+      "fix": "Create './taskbroker' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 641,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 641,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 642,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 642,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 642,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 642,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 642,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 642,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 642,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 642,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 642,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "taskscheduler",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 642,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 644,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 644,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 645,
+        "column": 9
+      },
+      "message": "depends_on 'memcached' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'memcached' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 645,
+        "column": 9
+      },
+      "message": "depends_on 'seaweedfs' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'seaweedfs' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 645,
+        "column": 9
+      },
+      "message": "depends_on 'smtp' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'smtp' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 645,
+        "column": 9
+      },
+      "message": "depends_on 'snuba-api' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'snuba-api' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 645,
+        "column": 9
+      },
+      "message": "depends_on 'symbolicator' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'symbolicator' and give it a healthcheck."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 645,
+        "column": 9
+      },
+      "message": "image 'sentry-self-hosted-local' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'sentry-self-hosted-local' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 645,
+        "column": 9
+      },
+      "message": "bind mount source './certificates' does not exist on the host",
+      "fix": "Create './certificates' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 645,
+        "column": 9
+      },
+      "message": "bind mount source './geoip' does not exist on the host",
+      "fix": "Create './geoip' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 645,
+        "column": 9
+      },
+      "message": "bind mount source './healthcheck' does not exist on the host",
+      "fix": "Create './healthcheck' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 645,
+        "column": 9
+      },
+      "message": "bind mount source './sentry' does not exist on the host",
+      "fix": "Create './sentry' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "launchpad-taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 649,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "launchpad-taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 649,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "launchpad-taskworker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 666,
+        "column": 7
+      },
+      "message": "depends_on 'taskbroker' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'taskbroker' and give it a healthcheck."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "vroom",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 672,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "vroom",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 672,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "vroom",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 685,
+        "column": 11
+      },
+      "message": "healthcheck timeout 90s is not shorter than its interval 30s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "uptime-checker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 692,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "uptime-checker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 692,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 311,
+    "info": 0
+  }
+}

@@ -45,13 +45,13 @@ fn map_volume(ctx: &Context<'_>, volume: &RawVolume, location: Location) -> Opti
             .map(|s| ctx.interpolate(s.as_str()))
             .unwrap_or_default()
     };
-    match volume {
-        RawVolume::Short(spec) => Some(parse_short(ctx, &ctx.interpolate(spec.as_str()), location)),
+    let mount = match volume {
+        RawVolume::Short(spec) => parse_short(ctx, &ctx.interpolate(spec.as_str()), location),
         RawVolume::Long {
             kind,
             source,
             target,
-        } => Some(map_long(
+        } => map_long(
             ctx,
             &LongVolume {
                 kind: kind
@@ -61,8 +61,29 @@ fn map_volume(ctx: &Context<'_>, volume: &RawVolume, location: Location) -> Opti
                 target: text(target),
             },
             location,
-        )),
-        RawVolume::Other(_) => None,
+        ),
+        RawVolume::Other(_) => return None,
+    };
+    match mount {
+        // R013 already reports the unresolved variable that broke the entry.
+        Mount::Malformed { .. } if has_unresolved(ctx, volume) => None,
+        mount => Some(mount),
+    }
+}
+
+/// Whether any field of the entry references a variable with no value.
+fn has_unresolved(ctx: &Context<'_>, volume: &RawVolume) -> bool {
+    match volume {
+        RawVolume::Short(spec) => ctx.has_unresolved(spec.as_str()),
+        RawVolume::Long {
+            kind,
+            source,
+            target,
+        } => [kind, source, target]
+            .into_iter()
+            .flatten()
+            .any(|scalar| ctx.has_unresolved(scalar.as_str())),
+        RawVolume::Other(_) => false,
     }
 }
 
@@ -332,5 +353,15 @@ mod tests {
         assert!(reason(&all[5]).is_some_and(|r| r.contains("weird")));
         assert!(reason(&all[6]).is_some());
         assert_eq!(all[1].location(), at(3, 5));
+    }
+
+    #[test]
+    fn entries_broken_only_by_an_unresolved_variable_are_left_to_r013() {
+        // `${UPLOAD_LOCATION}:/data` with no `.env`: R013 already reports the
+        // variable; calling the entry malformed would double-report it.
+        assert!(mounts("volumes: [\"${UNSET}:/data\"]").is_empty());
+        assert!(mounts("volumes: [\"db:${UNSET}\"]").is_empty());
+        assert!(mounts("volumes: [{type: bind, source: \"${UNSET}\", target: /b}]").is_empty());
+        assert!(reason(&one("\"${DATA}:/data:bogus\"")).is_some());
     }
 }

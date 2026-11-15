@@ -1,0 +1,238 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "docker-compose.yml"
+  ],
+  "findings": [
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 22,
+        "column": 27
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 22,
+        "column": 27
+      },
+      "message": "variable 'POSTGRES_USER' is not set and has no default",
+      "fix": "define POSTGRES_USER in the environment or in .env, or use ${POSTGRES_USER:-default} or ${POSTGRES_USER:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "n8n",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 28,
+        "column": 12
+      },
+      "message": "variable 'N8N_VERSION' is not set and has no default",
+      "fix": "define N8N_VERSION in the environment or in .env, or use ${N8N_VERSION:-default} or ${N8N_VERSION:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "n8n",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 35,
+        "column": 9
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "n8n",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 36,
+        "column": 9
+      },
+      "message": "variable 'POSTGRES_NON_ROOT_USER' is not set and has no default",
+      "fix": "define POSTGRES_NON_ROOT_USER in the environment or in .env, or use ${POSTGRES_NON_ROOT_USER:-default} or ${POSTGRES_NON_ROOT_USER:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "n8n",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 37,
+        "column": 9
+      },
+      "message": "variable 'POSTGRES_NON_ROOT_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_NON_ROOT_PASSWORD in the environment or in .env, or use ${POSTGRES_NON_ROOT_PASSWORD:-default} or ${POSTGRES_NON_ROOT_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "n8n",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 39,
+        "column": 9
+      },
+      "message": "variable 'RUNNERS_AUTH_TOKEN' is not set and has no default",
+      "fix": "define RUNNERS_AUTH_TOKEN in the environment or in .env, or use ${RUNNERS_AUTH_TOKEN:-default} or ${RUNNERS_AUTH_TOKEN:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "n8n-runner",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 52,
+        "column": 12
+      },
+      "message": "variable 'N8N_VERSION' is not set and has no default",
+      "fix": "define N8N_VERSION in the environment or in .env, or use ${N8N_VERSION:-default} or ${N8N_VERSION:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "n8n-runner",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 55,
+        "column": 9
+      },
+      "message": "variable 'RUNNERS_AUTH_TOKEN' is not set and has no default",
+      "fix": "define RUNNERS_AUTH_TOKEN in the environment or in .env, or use ${RUNNERS_AUTH_TOKEN:-default} or ${RUNNERS_AUTH_TOKEN:?message}"
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 6,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 6,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 20,
+        "column": 9
+      },
+      "message": "bind mount source './init-data.sh' does not exist on the host",
+      "fix": "Create './init-data.sh' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 24,
+        "column": 16
+      },
+      "message": "healthcheck timeout 5s is not shorter than its interval 5s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "n8n",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 27,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "n8n",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 27,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "n8n-runner",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 51,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "n8n-runner",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 51,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "n8n-runner",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 58,
+        "column": 9
+      },
+      "message": "depends_on 'n8n' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'n8n' and give it a healthcheck."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 9,
+    "warning": 9,
+    "info": 0
+  }
+}

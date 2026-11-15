@@ -1,0 +1,322 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "compose.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "compose.yaml",
+        "line": 5,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "compose.yaml",
+        "line": 5,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "compose.yaml",
+        "line": 12,
+        "column": 9
+      },
+      "message": "env_file 'db.env' does not exist on the host",
+      "fix": "Create 'db.env' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "compose.yaml",
+        "line": 16,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "compose.yaml",
+        "line": 16,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "app",
+      "location": {
+        "file": "compose.yaml",
+        "line": 20,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "app",
+      "location": {
+        "file": "compose.yaml",
+        "line": 20,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "app",
+      "location": {
+        "file": "compose.yaml",
+        "line": 30,
+        "column": 9
+      },
+      "message": "env_file 'db.env' does not exist on the host",
+      "fix": "Create 'db.env' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "app",
+      "location": {
+        "file": "compose.yaml",
+        "line": 32,
+        "column": 9
+      },
+      "message": "depends_on 'db' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'db' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "app",
+      "location": {
+        "file": "compose.yaml",
+        "line": 33,
+        "column": 9
+      },
+      "message": "depends_on 'redis' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'redis' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "app",
+      "location": {
+        "file": "compose.yaml",
+        "line": 34,
+        "column": 9
+      },
+      "message": "depends_on 'proxy' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'proxy' and give it a healthcheck."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "compose.yaml",
+        "line": 38,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "compose.yaml",
+        "line": 38,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "compose.yaml",
+        "line": 43,
+        "column": 9
+      },
+      "message": "bind mount source './web/nginx.conf' does not exist on the host",
+      "fix": "Create './web/nginx.conf' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "compose.yaml",
+        "line": 51,
+        "column": 9
+      },
+      "message": "depends_on 'app' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'app' and give it a healthcheck."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "cron",
+      "location": {
+        "file": "compose.yaml",
+        "line": 56,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "cron",
+      "location": {
+        "file": "compose.yaml",
+        "line": 56,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "cron",
+      "location": {
+        "file": "compose.yaml",
+        "line": 64,
+        "column": 9
+      },
+      "message": "depends_on 'db' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'db' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "cron",
+      "location": {
+        "file": "compose.yaml",
+        "line": 65,
+        "column": 9
+      },
+      "message": "depends_on 'redis' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'redis' and give it a healthcheck."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "proxy",
+      "location": {
+        "file": "compose.yaml",
+        "line": 70,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "proxy",
+      "location": {
+        "file": "compose.yaml",
+        "line": 70,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "letsencrypt-companion",
+      "location": {
+        "file": "compose.yaml",
+        "line": 88,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "letsencrypt-companion",
+      "location": {
+        "file": "compose.yaml",
+        "line": 88,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "letsencrypt-companion",
+      "location": {
+        "file": "compose.yaml",
+        "line": 89,
+        "column": 12
+      },
+      "message": "image 'nginxproxy/acme-companion' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'nginxproxy/acme-companion' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "letsencrypt-companion",
+      "location": {
+        "file": "compose.yaml",
+        "line": 102,
+        "column": 9
+      },
+      "message": "depends_on 'proxy' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'proxy' and give it a healthcheck."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 25,
+    "info": 0
+  }
+}

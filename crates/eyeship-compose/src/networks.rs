@@ -12,7 +12,11 @@ pub(crate) fn map_service_networks(
     networks: &ListOrMap<IgnoredAny>,
 ) -> Vec<Located<String>> {
     match networks {
-        ListOrMap::List(names) => names.iter().map(|name| ctx.text(name)).collect(),
+        // A name broken by an unresolved variable is left to R013.
+        ListOrMap::List(names) => names
+            .iter()
+            .filter_map(|name| ctx.resolved_text(name))
+            .collect(),
         ListOrMap::Map(entries) => entries
             .iter()
             .map(|(name, _)| {
@@ -105,6 +109,14 @@ mod tests {
                 ("c", false, 4),
                 ("d", true, 6)
             ]
+        );
+    }
+
+    #[test]
+    fn service_networks_with_an_unresolved_variable_are_left_to_r013() {
+        assert_eq!(
+            service_networks("networks: [\"${UNSET}\", \"app-${UNSET}\", front]"),
+            [Located::new("front".to_owned(), at(1, 40))]
         );
     }
 }

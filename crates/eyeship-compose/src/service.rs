@@ -20,12 +20,16 @@ pub(crate) fn map_service(
     roots: &[RawRoot],
 ) -> Service {
     Service {
-        image: service.image.as_ref().map(|image| {
-            let image = ctx.text(image);
-            ImageRef::parse(&image.value, image.location)
-        }),
+        image: service
+            .image
+            .as_ref()
+            .and_then(|image| ctx.resolved_text(image))
+            .map(|image| ImageRef::parse(&image.value, image.location)),
         has_build: service.build.is_some(),
-        container_name: service.container_name.as_ref().map(|n| ctx.text(n)),
+        container_name: service
+            .container_name
+            .as_ref()
+            .and_then(|n| ctx.resolved_text(n)),
         restart: service
             .restart
             .as_ref()
@@ -138,5 +142,17 @@ mod tests {
         assert_eq!(service.networks.len(), 1);
         assert!(matches!(service.mounts[..], [Mount::Named { .. }]));
         assert_eq!(service.memory_limit.map(|m| m.value), Some(1 << 30));
+    }
+
+    #[test]
+    fn values_broken_by_an_unresolved_variable_are_left_to_r013() {
+        let yaml = "services:
+  web:
+    image: ${UNSET_IMAGE}
+    container_name: ${UNSET_PROJECT}-web
+";
+        let service = first_service(yaml);
+        assert_eq!(service.image, None);
+        assert_eq!(service.container_name, None);
     }
 }

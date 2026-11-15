@@ -1,0 +1,154 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "compose.yml"
+  ],
+  "findings": [
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "plausible",
+      "location": {
+        "file": "compose.yml",
+        "line": 53,
+        "column": 9
+      },
+      "message": "variable 'BASE_URL' is not set and has no default",
+      "fix": "define BASE_URL in the environment or in .env, or use ${BASE_URL:-default} or ${BASE_URL:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "plausible",
+      "location": {
+        "file": "compose.yml",
+        "line": 54,
+        "column": 9
+      },
+      "message": "variable 'SECRET_KEY_BASE' is not set and has no default",
+      "fix": "define SECRET_KEY_BASE in the environment or in .env, or use ${SECRET_KEY_BASE:-default} or ${SECRET_KEY_BASE:?message}"
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "plausible_db",
+      "location": {
+        "file": "compose.yml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "plausible_db",
+      "location": {
+        "file": "compose.yml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "plausible_events_db",
+      "location": {
+        "file": "compose.yml",
+        "line": 13,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "plausible_events_db",
+      "location": {
+        "file": "compose.yml",
+        "line": 13,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "plausible_events_db",
+      "location": {
+        "file": "compose.yml",
+        "line": 19,
+        "column": 9
+      },
+      "message": "bind mount source './clickhouse/logs.xml' does not exist on the host",
+      "fix": "Create './clickhouse/logs.xml' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "plausible_events_db",
+      "location": {
+        "file": "compose.yml",
+        "line": 22,
+        "column": 9
+      },
+      "message": "bind mount source './clickhouse/ipv4-only.xml' does not exist on the host",
+      "fix": "Create './clickhouse/ipv4-only.xml' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "plausible_events_db",
+      "location": {
+        "file": "compose.yml",
+        "line": 25,
+        "column": 9
+      },
+      "message": "bind mount source './clickhouse/low-resources.xml' does not exist on the host",
+      "fix": "Create './clickhouse/low-resources.xml' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "plausible",
+      "location": {
+        "file": "compose.yml",
+        "line": 34,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "plausible",
+      "location": {
+        "file": "compose.yml",
+        "line": 34,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 2,
+    "warning": 9,
+    "info": 0
+  }
+}
