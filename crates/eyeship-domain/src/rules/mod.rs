@@ -1,0 +1,35 @@
+//! The rule registry. One module per rule: `rNNN.rs`.
+
+use crate::rule::Rule;
+
+/// Every rule, in ID order.
+pub static RULES: &[Rule] = &[];
+
+/// Finds a rule by its ID, case-insensitively.
+pub fn find(id: &str) -> Option<&'static Rule> {
+    RULES
+        .iter()
+        .find(|rule| rule.id.as_str().eq_ignore_ascii_case(id))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rules_are_sorted_by_unique_id() {
+        let ids: Vec<&str> = RULES.iter().map(|rule| rule.id.as_str()).collect();
+        assert!(ids.windows(2).all(|pair| pair[0] < pair[1]), "{ids:?}");
+    }
+
+    #[test]
+    fn every_rule_is_documented() {
+        assert!(RULES.iter().all(|rule| {
+            !rule.title.is_empty()
+                && !rule.doc.scenario.is_empty()
+                && !rule.doc.fix.is_empty()
+                && !rule.doc.bad_example.is_empty()
+                && !rule.doc.good_example.is_empty()
+        }));
+    }
+}
