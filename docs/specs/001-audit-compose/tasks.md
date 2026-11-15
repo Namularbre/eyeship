@@ -37,7 +37,7 @@ Conventions :
 - [ ] **T017** Erreurs de chargement explicites (fichier absent, YAML invalide) avec position.
 
 ### Sortie et CLI : première tranche de bout en bout
-- [ ] **T018** Rendu texte : constats groupés par service, résumé, couleurs désactivées si pas de TTY ou `NO_COLOR`. Snapshot `insta`. [US1]
+- [x] **T018** Rendu texte : constats groupés par service, résumé, couleurs désactivées si pas de TTY ou `NO_COLOR`. Snapshot `insta`. [US1]
 - [ ] **T019** Commande `eyeship compose [FICHIER]`, câblage `load → audit → render`, codes 0/1/2. [US1]
 - [ ] **T020** Tranche verticale avec **R008** (image non épinglée), la règle la plus simple : fixture `bad`/`good`, test de bout en bout `assert_cmd`. **Jalon : l'outil est utilisable.**
 
@@ -64,10 +64,10 @@ Une tâche par règle : module `rules/rNNN.rs`, tests unitaires positifs et nég
 
 ## Phase 3 : CI et documentation des règles (P1)
 
-- [ ] **T037** Rendu JSON versionné (plan §5), aucun texte parasite sur stdout. Snapshot. [US2]
+- [x] **T037** Rendu JSON versionné (plan §5), aucun texte parasite sur stdout. Snapshot. [US2]
 - [ ] **T038** Option `--fail-on`. Tests de bout en bout pour chaque seuil. [US2]
-- [ ] **T039** [P] Commande `eyeship rules`. [US3]
-- [ ] **T040** [P] Commande `eyeship explain <ID>`, erreur claire si l'ID est inconnu. [US3]
+- [x] **T039** [P] Commande `eyeship rules`. [US3]
+- [x] **T040** [P] Commande `eyeship explain <ID>`, erreur claire si l'ID est inconnu. [US3]
 
 ## Phase 4 : Confort (P2)
 
