@@ -1,0 +1,18 @@
+[package]
+name = "eyeship-cli"
+description = "Command-line interface of eyeship."
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "eyeship"
+path = "src/main.rs"
+
+[dependencies]
+eyeship-domain.workspace = true
+eyeship-compose.workspace = true
+eyeship-report.workspace = true
+
+[lints]
+workspace = true
