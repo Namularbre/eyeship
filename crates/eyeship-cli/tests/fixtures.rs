@@ -136,3 +136,30 @@ fn the_default_file_is_discovered() {
     assert_eq!(output.status.code(), Some(2));
     assert!(String::from_utf8_lossy(&output.stderr).contains("compose"));
 }
+
+#[test]
+fn several_files_are_merged_and_findings_point_into_the_file_of_origin() {
+    let output = Command::cargo_bin("eyeship")
+        .expect("the eyeship binary is built")
+        .current_dir(fixture_dir("merge"))
+        .env_remove("NO_COLOR")
+        .args(["compose", "-f", "compose.yaml", "-f", "compose.prod.yaml"])
+        .args(["--format", "json", "--fail-on", "none"])
+        .output()
+        .expect("eyeship runs");
+    assert_eq!(output.status.code(), Some(0));
+    let json: serde_json::Value =
+        serde_json::from_slice(&output.stdout).expect("stdout is pure JSON");
+    assert_eq!(
+        json["files"],
+        serde_json::json!(["compose.yaml", "compose.prod.yaml"])
+    );
+    let files: Vec<&str> = json["findings"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|finding| finding["location"]["file"].as_str())
+        .collect();
+    assert_eq!(files, ["compose.prod.yaml", "compose.prod.yaml"]);
+    insta::assert_snapshot!("json_merge", stdout(&output));
+}

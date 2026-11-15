@@ -7,7 +7,11 @@ use crate::context::Context;
 use crate::raw::{Entries, OneOrMany, RawEnvFile, RawFileRef, RawFileSource, RawRoot, RawService};
 
 /// Every host file a service needs, in the order `env_file`, secrets, configs.
-pub(crate) fn map_files(ctx: &Context<'_>, service: &RawService, root: &RawRoot) -> Vec<HostPath> {
+pub(crate) fn map_files(
+    ctx: &Context<'_>,
+    service: &RawService,
+    roots: &[RawRoot],
+) -> Vec<HostPath> {
     let env_files = service
         .env_file
         .as_ref()
@@ -16,13 +20,15 @@ pub(crate) fn map_files(ctx: &Context<'_>, service: &RawService, root: &RawRoot)
     let secrets = map_references(
         ctx,
         service.secrets.as_deref(),
-        root.secrets.as_ref(),
+        roots,
+        |root| root.secrets.as_ref(),
         HostPathKind::Secret,
     );
     let configs = map_references(
         ctx,
         service.configs.as_deref(),
-        root.configs.as_ref(),
+        roots,
+        |root| root.configs.as_ref(),
         HostPathKind::Config,
     );
     env_files
@@ -65,12 +71,14 @@ fn env_path(ctx: &Context<'_>, raw: &str, location: Location) -> HostPath {
     ctx.host_path(ctx.interpolate(raw), HostPathKind::EnvFile, location)
 }
 
-/// Resolves a service's `secrets` or `configs` against the root declarations;
-/// only declarations with a `file:` produce a host path.
+/// Resolves a service's `secrets` or `configs` against the root declarations
+/// of every file, the last one with a `file:` winning; only declarations with
+/// a `file:` produce a host path.
 fn map_references(
     ctx: &Context<'_>,
     references: Option<&[Spanned<RawFileRef>]>,
-    declared: Option<&Entries<Option<RawFileSource>>>,
+    roots: &[RawRoot],
+    declared: fn(&RawRoot) -> Option<&Entries<Option<RawFileSource>>>,
     kind: HostPathKind,
 ) -> Vec<HostPath> {
     references
@@ -83,11 +91,13 @@ fn map_references(
                 }
                 RawFileRef::Long { source: None } | RawFileRef::Other(_) => return None,
             };
-            let file = declared?
-                .0
+            let file = roots
                 .iter()
-                .find(|(key, _)| key.value.as_str() == name)
-                .and_then(|(_, source)| source.as_ref()?.file.as_ref())?;
+                .rev()
+                .filter_map(declared)
+                .flat_map(|entries| entries.0.iter())
+                .filter(|(key, _)| key.value.as_str() == name)
+                .find_map(|(_, source)| source.as_ref()?.file.as_ref())?;
             let path = ctx.interpolate(file.value.as_str());
             (!path.is_empty())
                 .then(|| ctx.host_path(path, kind, ctx.location(&reference.referenced)))
@@ -109,7 +119,7 @@ mod tests {
         with_context(
             &[PRESENT, "/app/secrets/db"],
             &[("NAME", "present")],
-            |ctx| map_files(ctx, service, &root),
+            |ctx| map_files(ctx, service, std::slice::from_ref(&root)),
         )
         .into_iter()
         .map(|p| (p.path, p.kind, p.exists, p.location.line))
@@ -183,6 +193,22 @@ configs:
                 file("/etc/nginx.conf", HostPathKind::Config, true, 7),
             ]
         );
+    }
+
+    #[test]
+    fn secrets_may_be_declared_in_another_file_the_last_one_winning() {
+        let parse = |yaml: &str| -> RawRoot { serde_saphyr::from_str(yaml).unwrap() };
+        let roots = [
+            parse("secrets:\n  db:\n    file: ./old\n  api:\n    file: ./secrets/api\n"),
+            parse("services:\n  a:\n    secrets: [db, api]\n"),
+            parse("secrets:\n  db:\n    file: ./secrets/db\n"),
+        ];
+        let service = roots[1].services.as_ref().unwrap().0[0].1.as_ref().unwrap();
+        let paths: Vec<_> = with_context(&[], &[], |ctx| map_files(ctx, service, &roots))
+            .into_iter()
+            .map(|p| p.path)
+            .collect();
+        assert_eq!(paths, ["./secrets/db", "./secrets/api"]);
     }
 
     #[test]

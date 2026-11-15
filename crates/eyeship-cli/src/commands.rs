@@ -40,16 +40,12 @@ pub fn run_compose(
     out: &mut dyn Write,
     err: &mut dyn Write,
 ) -> u8 {
-    let files: Vec<&PathBuf> = args.file.iter().chain(&args.files).collect();
-    if files.len() > 1 {
-        return report_error(err, "auditing several merged files is not supported yet");
-    }
     let config = match load_config(context.fs, &context.working_dir) {
         Ok(config) => config,
         Err(error) => return report_error(err, &error.to_string()),
     };
     let request = LoadRequest {
-        file: files.first().map(|file| (*file).clone()),
+        files: args.file.iter().chain(&args.files).cloned().collect(),
         env_file: args.env_file.clone(),
         working_dir: context.working_dir.clone(),
     };
@@ -257,12 +253,13 @@ mod tests {
     }
 
     #[test]
-    fn several_files_are_not_supported_yet() {
+    fn several_files_are_merged() {
         let args = ComposeArgs {
-            files: vec![PathBuf::from("a.yaml"), PathBuf::from("b.yaml")],
+            files: vec![PathBuf::from("compose.yaml"), PathBuf::from("compose.yaml")],
             ..compose_args(None)
         };
-        assert_eq!(run_on(CLEAN, &args).code, USAGE_ERROR);
+        let output = run_on(CLEAN, &args);
+        assert_eq!(output.code, 0, "{}", output.err);
     }
 
     #[test]

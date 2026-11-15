@@ -1,0 +1,47 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "compose.yaml",
+    "compose.prod.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R009",
+      "severity": "error",
+      "service": "web",
+      "location": {
+        "file": "compose.prod.yaml",
+        "line": 9,
+        "column": 9
+      },
+      "message": "host port 8080/tcp is already published by service 'api' (8080/tcp)",
+      "fix": "Publish a different host port, bind to a distinct host IP, or remove one of the two mappings of service 'api' and 'web'."
+    },
+    {
+      "rule": "R005",
+      "severity": "warning",
+      "service": "api",
+      "location": {
+        "file": "compose.prod.yaml",
+        "line": 4,
+        "column": 14
+      },
+      "message": "restart policy 'no' leaves the service down after a crash",
+      "fix": "Add `restart: unless-stopped` to the service."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 1,
+    "warning": 1,
+    "info": 0
+  }
+}

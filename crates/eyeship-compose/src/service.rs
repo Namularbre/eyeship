@@ -11,12 +11,13 @@ use crate::raw::{Key, RawRoot, RawService};
 use crate::resources::{map_healthcheck, map_logging, map_memory_limit};
 use crate::volumes::map_volumes;
 
-/// Maps a service; its location is the location of its name.
+/// Maps a service; its location is the location of its name. `roots` are
+/// the roots of every file, where its secrets and configs are declared.
 pub(crate) fn map_service(
     ctx: &Context<'_>,
     name: &Key,
     service: &RawService,
-    root: &RawRoot,
+    roots: &[RawRoot],
 ) -> Service {
     Service {
         image: service.image.as_ref().map(|image| {
@@ -55,7 +56,7 @@ pub(crate) fn map_service(
             .as_deref()
             .map(|v| map_volumes(ctx, v))
             .unwrap_or_default(),
-        files: map_files(ctx, service, root),
+        files: map_files(ctx, service, roots),
         ..Service::new(name.value.as_str(), ctx.location(&name.referenced))
     }
 }
@@ -73,7 +74,12 @@ mod tests {
         let (name, service) = &services.0[0];
         let empty = RawService::default();
         with_context(&[], &[("TAG", "1.27")], |ctx| {
-            map_service(ctx, name, service.as_ref().unwrap_or(&empty), &root)
+            map_service(
+                ctx,
+                name,
+                service.as_ref().unwrap_or(&empty),
+                std::slice::from_ref(&root),
+            )
         })
     }
 

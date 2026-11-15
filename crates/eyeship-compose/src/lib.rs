@@ -14,6 +14,7 @@ pub mod fs;
 pub mod interpolate;
 mod loader;
 mod location;
+mod merge;
 mod networks;
 mod ports;
 mod raw;

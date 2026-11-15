@@ -40,6 +40,14 @@ pub(crate) fn map_logging(ctx: &Context<'_>, logging: &Spanned<RawLogging>) -> L
     }
 }
 
+/// Whether the service's healthcheck writes `test` or `disable`, the keys
+/// that decide whether it is disabled.
+pub(crate) fn healthcheck_sets_status(service: &RawService) -> bool {
+    service.healthcheck.as_ref().is_some_and(|healthcheck| {
+        healthcheck.value.test.is_some() || healthcheck.value.disable.is_some()
+    })
+}
+
 pub(crate) fn map_healthcheck(
     ctx: &Context<'_>,
     healthcheck: &Spanned<RawHealthcheck>,
@@ -172,6 +180,20 @@ mod tests {
         assert!(healthcheck("healthcheck:\n  disable: true\n").disabled);
         assert!(healthcheck("healthcheck:\n  test: [\"NONE\"]\n").disabled);
         assert!(!healthcheck("healthcheck:\n  test: curl -f http://x\n").disabled);
+    }
+
+    #[test]
+    fn healthcheck_status_is_set_by_test_or_disable() {
+        assert!(healthcheck_sets_status(&service(
+            "healthcheck:\n  disable: false\n"
+        )));
+        assert!(healthcheck_sets_status(&service(
+            "healthcheck:\n  test: curl x\n"
+        )));
+        assert!(!healthcheck_sets_status(&service(
+            "healthcheck:\n  interval: 5s\n"
+        )));
+        assert!(!healthcheck_sets_status(&service("image: x\n")));
     }
 
     #[test]

@@ -1,0 +1,23 @@
+# Base file: clean on its own.
+services:
+  api:
+    image: ghcr.io/acme/api:1.4.2
+    restart: unless-stopped
+    mem_limit: 512m
+    ports:
+      - "8080:80"
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+
+  web:
+    image: ghcr.io/acme/web:2.0.1
+    restart: unless-stopped
+    mem_limit: 256m
+    ports:
+      - "8081:80"
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
