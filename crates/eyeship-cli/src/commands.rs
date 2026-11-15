@@ -4,10 +4,11 @@ use std::io::{self, Write};
 use std::path::PathBuf;
 
 use eyeship_compose::{Env, FileSystem, LoadRequest, load};
-use eyeship_domain::{AuditConfig, RULES, Rule, audit, rules};
+use eyeship_domain::{AuditConfig, FailOn, RULES, Rule, audit, rules};
 use eyeship_report::{Format, render, render_explain, render_rules};
 
 use crate::cli::{Command, ComposeArgs, OutputFormat};
+use crate::config::load_config;
 
 /// No finding at or above the threshold.
 pub const SUCCESS: u8 = 0;
@@ -43,6 +44,10 @@ pub fn run_compose(
     if files.len() > 1 {
         return report_error(err, "auditing several merged files is not supported yet");
     }
+    let config = match load_config(context.fs, &context.working_dir) {
+        Ok(config) => config,
+        Err(error) => return report_error(err, &error.to_string()),
+    };
     let request = LoadRequest {
         file: files.first().map(|file| (*file).clone()),
         env_file: args.env_file.clone(),
@@ -51,15 +56,20 @@ pub fn run_compose(
     match load(&request, context.fs, context.env) {
         Err(error) => report_error(err, &error.to_string()),
         Ok(project) => {
-            let config = AuditConfig {
-                ignored_rules: args
-                    .ignore
-                    .iter()
-                    .map(|id| id.trim().to_uppercase())
+            let fail_on = args
+                .fail_on
+                .map(FailOn::from)
+                .or(config.fail_on)
+                .unwrap_or_default();
+            let audit_config = AuditConfig {
+                ignored_rules: config
+                    .ignored_rules
+                    .into_iter()
+                    .chain(args.ignore.iter().map(|id| id.trim().to_uppercase()))
                     .collect(),
-                ..AuditConfig::default()
+                ignored_for_service: config.ignored_for_service,
             };
-            let report = audit(&project, RULES, &config);
+            let report = audit(&project, RULES, &audit_config);
             let format = match args.format {
                 OutputFormat::Text => Format::Text {
                     color: context.color,
@@ -67,7 +77,7 @@ pub fn run_compose(
                 OutputFormat::Json => Format::Json,
             };
             match render(&report, format, env!("CARGO_PKG_VERSION"), out) {
-                Ok(()) => report.exit_code(args.fail_on.into()),
+                Ok(()) => report.exit_code(fail_on),
                 Err(error) => report_error(err, &format!("cannot write the output: {error}")),
             }
         }
@@ -180,13 +190,20 @@ mod tests {
             files: Vec::new(),
             env_file: None,
             format: OutputFormat::Text,
-            fail_on: Threshold::Error,
+            fail_on: None,
             ignore: Vec::new(),
         }
     }
 
     fn run_on(content: &str, args: &ComposeArgs) -> Output {
-        let fs = MemoryFileSystem::new([("/work/compose.yaml", content)]);
+        run_with_config(content, None, args)
+    }
+
+    fn run_with_config(content: &str, config: Option<&str>, args: &ComposeArgs) -> Output {
+        let fs = MemoryFileSystem::new(
+            std::iter::once(("/work/compose.yaml", content))
+                .chain(config.map(|config| ("/work/.eyeship.toml", config))),
+        );
         let env = MemoryEnv::new(Vec::<(String, String)>::new());
         let context = Context {
             fs: &fs,
@@ -214,7 +231,7 @@ mod tests {
     #[test]
     fn fail_on_none_never_fails() {
         let args = ComposeArgs {
-            fail_on: Threshold::None,
+            fail_on: Some(Threshold::None),
             ..compose_args(None)
         };
         assert_eq!(run_on(CONFLICT, &args).code, SUCCESS);
@@ -246,6 +263,58 @@ mod tests {
             ..compose_args(None)
         };
         assert_eq!(run_on(CLEAN, &args).code, USAGE_ERROR);
+    }
+
+    #[test]
+    fn the_config_file_ignores_rules_globally() {
+        let output = run_with_config(CONFLICT, Some("ignore = [\"R009\"]\n"), &compose_args(None));
+        assert_eq!(output.code, SUCCESS, "{}", output.out);
+        assert!(output.out.contains("ignored by configuration"));
+    }
+
+    #[test]
+    fn the_config_file_ignores_rules_per_service() {
+        let config = "[services.a]\nignore = [\"R009\"]\n[services.b]\nignore = [\"R009\"]\n";
+        let output = run_with_config(CONFLICT, Some(config), &compose_args(None));
+        assert_eq!(output.code, SUCCESS, "{}", output.out);
+        let other = "[services.other]\nignore = [\"R009\"]\n";
+        assert_eq!(
+            run_with_config(CONFLICT, Some(other), &compose_args(None)).code,
+            1
+        );
+    }
+
+    #[test]
+    fn the_config_threshold_applies_unless_overridden() {
+        let config = Some("fail_on = \"none\"\n");
+        assert_eq!(
+            run_with_config(CONFLICT, config, &compose_args(None)).code,
+            SUCCESS
+        );
+        let args = ComposeArgs {
+            fail_on: Some(Threshold::Error),
+            ..compose_args(None)
+        };
+        assert_eq!(run_with_config(CONFLICT, config, &args).code, 1);
+    }
+
+    #[test]
+    fn cli_ignores_add_to_the_config_file() {
+        let args = ComposeArgs {
+            ignore: vec!["R009".into()],
+            ..compose_args(None)
+        };
+        let output = run_with_config(CONFLICT, Some("ignore = [\"R001\"]\n"), &args);
+        assert_eq!(output.code, SUCCESS, "{}", output.out);
+    }
+
+    #[test]
+    fn an_invalid_config_file_is_a_usage_error() {
+        let output = run_with_config(CLEAN, Some("ignore = [\"R999\"]\n"), &compose_args(None));
+        assert_eq!(output.code, USAGE_ERROR);
+        assert!(output.out.is_empty());
+        assert!(output.err.contains("/work/.eyeship.toml"), "{}", output.err);
+        assert!(output.err.contains("R999"), "{}", output.err);
     }
 
     struct Broken;

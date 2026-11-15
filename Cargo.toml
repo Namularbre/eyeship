@@ -17,6 +17,8 @@ clap = { version = "4", default-features = false, features = ["std", "derive", "
 insta = "1"
 assert_cmd = "2"
 serde-saphyr = { version = "2.1", default-features = false, features = ["deserialize"] }
+toml = { version = "0.9", default-features = false, features = ["parse", "serde"] }
+tempfile = "3"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

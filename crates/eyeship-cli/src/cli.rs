@@ -40,10 +40,11 @@ pub struct ComposeArgs {
     /// Output format.
     #[arg(long, value_enum, default_value_t = OutputFormat::Text)]
     pub format: OutputFormat,
-    /// Minimum severity that makes the audit fail (exit code 1).
-    #[arg(long, value_enum, default_value_t = Threshold::Error)]
-    pub fail_on: Threshold,
-    /// Rule IDs to ignore, comma-separated.
+    /// Minimum severity that makes the audit fail (exit code 1) [default: error, or
+    /// `fail_on` from `.eyeship.toml`].
+    #[arg(long, value_enum)]
+    pub fail_on: Option<Threshold>,
+    /// Rule IDs to ignore, comma-separated (added to those of `.eyeship.toml`).
     #[arg(long, value_name = "IDS", value_delimiter = ',')]
     pub ignore: Vec<String>,
 }
@@ -105,7 +106,7 @@ mod tests {
                 files: Vec::new(),
                 env_file: None,
                 format: OutputFormat::Text,
-                fail_on: Threshold::Error,
+                fail_on: None,
                 ignore: Vec::new(),
             }
         );
@@ -137,7 +138,7 @@ mod tests {
         );
         assert_eq!(args.env_file, Some(PathBuf::from("prod.env")));
         assert_eq!(args.format, OutputFormat::Json);
-        assert_eq!(FailOn::from(args.fail_on), FailOn::Warning);
+        assert_eq!(args.fail_on.map(FailOn::from), Some(FailOn::Warning));
         assert_eq!(args.ignore, ["R001", "R002", "R003"]);
     }
 
