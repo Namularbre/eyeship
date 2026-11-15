@@ -1,14 +1,29 @@
 //! The rule registry. One module per rule: `rNNN.rs`.
 
-use crate::rule::Rule;
-
 mod r005;
 mod r006;
 mod r007;
 mod r008;
+mod r013;
+mod r014;
+mod r015;
+mod r016;
+mod r017;
+
+use crate::rule::Rule;
 
 /// Every rule, in ID order.
-pub static RULES: &[Rule] = &[r005::RULE, r006::RULE, r007::RULE, r008::RULE];
+pub static RULES: &[Rule] = &[
+    r005::RULE,
+    r006::RULE,
+    r007::RULE,
+    r008::RULE,
+    r013::RULE,
+    r014::RULE,
+    r015::RULE,
+    r016::RULE,
+    r017::RULE,
+];
 
 /// Finds a rule by its ID, case-insensitively.
 pub fn find(id: &str) -> Option<&'static Rule> {
