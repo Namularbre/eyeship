@@ -2,8 +2,13 @@
 
 use crate::rule::Rule;
 
+mod r005;
+mod r006;
+mod r007;
+mod r008;
+
 /// Every rule, in ID order.
-pub static RULES: &[Rule] = &[];
+pub static RULES: &[Rule] = &[r005::RULE, r006::RULE, r007::RULE, r008::RULE];
 
 /// Finds a rule by its ID, case-insensitively.
 pub fn find(id: &str) -> Option<&'static Rule> {
