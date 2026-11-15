@@ -79,9 +79,9 @@ Une tâche par règle : module `rules/rNNN.rs`, tests unitaires positifs et nég
 ## Phase 5 : Sortie du MVP
 
 - [x] **T045** Corpus de 10 fichiers Compose publics réels, revue des constats, correction des faux positifs. Critère : aucun faux positif `error`.
-- [ ] **T046** [P] Benchmark : 50 services en moins de 100 ms et moins de 20 Mo de RAM (ENF1).
-- [ ] **T047** [P] Binaires de release (Linux musl x86_64 et aarch64, macOS, Windows) et image Docker `FROM scratch`.
-- [ ] **T048** [P] README : installation, exemple de sortie, intégration GitHub Actions en une ligne, liste des règles.
+- [x] **T046** [P] Benchmark : 50 services en moins de 100 ms et moins de 20 Mo de RAM (ENF1).
+- [x] **T047** [P] Binaires de release (Linux musl x86_64 et aarch64, macOS, Windows) et image Docker `FROM scratch`.
+- [x] **T048** [P] README : installation, exemple de sortie, intégration GitHub Actions en une ligne, liste des règles.
 
 ## Dépendances entre phases
 
