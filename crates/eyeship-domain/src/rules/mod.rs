@@ -1,5 +1,9 @@
 //! The rule registry. One module per rule: `rNNN.rs`.
 
+mod r001;
+mod r002;
+mod r003;
+mod r004;
 mod r005;
 mod r006;
 mod r007;
@@ -18,6 +22,10 @@ use crate::rule::Rule;
 
 /// Every rule, in ID order.
 pub static RULES: &[Rule] = &[
+    r001::RULE,
+    r002::RULE,
+    r003::RULE,
+    r004::RULE,
     r005::RULE,
     r006::RULE,
     r007::RULE,

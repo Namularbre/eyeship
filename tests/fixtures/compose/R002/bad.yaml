@@ -1,0 +1,24 @@
+services:
+  api:
+    image: ghcr.io/acme/api:1.4.2
+    restart: unless-stopped
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16.4
+    restart: unless-stopped
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    environment:
+      POSTGRES_PASSWORD: example
