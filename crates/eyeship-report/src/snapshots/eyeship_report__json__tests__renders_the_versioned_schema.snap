@@ -1,0 +1,71 @@
+---
+source: crates/eyeship-report/src/json.rs
+expression: json(&sample_report())
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "compose.yaml",
+    "compose.override.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R005",
+      "severity": "error",
+      "service": "api",
+      "location": {
+        "file": "compose.yaml",
+        "line": 4,
+        "column": 5
+      },
+      "message": "volume 'data' is not declared at the root",
+      "fix": "Declare 'data' under the root `volumes:` key"
+    },
+    {
+      "rule": "R002",
+      "severity": "error",
+      "service": "db",
+      "location": {
+        "file": "compose.yaml",
+        "line": 9,
+        "column": 12
+      },
+      "message": "image 'postgres' has no tag",
+      "fix": "Pin a version, e.g. `postgres:16.4`"
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "api",
+      "location": {
+        "file": "compose.override.yaml",
+        "line": 3,
+        "column": 7
+      },
+      "message": "depends_on 'db' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` and add a healthcheck to 'db'"
+    },
+    {
+      "rule": "R017",
+      "severity": "info",
+      "service": null,
+      "location": {
+        "file": "compose.yaml",
+        "line": 1,
+        "column": 1
+      },
+      "message": "the root `version` key is obsolete",
+      "fix": "Remove the `version` key"
+    }
+  ],
+  "ignored": 2,
+  "summary": {
+    "error": 2,
+    "warning": 1,
+    "info": 1
+  }
+}

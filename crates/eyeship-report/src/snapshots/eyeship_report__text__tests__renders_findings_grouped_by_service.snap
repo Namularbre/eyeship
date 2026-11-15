@@ -1,0 +1,23 @@
+---
+source: crates/eyeship-report/src/text.rs
+expression: "text(&sample_report(), false)"
+---
+(project)
+  info    R017 compose.yaml:1:1
+          the root `version` key is obsolete
+          fix: Remove the `version` key
+
+api
+  error   R005 compose.yaml:4:5
+          volume 'data' is not declared at the root
+          fix: Declare 'data' under the root `volumes:` key
+  warning R001 compose.override.yaml:3:7
+          depends_on 'db' does not wait for the service to be healthy
+          fix: Use `condition: service_healthy` and add a healthcheck to 'db'
+
+db
+  error   R002 compose.yaml:9:12
+          image 'postgres' has no tag
+          fix: Pin a version, e.g. `postgres:16.4`
+
+2 errors, 1 warning, 1 info, 2 findings ignored by configuration

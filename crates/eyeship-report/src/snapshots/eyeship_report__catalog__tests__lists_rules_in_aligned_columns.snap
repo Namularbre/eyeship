@@ -1,0 +1,8 @@
+---
+source: crates/eyeship-report/src/catalog.rs
+expression: "rendered(|out| render_rules(&[HEALTHY, VERSION, LONG_ID], out))"
+---
+ID     SEVERITY  TITLE
+R001   warning   depends_on does not wait for a healthy service
+R017   info      obsolete `version` key
+R1000  error     a rule with a longer ID
