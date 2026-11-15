@@ -1,0 +1,13 @@
+services:
+  web:
+    image: nginx:1.27.2
+    restart: unless-stopped
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    env_file:
+      - ./web.env
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro

@@ -4,6 +4,10 @@ mod r005;
 mod r006;
 mod r007;
 mod r008;
+mod r009;
+mod r010;
+mod r011;
+mod r012;
 mod r013;
 mod r014;
 mod r015;
@@ -18,6 +22,10 @@ pub static RULES: &[Rule] = &[
     r006::RULE,
     r007::RULE,
     r008::RULE,
+    r009::RULE,
+    r010::RULE,
+    r011::RULE,
+    r012::RULE,
     r013::RULE,
     r014::RULE,
     r015::RULE,
