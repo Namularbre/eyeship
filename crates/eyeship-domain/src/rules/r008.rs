@@ -24,8 +24,6 @@ fn check(project: &Project) -> Vec<Finding> {
     project
         .services
         .iter()
-        // With `build`, `image` names the locally built image: nothing is pulled.
-        .filter(|service| !service.has_build)
         .filter_map(|service| {
             service
                 .image
@@ -124,12 +122,12 @@ mod tests {
     }
 
     #[test]
-    fn ignores_an_image_name_given_to_a_local_build() {
+    fn flags_an_unpinned_image_even_with_a_build_as_the_spec_says() {
         let api = Service {
             has_build: true,
             ..with_image("acme/api")
         };
-        assert!(check(&project(vec![api])).is_empty());
+        assert_eq!(check(&project(vec![api])).len(), 1);
     }
 
     #[test]
