@@ -46,4 +46,3 @@ fn a_missing_subcommand_is_a_usage_error() {
     let output = eyeship().output().expect("eyeship runs");
     assert_eq!(output.status.code(), Some(2));
 }
-
