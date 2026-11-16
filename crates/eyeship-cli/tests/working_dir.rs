@@ -69,6 +69,9 @@ fn a_directory_argument_audits_the_file_inside_it() {
     let output = eyeship_in(dir.path(), &["compose", "sub", "--format", "json"]);
     assert_eq!(
         audited(&output),
-        (vec!["sub/compose.yaml".into()], vec!["sub".into()])
+        (
+            vec![Path::new("sub").join("compose.yaml").display().to_string()],
+            vec!["sub".into()]
+        )
     );
 }
