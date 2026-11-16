@@ -1,67 +1,67 @@
 # eyeship
 
-> *eyeship*, prononcé « I ship » : l'œil qui surveille (*eye*), le navire (*ship*) et « je livre en prod » (*I ship*).
+> *eyeship*, pronounced "I ship": the watching eye (*eye*), the vessel (*ship*), and "I ship to production" (*I ship*).
 
-`eyeship` audite vos fichiers Docker Compose et trouve, **avant la mise en production**, ce qui risque de faire tomber votre application : dépendance démarrée avant que la base soit prête, conteneur sans limite mémoire, logs qui remplissent le disque, port publié deux fois, variable non définie…
+`eyeship` audits your Docker Compose files and finds, **before you go to production**, what is likely to bring your application down: a dependency started before the database is ready, a container without a memory limit, logs filling up the disk, a port published twice, an undefined variable…
 
-- Analyse **statique et hors ligne** : aucun conteneur lancé, aucun démon Docker, aucun réseau.
-- Chaque constat dit **où** (fichier, service, ligne), **pourquoi** et **comment corriger**.
-- Pensé pour la **CI** : codes de sortie stables, sortie JSON, seuil d'échec configurable, résultat déterministe.
-- Un seul binaire statique (quelques Mo), rapide : 50 services audités en ~6 ms et ~5 Mo de RAM.
+- **Static, offline** analysis: no container started, no Docker daemon, no network.
+- Every finding says **where** (file, service, line), **why**, and **how to fix it**.
+- Built for **CI**: stable exit codes, JSON output, configurable failure threshold, deterministic results.
+- A single static binary (a few MB), fast: 50 services audited in ~6 ms with ~5 MB of RAM.
 
 ## Installation
 
-**Binaires** : téléchargez l'archive de votre plateforme (Linux musl x86_64/aarch64, macOS x86_64/aarch64, Windows x86_64) depuis les [releases GitHub](https://github.com/Namularbre/eyeship/releases).
+**Binaries**: download the archive for your platform (Linux musl x86_64/aarch64, macOS x86_64/aarch64, Windows x86_64) from the [GitHub releases](https://github.com/Namularbre/eyeship/releases).
 
-**Depuis les sources** (Rust ≥ 1.85) :
+**From source** (Rust ≥ 1.85):
 
 ```sh
 cargo install --git https://github.com/Namularbre/eyeship eyeship-cli
 ```
 
-**Docker** (image `scratch` de quelques Mo) :
+**Docker** (a `scratch` image of a few MB):
 
 ```sh
 docker run --rm -v "$PWD:/work" ghcr.io/namularbre/eyeship compose
 ```
 
-## Utilisation
+## Usage
 
 ```sh
-eyeship compose                                 # cherche compose.yaml, docker-compose.yml… dans le dossier courant
-eyeship compose infra/compose.yaml              # un fichier précis
-eyeship compose -f compose.yaml -f compose.prod.yaml   # plusieurs fichiers, fusionnés dans l'ordre
-eyeship compose --env-file .env.prod            # variables pour l'interpolation
-eyeship compose --format json                   # sortie machine
-eyeship compose --fail-on warning               # seuil d'échec : error (défaut), warning, info, none
-eyeship compose --ignore R015,R016              # ignorer des règles (les constats ignorés restent comptés)
-eyeship rules                                   # liste des règles
-eyeship explain R001                            # scénario de panne, correction, exemples
+eyeship compose                                 # looks for compose.yaml, docker-compose.yml… in the current directory
+eyeship compose infra/compose.yaml              # a specific file
+eyeship compose -f compose.yaml -f compose.prod.yaml   # several files, merged in order
+eyeship compose --env-file .env.prod            # variables used for interpolation
+eyeship compose --format json                   # machine-readable output
+eyeship compose --fail-on warning               # failure threshold: error (default), warning, info, none
+eyeship compose --ignore R015,R016              # ignore rules (ignored findings are still counted)
+eyeship rules                                   # list the rules
+eyeship explain R001                            # failure scenario, fix, examples
 ```
 
-### Fichier `.eyeship.toml`
+### `.eyeship.toml` file
 
-Placé dans le dossier où l'on lance `eyeship`, il rend le silence explicite et versionné :
+Placed in the directory where you run `eyeship`, it makes silencing explicit and versioned:
 
 ```toml
-fail_on = "warning"          # seuil d'échec
-ignore = ["R015", "R016"]    # pour tous les services
+fail_on = "warning"          # failure threshold
+ignore = ["R015", "R016"]    # for every service
 
 [services.api]
-ignore = ["R006"]            # pour un seul service
+ignore = ["R006"]            # for a single service
 ```
 
-### Codes de sortie
+### Exit codes
 
-| Code | Signification |
+| Code | Meaning |
 |---|---|
-| 0 | Aucun constat au niveau du seuil ou au-dessus |
-| 1 | Au moins un constat au niveau du seuil ou au-dessus |
-| 2 | Erreur d'utilisation ou de lecture (fichier absent, YAML invalide) |
+| 0 | No finding at or above the threshold |
+| 1 | At least one finding at or above the threshold |
+| 2 | Usage or read error (missing file, invalid YAML) |
 
-## Exemple
+## Example
 
-Sur [`examples/compose.yaml`](examples/compose.yaml) :
+On [`examples/compose.yaml`](examples/compose.yaml):
 
 ```text
 $ eyeship compose examples/compose.yaml
@@ -94,15 +94,15 @@ $ echo $?
 1
 ```
 
-## Intégration GitHub Actions
+## GitHub Actions integration
 
 ```yaml
 - run: docker run --rm -v "$PWD:/work" ghcr.io/namularbre/eyeship compose --fail-on warning
 ```
 
-## Règles
+## Rules
 
-| ID | Sévérité | Règle |
+| ID | Severity | Rule |
 |---|---|---|
 | R001 | warning | depends_on without health condition |
 | R002 | error | depends_on towards a service without healthcheck |
@@ -122,17 +122,17 @@ $ echo $?
 | R016 | info | Container name not in kebab-case |
 | R017 | info | Obsolete version key |
 
-`eyeship explain <ID>` détaille chacune : le problème, le scénario de panne, la correction, un exemple fautif et un exemple corrigé. Les identifiants sont stables : une règle peut être dépréciée, jamais renumérotée.
+`eyeship explain <ID>` details each one: the problem, the failure scenario, the fix, a faulty example and a corrected example. Rule IDs are stable: a rule may be deprecated, never renumbered.
 
-## Développement
+## Development
 
 ```sh
 cargo fmt --all --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
-cargo test --release -p eyeship-cli --test perf -- --ignored   # ENF1 : < 100 ms pour 50 services
-scripts/bench.sh                                               # temps et RSS max (GNU time requis)
+cargo test --release -p eyeship-cli --test perf -- --ignored   # ENF1 (non-functional req.): < 100 ms for 50 services
+scripts/bench.sh                                               # time and max RSS (requires GNU time)
 docker build -t eyeship .
 ```
 
-La démarche (constitution, spec, plan, tâches) est décrite dans [`docs/`](docs/). Documentation en français, messages de l'outil en anglais.
+The approach (constitution, spec, plan, tasks) is described in [`docs/`](docs/) (in French). The tool's messages are in English.
