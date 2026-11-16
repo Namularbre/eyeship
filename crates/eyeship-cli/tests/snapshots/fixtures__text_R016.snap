@@ -1,0 +1,13 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+api
+  info    R015 bad.yaml:4:21
+          container_name 'Acme_API' prevents scaling the service and collides between projects on the same host
+          fix: remove container_name and reach the service by its service name
+  info    R016 bad.yaml:4:21
+          container_name 'Acme_API' is not in kebab-case
+          fix: rename it in kebab-case, e.g. 'acme-api'
+
+0 errors, 0 warnings, 2 info

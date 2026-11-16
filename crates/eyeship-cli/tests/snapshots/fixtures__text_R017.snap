@@ -1,0 +1,10 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+(project)
+  info    R017 bad.yaml:1:1
+          the root 'version' key is obsolete and ignored by Compose
+          fix: remove the root 'version' key
+
+0 errors, 0 warnings, 1 info

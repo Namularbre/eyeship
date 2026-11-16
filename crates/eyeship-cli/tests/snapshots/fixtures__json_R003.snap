@@ -1,0 +1,46 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "bad.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R003",
+      "severity": "error",
+      "service": "api",
+      "location": {
+        "file": "bad.yaml",
+        "line": 13,
+        "column": 7
+      },
+      "message": "depends_on 'database' names a service that does not exist",
+      "fix": "Fix the name 'database' or declare that service under `services`."
+    },
+    {
+      "rule": "R003",
+      "severity": "error",
+      "service": "worker",
+      "location": {
+        "file": "bad.yaml",
+        "line": 31,
+        "column": 7
+      },
+      "message": "dependency cycle: api -> worker -> api",
+      "fix": "Remove one of the `depends_on` entries of the cycle."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 2,
+    "warning": 0,
+    "info": 0
+  }
+}

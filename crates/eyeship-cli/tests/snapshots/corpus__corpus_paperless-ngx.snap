@@ -1,0 +1,166 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "docker-compose.yml"
+  ],
+  "findings": [
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "broker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 28,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "broker",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 28,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 33,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 33,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "webserver",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 42,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "webserver",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 42,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "webserver",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 43,
+        "column": 12
+      },
+      "message": "image 'ghcr.io/paperless-ngx/paperless-ngx:latest' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'paperless-ngx/paperless-ngx' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "webserver",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 46,
+        "column": 9
+      },
+      "message": "depends_on 'db' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'db' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "webserver",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 47,
+        "column": 9
+      },
+      "message": "depends_on 'broker' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'broker' and give it a healthcheck."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "webserver",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 53,
+        "column": 9
+      },
+      "message": "bind mount source './export' does not exist on the host",
+      "fix": "Create './export' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "webserver",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 54,
+        "column": 9
+      },
+      "message": "bind mount source './consume' does not exist on the host",
+      "fix": "Create './consume' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "webserver",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 55,
+        "column": 15
+      },
+      "message": "env_file 'docker-compose.env' does not exist on the host",
+      "fix": "Create 'docker-compose.env' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 12,
+    "info": 0
+  }
+}

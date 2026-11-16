@@ -1,0 +1,46 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "bad.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "api",
+      "location": {
+        "file": "bad.yaml",
+        "line": 4,
+        "column": 21
+      },
+      "message": "container_name 'Acme_API' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R016",
+      "severity": "info",
+      "service": "api",
+      "location": {
+        "file": "bad.yaml",
+        "line": 4,
+        "column": 21
+      },
+      "message": "container_name 'Acme_API' is not in kebab-case",
+      "fix": "rename it in kebab-case, e.g. 'acme-api'"
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 0,
+    "info": 2
+  }
+}

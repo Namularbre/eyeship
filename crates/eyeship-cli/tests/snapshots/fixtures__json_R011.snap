@@ -1,0 +1,34 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "bad.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R011",
+      "severity": "error",
+      "service": "db",
+      "location": {
+        "file": "bad.yaml",
+        "line": 11,
+        "column": 9
+      },
+      "message": "named volume 'pgdata' is not declared in the root 'volumes' section",
+      "fix": "Declare 'pgdata' under the root 'volumes' key (add 'external: true' if it is created outside this project), or fix the volume name."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 1,
+    "warning": 0,
+    "info": 0
+  }
+}

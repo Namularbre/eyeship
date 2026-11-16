@@ -1,0 +1,21 @@
+services:
+  web:
+    image: nginx:1.27.2
+    restart: unless-stopped
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    ports:
+      - "8080:80"
+  admin:
+    image: nginx:1.27.2
+    restart: unless-stopped
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    ports:
+      - "8080:80"

@@ -1,0 +1,2098 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "docker-compose.yml"
+  ],
+  "findings": [
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 34,
+        "column": 22
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 35,
+        "column": 22
+      },
+      "message": "variable 'POSTGRES_HOST' is not set and has no default",
+      "fix": "define POSTGRES_HOST in the environment or in .env, or use ${POSTGRES_HOST:-default} or ${POSTGRES_HOST:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 36,
+        "column": 20
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 37,
+        "column": 26
+      },
+      "message": "variable 'POSTGRES_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_PASSWORD in the environment or in .env, or use ${POSTGRES_PASSWORD:-default} or ${POSTGRES_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 42,
+        "column": 27
+      },
+      "message": "variable 'PG_META_CRYPTO_KEY' is not set and has no default",
+      "fix": "define PG_META_CRYPTO_KEY in the environment or in .env, or use ${PG_META_CRYPTO_KEY:-default} or ${PG_META_CRYPTO_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 43,
+        "column": 25
+      },
+      "message": "variable 'PGRST_DB_SCHEMAS' is not set and has no default",
+      "fix": "define PGRST_DB_SCHEMAS in the environment or in .env, or use ${PGRST_DB_SCHEMAS:-default} or ${PGRST_DB_SCHEMAS:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 47,
+        "column": 34
+      },
+      "message": "variable 'STUDIO_DEFAULT_ORGANIZATION' is not set and has no default",
+      "fix": "define STUDIO_DEFAULT_ORGANIZATION in the environment or in .env, or use ${STUDIO_DEFAULT_ORGANIZATION:-default} or ${STUDIO_DEFAULT_ORGANIZATION:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 48,
+        "column": 29
+      },
+      "message": "variable 'STUDIO_DEFAULT_PROJECT' is not set and has no default",
+      "fix": "define STUDIO_DEFAULT_PROJECT in the environment or in .env, or use ${STUDIO_DEFAULT_PROJECT:-default} or ${STUDIO_DEFAULT_PROJECT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 49,
+        "column": 23
+      },
+      "message": "variable 'OPENAI_API_KEY' is not set and has no default",
+      "fix": "define OPENAI_API_KEY in the environment or in .env, or use ${OPENAI_API_KEY:-default} or ${OPENAI_API_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 52,
+        "column": 28
+      },
+      "message": "variable 'SUPABASE_PUBLIC_URL' is not set and has no default",
+      "fix": "define SUPABASE_PUBLIC_URL in the environment or in .env, or use ${SUPABASE_PUBLIC_URL:-default} or ${SUPABASE_PUBLIC_URL:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 53,
+        "column": 26
+      },
+      "message": "variable 'ANON_KEY' is not set and has no default",
+      "fix": "define ANON_KEY in the environment or in .env, or use ${ANON_KEY:-default} or ${ANON_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 54,
+        "column": 29
+      },
+      "message": "variable 'SERVICE_ROLE_KEY' is not set and has no default",
+      "fix": "define SERVICE_ROLE_KEY in the environment or in .env, or use ${SERVICE_ROLE_KEY:-default} or ${SERVICE_ROLE_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 55,
+        "column": 24
+      },
+      "message": "variable 'JWT_SECRET' is not set and has no default",
+      "fix": "define JWT_SECRET in the environment or in .env, or use ${JWT_SECRET:-default} or ${JWT_SECRET:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 56,
+        "column": 33
+      },
+      "message": "variable 'SUPABASE_PUBLISHABLE_KEY' is not set and has no default",
+      "fix": "define SUPABASE_PUBLISHABLE_KEY in the environment or in .env, or use ${SUPABASE_PUBLISHABLE_KEY:-default} or ${SUPABASE_PUBLISHABLE_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 57,
+        "column": 28
+      },
+      "message": "variable 'SUPABASE_SECRET_KEY' is not set and has no default",
+      "fix": "define SUPABASE_SECRET_KEY in the environment or in .env, or use ${SUPABASE_SECRET_KEY:-default} or ${SUPABASE_SECRET_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 98,
+        "column": 17
+      },
+      "message": "variable 'ANON_KEY' is not set and has no default",
+      "fix": "define ANON_KEY in the environment or in .env, or use ${ANON_KEY:-default} or ${ANON_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 99,
+        "column": 25
+      },
+      "message": "variable 'SERVICE_ROLE_KEY' is not set and has no default",
+      "fix": "define SERVICE_ROLE_KEY in the environment or in .env, or use ${SERVICE_ROLE_KEY:-default} or ${SERVICE_ROLE_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 104,
+        "column": 28
+      },
+      "message": "variable 'SUPABASE_PUBLIC_URL' is not set and has no default",
+      "fix": "define SUPABASE_PUBLIC_URL in the environment or in .env, or use ${SUPABASE_PUBLIC_URL:-default} or ${SUPABASE_PUBLIC_URL:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 105,
+        "column": 27
+      },
+      "message": "variable 'DASHBOARD_USERNAME' is not set and has no default",
+      "fix": "define DASHBOARD_USERNAME in the environment or in .env, or use ${DASHBOARD_USERNAME:-default} or ${DASHBOARD_USERNAME:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 106,
+        "column": 27
+      },
+      "message": "variable 'DASHBOARD_PASSWORD' is not set and has no default",
+      "fix": "define DASHBOARD_PASSWORD in the environment or in .env, or use ${DASHBOARD_PASSWORD:-default} or ${DASHBOARD_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 133,
+        "column": 25
+      },
+      "message": "variable 'API_EXTERNAL_URL' is not set and has no default",
+      "fix": "define API_EXTERNAL_URL in the environment or in .env, or use ${API_EXTERNAL_URL:-default} or ${API_EXTERNAL_URL:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 136,
+        "column": 31
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 136,
+        "column": 31
+      },
+      "message": "variable 'POSTGRES_HOST' is not set and has no default",
+      "fix": "define POSTGRES_HOST in the environment or in .env, or use ${POSTGRES_HOST:-default} or ${POSTGRES_HOST:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 136,
+        "column": 31
+      },
+      "message": "variable 'POSTGRES_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_PASSWORD in the environment or in .env, or use ${POSTGRES_PASSWORD:-default} or ${POSTGRES_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 136,
+        "column": 31
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 138,
+        "column": 24
+      },
+      "message": "variable 'SITE_URL' is not set and has no default",
+      "fix": "define SITE_URL in the environment or in .env, or use ${SITE_URL:-default} or ${SITE_URL:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 139,
+        "column": 30
+      },
+      "message": "variable 'ADDITIONAL_REDIRECT_URLS' is not set and has no default",
+      "fix": "define ADDITIONAL_REDIRECT_URLS in the environment or in .env, or use ${ADDITIONAL_REDIRECT_URLS:-default} or ${ADDITIONAL_REDIRECT_URLS:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 140,
+        "column": 30
+      },
+      "message": "variable 'DISABLE_SIGNUP' is not set and has no default",
+      "fix": "define DISABLE_SIGNUP in the environment or in .env, or use ${DISABLE_SIGNUP:-default} or ${DISABLE_SIGNUP:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 145,
+        "column": 23
+      },
+      "message": "variable 'JWT_EXPIRY' is not set and has no default",
+      "fix": "define JWT_EXPIRY in the environment or in .env, or use ${JWT_EXPIRY:-default} or ${JWT_EXPIRY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 148,
+        "column": 26
+      },
+      "message": "variable 'JWT_SECRET' is not set and has no default",
+      "fix": "define JWT_SECRET in the environment or in .env, or use ${JWT_SECRET:-default} or ${JWT_SECRET:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 154,
+        "column": 26
+      },
+      "message": "variable 'API_EXTERNAL_URL' is not set and has no default",
+      "fix": "define API_EXTERNAL_URL in the environment or in .env, or use ${API_EXTERNAL_URL:-default} or ${API_EXTERNAL_URL:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 156,
+        "column": 38
+      },
+      "message": "variable 'ENABLE_EMAIL_SIGNUP' is not set and has no default",
+      "fix": "define ENABLE_EMAIL_SIGNUP in the environment or in .env, or use ${ENABLE_EMAIL_SIGNUP:-default} or ${ENABLE_EMAIL_SIGNUP:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 157,
+        "column": 48
+      },
+      "message": "variable 'ENABLE_ANONYMOUS_USERS' is not set and has no default",
+      "fix": "define ENABLE_ANONYMOUS_USERS in the environment or in .env, or use ${ENABLE_ANONYMOUS_USERS:-default} or ${ENABLE_ANONYMOUS_USERS:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 158,
+        "column": 34
+      },
+      "message": "variable 'ENABLE_EMAIL_AUTOCONFIRM' is not set and has no default",
+      "fix": "define ENABLE_EMAIL_AUTOCONFIRM in the environment or in .env, or use ${ENABLE_EMAIL_AUTOCONFIRM:-default} or ${ENABLE_EMAIL_AUTOCONFIRM:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 165,
+        "column": 32
+      },
+      "message": "variable 'SMTP_ADMIN_EMAIL' is not set and has no default",
+      "fix": "define SMTP_ADMIN_EMAIL in the environment or in .env, or use ${SMTP_ADMIN_EMAIL:-default} or ${SMTP_ADMIN_EMAIL:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 166,
+        "column": 25
+      },
+      "message": "variable 'SMTP_HOST' is not set and has no default",
+      "fix": "define SMTP_HOST in the environment or in .env, or use ${SMTP_HOST:-default} or ${SMTP_HOST:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 167,
+        "column": 25
+      },
+      "message": "variable 'SMTP_PORT' is not set and has no default",
+      "fix": "define SMTP_PORT in the environment or in .env, or use ${SMTP_PORT:-default} or ${SMTP_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 168,
+        "column": 25
+      },
+      "message": "variable 'SMTP_USER' is not set and has no default",
+      "fix": "define SMTP_USER in the environment or in .env, or use ${SMTP_USER:-default} or ${SMTP_USER:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 169,
+        "column": 25
+      },
+      "message": "variable 'SMTP_PASS' is not set and has no default",
+      "fix": "define SMTP_PASS in the environment or in .env, or use ${SMTP_PASS:-default} or ${SMTP_PASS:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 170,
+        "column": 32
+      },
+      "message": "variable 'SMTP_SENDER_NAME' is not set and has no default",
+      "fix": "define SMTP_SENDER_NAME in the environment or in .env, or use ${SMTP_SENDER_NAME:-default} or ${SMTP_SENDER_NAME:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 171,
+        "column": 38
+      },
+      "message": "variable 'MAILER_URLPATHS_INVITE' is not set and has no default",
+      "fix": "define MAILER_URLPATHS_INVITE in the environment or in .env, or use ${MAILER_URLPATHS_INVITE:-default} or ${MAILER_URLPATHS_INVITE:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 172,
+        "column": 44
+      },
+      "message": "variable 'MAILER_URLPATHS_CONFIRMATION' is not set and has no default",
+      "fix": "define MAILER_URLPATHS_CONFIRMATION in the environment or in .env, or use ${MAILER_URLPATHS_CONFIRMATION:-default} or ${MAILER_URLPATHS_CONFIRMATION:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 173,
+        "column": 40
+      },
+      "message": "variable 'MAILER_URLPATHS_RECOVERY' is not set and has no default",
+      "fix": "define MAILER_URLPATHS_RECOVERY in the environment or in .env, or use ${MAILER_URLPATHS_RECOVERY:-default} or ${MAILER_URLPATHS_RECOVERY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 174,
+        "column": 44
+      },
+      "message": "variable 'MAILER_URLPATHS_EMAIL_CHANGE' is not set and has no default",
+      "fix": "define MAILER_URLPATHS_EMAIL_CHANGE in the environment or in .env, or use ${MAILER_URLPATHS_EMAIL_CHANGE:-default} or ${MAILER_URLPATHS_EMAIL_CHANGE:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 176,
+        "column": 38
+      },
+      "message": "variable 'ENABLE_PHONE_SIGNUP' is not set and has no default",
+      "fix": "define ENABLE_PHONE_SIGNUP in the environment or in .env, or use ${ENABLE_PHONE_SIGNUP:-default} or ${ENABLE_PHONE_SIGNUP:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 177,
+        "column": 31
+      },
+      "message": "variable 'ENABLE_PHONE_AUTOCONFIRM' is not set and has no default",
+      "fix": "define ENABLE_PHONE_AUTOCONFIRM in the environment or in .env, or use ${ENABLE_PHONE_AUTOCONFIRM:-default} or ${ENABLE_PHONE_AUTOCONFIRM:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "rest",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 263,
+        "column": 21
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "rest",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 263,
+        "column": 21
+      },
+      "message": "variable 'POSTGRES_HOST' is not set and has no default",
+      "fix": "define POSTGRES_HOST in the environment or in .env, or use ${POSTGRES_HOST:-default} or ${POSTGRES_HOST:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "rest",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 263,
+        "column": 21
+      },
+      "message": "variable 'POSTGRES_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_PASSWORD in the environment or in .env, or use ${POSTGRES_PASSWORD:-default} or ${POSTGRES_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "rest",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 263,
+        "column": 21
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "rest",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 264,
+        "column": 25
+      },
+      "message": "variable 'PGRST_DB_SCHEMAS' is not set and has no default",
+      "fix": "define PGRST_DB_SCHEMAS in the environment or in .env, or use ${PGRST_DB_SCHEMAS:-default} or ${PGRST_DB_SCHEMAS:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "rest",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 275,
+        "column": 25
+      },
+      "message": "variable 'JWT_SECRET' is not set and has no default",
+      "fix": "define JWT_SECRET in the environment or in .env, or use ${JWT_SECRET:-default} or ${JWT_SECRET:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "rest",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 278,
+        "column": 35
+      },
+      "message": "variable 'JWT_EXPIRY' is not set and has no default",
+      "fix": "define JWT_EXPIRY in the environment or in .env, or use ${JWT_EXPIRY:-default} or ${JWT_EXPIRY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 297,
+        "column": 11
+      },
+      "message": "variable 'ANON_KEY' is not set and has no default",
+      "fix": "define ANON_KEY in the environment or in .env, or use ${ANON_KEY:-default} or ${ANON_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 305,
+        "column": 16
+      },
+      "message": "variable 'POSTGRES_HOST' is not set and has no default",
+      "fix": "define POSTGRES_HOST in the environment or in .env, or use ${POSTGRES_HOST:-default} or ${POSTGRES_HOST:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 306,
+        "column": 16
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 308,
+        "column": 20
+      },
+      "message": "variable 'POSTGRES_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_PASSWORD in the environment or in .env, or use ${POSTGRES_PASSWORD:-default} or ${POSTGRES_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 309,
+        "column": 16
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 314,
+        "column": 23
+      },
+      "message": "variable 'JWT_SECRET' is not set and has no default",
+      "fix": "define JWT_SECRET in the environment or in .env, or use ${JWT_SECRET:-default} or ${JWT_SECRET:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 320,
+        "column": 24
+      },
+      "message": "variable 'SECRET_KEY_BASE' is not set and has no default",
+      "fix": "define SECRET_KEY_BASE in the environment or in .env, or use ${SECRET_KEY_BASE:-default} or ${SECRET_KEY_BASE:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 321,
+        "column": 27
+      },
+      "message": "variable 'JWT_SECRET' is not set and has no default",
+      "fix": "define JWT_SECRET in the environment or in .env, or use ${JWT_SECRET:-default} or ${JWT_SECRET:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 358,
+        "column": 17
+      },
+      "message": "variable 'ANON_KEY' is not set and has no default",
+      "fix": "define ANON_KEY in the environment or in .env, or use ${ANON_KEY:-default} or ${ANON_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 359,
+        "column": 20
+      },
+      "message": "variable 'SERVICE_ROLE_KEY' is not set and has no default",
+      "fix": "define SERVICE_ROLE_KEY in the environment or in .env, or use ${SERVICE_ROLE_KEY:-default} or ${SERVICE_ROLE_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 363,
+        "column": 24
+      },
+      "message": "variable 'JWT_SECRET' is not set and has no default",
+      "fix": "define JWT_SECRET in the environment or in .env, or use ${JWT_SECRET:-default} or ${JWT_SECRET:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 369,
+        "column": 21
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 369,
+        "column": 21
+      },
+      "message": "variable 'POSTGRES_HOST' is not set and has no default",
+      "fix": "define POSTGRES_HOST in the environment or in .env, or use ${POSTGRES_HOST:-default} or ${POSTGRES_HOST:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 369,
+        "column": 21
+      },
+      "message": "variable 'POSTGRES_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_PASSWORD in the environment or in .env, or use ${POSTGRES_PASSWORD:-default} or ${POSTGRES_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 369,
+        "column": 21
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 370,
+        "column": 27
+      },
+      "message": "variable 'SUPABASE_PUBLIC_URL' is not set and has no default",
+      "fix": "define SUPABASE_PUBLIC_URL in the environment or in .env, or use ${SUPABASE_PUBLIC_URL:-default} or ${SUPABASE_PUBLIC_URL:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 375,
+        "column": 25
+      },
+      "message": "variable 'GLOBAL_S3_BUCKET' is not set and has no default",
+      "fix": "define GLOBAL_S3_BUCKET in the environment or in .env, or use ${GLOBAL_S3_BUCKET:-default} or ${GLOBAL_S3_BUCKET:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 383,
+        "column": 18
+      },
+      "message": "variable 'STORAGE_TENANT_ID' is not set and has no default",
+      "fix": "define STORAGE_TENANT_ID in the environment or in .env, or use ${STORAGE_TENANT_ID:-default} or ${STORAGE_TENANT_ID:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 385,
+        "column": 15
+      },
+      "message": "variable 'REGION' is not set and has no default",
+      "fix": "define REGION in the environment or in .env, or use ${REGION:-default} or ${REGION:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 389,
+        "column": 34
+      },
+      "message": "variable 'S3_PROTOCOL_ACCESS_KEY_ID' is not set and has no default",
+      "fix": "define S3_PROTOCOL_ACCESS_KEY_ID in the environment or in .env, or use ${S3_PROTOCOL_ACCESS_KEY_ID:-default} or ${S3_PROTOCOL_ACCESS_KEY_ID:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 390,
+        "column": 38
+      },
+      "message": "variable 'S3_PROTOCOL_ACCESS_KEY_SECRET' is not set and has no default",
+      "fix": "define S3_PROTOCOL_ACCESS_KEY_SECRET in the environment or in .env, or use ${S3_PROTOCOL_ACCESS_KEY_SECRET:-default} or ${S3_PROTOCOL_ACCESS_KEY_SECRET:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "imgproxy",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 414,
+        "column": 27
+      },
+      "message": "variable 'IMGPROXY_AUTO_WEBP' is not set and has no default",
+      "fix": "define IMGPROXY_AUTO_WEBP in the environment or in .env, or use ${IMGPROXY_AUTO_WEBP:-default} or ${IMGPROXY_AUTO_WEBP:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "meta",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 427,
+        "column": 24
+      },
+      "message": "variable 'POSTGRES_HOST' is not set and has no default",
+      "fix": "define POSTGRES_HOST in the environment or in .env, or use ${POSTGRES_HOST:-default} or ${POSTGRES_HOST:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "meta",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 428,
+        "column": 24
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "meta",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 429,
+        "column": 24
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "meta",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 431,
+        "column": 28
+      },
+      "message": "variable 'POSTGRES_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_PASSWORD in the environment or in .env, or use ${POSTGRES_PASSWORD:-default} or ${POSTGRES_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "meta",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 432,
+        "column": 19
+      },
+      "message": "variable 'PG_META_CRYPTO_KEY' is not set and has no default",
+      "fix": "define PG_META_CRYPTO_KEY in the environment or in .env, or use ${PG_META_CRYPTO_KEY:-default} or ${PG_META_CRYPTO_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 452,
+        "column": 19
+      },
+      "message": "variable 'JWT_SECRET' is not set and has no default",
+      "fix": "define JWT_SECRET in the environment or in .env, or use ${JWT_SECRET:-default} or ${JWT_SECRET:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 458,
+        "column": 28
+      },
+      "message": "variable 'SUPABASE_PUBLIC_URL' is not set and has no default",
+      "fix": "define SUPABASE_PUBLIC_URL in the environment or in .env, or use ${SUPABASE_PUBLIC_URL:-default} or ${SUPABASE_PUBLIC_URL:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 460,
+        "column": 26
+      },
+      "message": "variable 'ANON_KEY' is not set and has no default",
+      "fix": "define ANON_KEY in the environment or in .env, or use ${ANON_KEY:-default} or ${ANON_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 461,
+        "column": 34
+      },
+      "message": "variable 'SERVICE_ROLE_KEY' is not set and has no default",
+      "fix": "define SERVICE_ROLE_KEY in the environment or in .env, or use ${SERVICE_ROLE_KEY:-default} or ${SERVICE_ROLE_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 465,
+        "column": 24
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 465,
+        "column": 24
+      },
+      "message": "variable 'POSTGRES_HOST' is not set and has no default",
+      "fix": "define POSTGRES_HOST in the environment or in .env, or use ${POSTGRES_HOST:-default} or ${POSTGRES_HOST:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 465,
+        "column": 24
+      },
+      "message": "variable 'POSTGRES_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_PASSWORD in the environment or in .env, or use ${POSTGRES_PASSWORD:-default} or ${POSTGRES_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 465,
+        "column": 24
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 467,
+        "column": 19
+      },
+      "message": "variable 'FUNCTIONS_VERIFY_JWT' is not set and has no default",
+      "fix": "define FUNCTIONS_VERIFY_JWT in the environment or in .env, or use ${FUNCTIONS_VERIFY_JWT:-default} or ${FUNCTIONS_VERIFY_JWT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 516,
+        "column": 15
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 517,
+        "column": 22
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 518,
+        "column": 19
+      },
+      "message": "variable 'POSTGRES_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_PASSWORD in the environment or in .env, or use ${POSTGRES_PASSWORD:-default} or ${POSTGRES_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 519,
+        "column": 26
+      },
+      "message": "variable 'POSTGRES_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_PASSWORD in the environment or in .env, or use ${POSTGRES_PASSWORD:-default} or ${POSTGRES_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 520,
+        "column": 19
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 521,
+        "column": 20
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 522,
+        "column": 16
+      },
+      "message": "variable 'JWT_EXPIRY' is not set and has no default",
+      "fix": "define JWT_EXPIRY in the environment or in .env, or use ${JWT_EXPIRY:-default} or ${JWT_EXPIRY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 538,
+        "column": 9
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 539,
+        "column": 9
+      },
+      "message": "variable 'POOLER_PROXY_PORT_TRANSACTION' is not set and has no default",
+      "fix": "define POOLER_PROXY_PORT_TRANSACTION in the environment or in .env, or use ${POOLER_PROXY_PORT_TRANSACTION:-default} or ${POOLER_PROXY_PORT_TRANSACTION:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 562,
+        "column": 22
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 563,
+        "column": 22
+      },
+      "message": "variable 'POSTGRES_HOST' is not set and has no default",
+      "fix": "define POSTGRES_HOST in the environment or in .env, or use ${POSTGRES_HOST:-default} or ${POSTGRES_HOST:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 564,
+        "column": 20
+      },
+      "message": "variable 'POSTGRES_DB' is not set and has no default",
+      "fix": "define POSTGRES_DB in the environment or in .env, or use ${POSTGRES_DB:-default} or ${POSTGRES_DB:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 565,
+        "column": 26
+      },
+      "message": "variable 'POSTGRES_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_PASSWORD in the environment or in .env, or use ${POSTGRES_PASSWORD:-default} or ${POSTGRES_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 21
+      },
+      "message": "variable 'POSTGRES_HOST' is not set and has no default",
+      "fix": "define POSTGRES_HOST in the environment or in .env, or use ${POSTGRES_HOST:-default} or ${POSTGRES_HOST:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 21
+      },
+      "message": "variable 'POSTGRES_PASSWORD' is not set and has no default",
+      "fix": "define POSTGRES_PASSWORD in the environment or in .env, or use ${POSTGRES_PASSWORD:-default} or ${POSTGRES_PASSWORD:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 566,
+        "column": 21
+      },
+      "message": "variable 'POSTGRES_PORT' is not set and has no default",
+      "fix": "define POSTGRES_PORT in the environment or in .env, or use ${POSTGRES_PORT:-default} or ${POSTGRES_PORT:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 568,
+        "column": 24
+      },
+      "message": "variable 'SECRET_KEY_BASE' is not set and has no default",
+      "fix": "define SECRET_KEY_BASE in the environment or in .env, or use ${SECRET_KEY_BASE:-default} or ${SECRET_KEY_BASE:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 569,
+        "column": 22
+      },
+      "message": "variable 'VAULT_ENC_KEY' is not set and has no default",
+      "fix": "define VAULT_ENC_KEY in the environment or in .env, or use ${VAULT_ENC_KEY:-default} or ${VAULT_ENC_KEY:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 570,
+        "column": 23
+      },
+      "message": "variable 'JWT_SECRET' is not set and has no default",
+      "fix": "define JWT_SECRET in the environment or in .env, or use ${JWT_SECRET:-default} or ${JWT_SECRET:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 571,
+        "column": 27
+      },
+      "message": "variable 'JWT_SECRET' is not set and has no default",
+      "fix": "define JWT_SECRET in the environment or in .env, or use ${JWT_SECRET:-default} or ${JWT_SECRET:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 574,
+        "column": 25
+      },
+      "message": "variable 'POOLER_TENANT_ID' is not set and has no default",
+      "fix": "define POOLER_TENANT_ID in the environment or in .env, or use ${POOLER_TENANT_ID:-default} or ${POOLER_TENANT_ID:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 575,
+        "column": 33
+      },
+      "message": "variable 'POOLER_DEFAULT_POOL_SIZE' is not set and has no default",
+      "fix": "define POOLER_DEFAULT_POOL_SIZE in the environment or in .env, or use ${POOLER_DEFAULT_POOL_SIZE:-default} or ${POOLER_DEFAULT_POOL_SIZE:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 576,
+        "column": 31
+      },
+      "message": "variable 'POOLER_MAX_CLIENT_CONN' is not set and has no default",
+      "fix": "define POOLER_MAX_CLIENT_CONN in the environment or in .env, or use ${POOLER_MAX_CLIENT_CONN:-default} or ${POOLER_MAX_CLIENT_CONN:?message}"
+    },
+    {
+      "rule": "R013",
+      "severity": "error",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 578,
+        "column": 21
+      },
+      "message": "variable 'POOLER_DB_POOL_SIZE' is not set and has no default",
+      "fix": "define POOLER_DB_POOL_SIZE in the environment or in .env, or use ${POOLER_DB_POOL_SIZE:-default} or ${POOLER_DB_POOL_SIZE:?message}"
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 15,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 15,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 25,
+        "column": 16
+      },
+      "message": "healthcheck timeout 10s is not shorter than its interval 5s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 65,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/snippets' does not exist on the host",
+      "fix": "Create './volumes/snippets' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 66,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/functions' does not exist on the host",
+      "fix": "Create './volumes/functions' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 70,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 70,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 93,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/api/envoy/envoy.yaml' does not exist on the host",
+      "fix": "Create './volumes/api/envoy/envoy.yaml' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 94,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/api/envoy/cds.yaml' does not exist on the host",
+      "fix": "Create './volumes/api/envoy/cds.yaml' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 95,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/api/envoy/lds.template.yaml' does not exist on the host",
+      "fix": "Create './volumes/api/envoy/lds.template.yaml' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 96,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/api/envoy/docker-entrypoint.sh' does not exist on the host",
+      "fix": "Create './volumes/api/envoy/docker-entrypoint.sh' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 109,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 109,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 123,
+        "column": 16
+      },
+      "message": "healthcheck timeout 5s is not shorter than its interval 5s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "rest",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 249,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "rest",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 249,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "rest",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 260,
+        "column": 16
+      },
+      "message": "healthcheck timeout 5s is not shorter than its interval 5s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 284,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 284,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 331,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 331,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 339,
+        "column": 7
+      },
+      "message": "depends_on 'rest' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'rest' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 341,
+        "column": 7
+      },
+      "message": "depends_on 'imgproxy' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'imgproxy' and give it a healthcheck."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 353,
+        "column": 16
+      },
+      "message": "healthcheck timeout 5s is not shorter than its interval 5s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 392,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/storage' does not exist on the host",
+      "fix": "Create './volumes/storage' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "imgproxy",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 394,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "imgproxy",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 394,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "imgproxy",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 399,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/storage' does not exist on the host",
+      "fix": "Create './volumes/storage' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "imgproxy",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 407,
+        "column": 16
+      },
+      "message": "healthcheck timeout 5s is not shorter than its interval 5s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "meta",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 417,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "meta",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 417,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 434,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 440,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/functions' does not exist on the host",
+      "fix": "Create './volumes/functions' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 448,
+        "column": 16
+      },
+      "message": "healthcheck timeout 5s is not shorter than its interval 5s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 478,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 478,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 484,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/db/realtime.sql' does not exist on the host",
+      "fix": "Create './volumes/db/realtime.sql' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 486,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/db/webhooks.sql' does not exist on the host",
+      "fix": "Create './volumes/db/webhooks.sql' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 488,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/db/roles.sql' does not exist on the host",
+      "fix": "Create './volumes/db/roles.sql' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 490,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/db/jwt.sql' does not exist on the host",
+      "fix": "Create './volumes/db/jwt.sql' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 492,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/db/data' does not exist on the host",
+      "fix": "Create './volumes/db/data' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 494,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/db/_supabase.sql' does not exist on the host",
+      "fix": "Create './volumes/db/_supabase.sql' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 496,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/db/logs.sql' does not exist on the host",
+      "fix": "Create './volumes/db/logs.sql' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 498,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/db/pooler.sql' does not exist on the host",
+      "fix": "Create './volumes/db/pooler.sql' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 512,
+        "column": 16
+      },
+      "message": "healthcheck timeout 5s is not shorter than its interval 5s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 533,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 533,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 541,
+        "column": 9
+      },
+      "message": "bind mount source './volumes/pooler/pooler.exs' does not exist on the host",
+      "fix": "Create './volumes/pooler/pooler.exs' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "studio",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 16,
+        "column": 21
+      },
+      "message": "container_name 'supabase-studio' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "api-gw",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 71,
+        "column": 21
+      },
+      "message": "container_name 'supabase-envoy' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "auth",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 110,
+        "column": 21
+      },
+      "message": "container_name 'supabase-auth' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "rest",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 250,
+        "column": 21
+      },
+      "message": "container_name 'supabase-rest' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 286,
+        "column": 21
+      },
+      "message": "container_name 'realtime-dev.supabase-realtime' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R016",
+      "severity": "info",
+      "service": "realtime",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 286,
+        "column": 21
+      },
+      "message": "container_name 'realtime-dev.supabase-realtime' is not in kebab-case",
+      "fix": "rename it in kebab-case, e.g. 'realtime-dev-supabase-realtime'"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "storage",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 332,
+        "column": 21
+      },
+      "message": "container_name 'supabase-storage' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "imgproxy",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 395,
+        "column": 21
+      },
+      "message": "container_name 'supabase-imgproxy' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "meta",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 418,
+        "column": 21
+      },
+      "message": "container_name 'supabase-meta' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "functions",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 435,
+        "column": 21
+      },
+      "message": "container_name 'supabase-edge-functions' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 479,
+        "column": 21
+      },
+      "message": "container_name 'supabase-db' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "supavisor",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 534,
+        "column": 21
+      },
+      "message": "container_name 'supabase-pooler' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 113,
+    "warning": 48,
+    "info": 12
+  }
+}

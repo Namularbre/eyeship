@@ -1,0 +1,10 @@
+services:
+  api:
+    image: ghcr.io/acme/api:1.4.2
+    container_name: "acme api"
+    restart: unless-stopped
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m

@@ -1,0 +1,9 @@
+# Production override: merged over compose.yaml.
+services:
+  api:
+    restart: "no"
+    mem_limit: 1g
+
+  web:
+    ports:
+      - "8080:80"

@@ -1,0 +1,178 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "compose.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R005",
+      "severity": "warning",
+      "service": "backend",
+      "location": {
+        "file": "compose.yaml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service has no restart policy and stays down after a crash",
+      "fix": "Add `restart: unless-stopped` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "backend",
+      "location": {
+        "file": "compose.yaml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "backend",
+      "location": {
+        "file": "compose.yaml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "backend",
+      "location": {
+        "file": "compose.yaml",
+        "line": 7,
+        "column": 9
+      },
+      "message": "secret file 'db/password.txt' does not exist on the host",
+      "fix": "Create 'db/password.txt' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "compose.yaml",
+        "line": 12,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "compose.yaml",
+        "line": 12,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "compose.yaml",
+        "line": 25,
+        "column": 9
+      },
+      "message": "secret file 'db/password.txt' does not exist on the host",
+      "fix": "Create 'db/password.txt' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R005",
+      "severity": "warning",
+      "service": "proxy",
+      "location": {
+        "file": "compose.yaml",
+        "line": 34,
+        "column": 3
+      },
+      "message": "service has no restart policy and stays down after a crash",
+      "fix": "Add `restart: unless-stopped` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "proxy",
+      "location": {
+        "file": "compose.yaml",
+        "line": 34,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "proxy",
+      "location": {
+        "file": "compose.yaml",
+        "line": 34,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "proxy",
+      "location": {
+        "file": "compose.yaml",
+        "line": 35,
+        "column": 12
+      },
+      "message": "image 'nginx' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'nginx' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "proxy",
+      "location": {
+        "file": "compose.yaml",
+        "line": 37,
+        "column": 9
+      },
+      "message": "bind mount source './proxy/nginx.conf' does not exist on the host",
+      "fix": "Create './proxy/nginx.conf' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "proxy",
+      "location": {
+        "file": "compose.yaml",
+        "line": 44,
+        "column": 9
+      },
+      "message": "depends_on 'backend' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'backend' and give it a healthcheck."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 13,
+    "info": 0
+  }
+}

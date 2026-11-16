@@ -1,0 +1,34 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "bad.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R005",
+      "severity": "warning",
+      "service": "api",
+      "location": {
+        "file": "bad.yaml",
+        "line": 4,
+        "column": 14
+      },
+      "message": "restart policy 'no' leaves the service down after a crash",
+      "fix": "Add `restart: unless-stopped` to the service."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 1,
+    "info": 0
+  }
+}

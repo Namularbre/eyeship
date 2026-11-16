@@ -1,0 +1,10 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+api
+  error   R002 bad.yaml:13:7
+          depends_on 'db' waits for it to be healthy, but 'db' has no healthcheck
+          fix: Add an enabled healthcheck to service 'db'.
+
+1 error, 0 warnings, 0 info

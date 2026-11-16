@@ -1,0 +1,298 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "docker-compose.yml"
+  ],
+  "findings": [
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 5,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 5,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 14,
+        "column": 9
+      },
+      "message": "bind mount source './postgres14' does not exist on the host",
+      "fix": "Create './postgres14' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 18,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 18,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 26,
+        "column": 9
+      },
+      "message": "bind mount source './redis' does not exist on the host",
+      "fix": "Create './redis' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 59,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 59,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 64,
+        "column": 15
+      },
+      "message": "env_file '.env.production' does not exist on the host",
+      "fix": "Create '.env.production' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 75,
+        "column": 9
+      },
+      "message": "depends_on 'db' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'db' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 76,
+        "column": 9
+      },
+      "message": "depends_on 'redis' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'redis' and give it a healthcheck."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "web",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 79,
+        "column": 9
+      },
+      "message": "bind mount source './public/system' does not exist on the host",
+      "fix": "Create './public/system' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "streaming",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 81,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "streaming",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 81,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "streaming",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 88,
+        "column": 15
+      },
+      "message": "env_file '.env.production' does not exist on the host",
+      "fix": "Create '.env.production' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "streaming",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 99,
+        "column": 9
+      },
+      "message": "depends_on 'db' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'db' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "streaming",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 100,
+        "column": 9
+      },
+      "message": "depends_on 'redis' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'redis' and give it a healthcheck."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "sidekiq",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 102,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "sidekiq",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 102,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "sidekiq",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 107,
+        "column": 15
+      },
+      "message": "env_file '.env.production' does not exist on the host",
+      "fix": "Create '.env.production' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "sidekiq",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 110,
+        "column": 9
+      },
+      "message": "depends_on 'db' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'db' and give it a healthcheck."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "sidekiq",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 111,
+        "column": 9
+      },
+      "message": "depends_on 'redis' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'redis' and give it a healthcheck."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "sidekiq",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 116,
+        "column": 9
+      },
+      "message": "bind mount source './public/system' does not exist on the host",
+      "fix": "Create './public/system' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 23,
+    "info": 0
+  }
+}

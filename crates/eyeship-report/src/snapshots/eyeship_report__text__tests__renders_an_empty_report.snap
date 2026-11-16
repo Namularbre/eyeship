@@ -1,0 +1,7 @@
+---
+source: crates/eyeship-report/src/text.rs
+expression: "text(&Report::default(), false)"
+---
+No issues found.
+
+0 errors, 0 warnings, 0 info

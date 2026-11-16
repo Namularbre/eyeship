@@ -1,0 +1,34 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "bad.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "db",
+      "location": {
+        "file": "bad.yaml",
+        "line": 3,
+        "column": 12
+      },
+      "message": "image 'postgres:latest' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'postgres' to an explicit version tag or a digest (@sha256:...)."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 1,
+    "info": 0
+  }
+}

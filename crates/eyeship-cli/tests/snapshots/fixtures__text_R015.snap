@@ -1,0 +1,10 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+api
+  info    R015 bad.yaml:4:21
+          container_name 'acme-api' prevents scaling the service and collides between projects on the same host
+          fix: remove container_name and reach the service by its service name
+
+0 errors, 0 warnings, 1 info

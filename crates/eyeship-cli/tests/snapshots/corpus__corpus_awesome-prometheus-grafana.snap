@@ -1,0 +1,142 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "compose.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "prometheus",
+      "location": {
+        "file": "compose.yaml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "prometheus",
+      "location": {
+        "file": "compose.yaml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "prometheus",
+      "location": {
+        "file": "compose.yaml",
+        "line": 3,
+        "column": 12
+      },
+      "message": "image 'prom/prometheus' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'prom/prometheus' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "prometheus",
+      "location": {
+        "file": "compose.yaml",
+        "line": 11,
+        "column": 9
+      },
+      "message": "bind mount source './prometheus' does not exist on the host",
+      "fix": "Create './prometheus' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "grafana",
+      "location": {
+        "file": "compose.yaml",
+        "line": 13,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "grafana",
+      "location": {
+        "file": "compose.yaml",
+        "line": 13,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "grafana",
+      "location": {
+        "file": "compose.yaml",
+        "line": 14,
+        "column": 12
+      },
+      "message": "image 'grafana/grafana' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'grafana/grafana' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "grafana",
+      "location": {
+        "file": "compose.yaml",
+        "line": 23,
+        "column": 9
+      },
+      "message": "bind mount source './grafana' does not exist on the host",
+      "fix": "Create './grafana' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "prometheus",
+      "location": {
+        "file": "compose.yaml",
+        "line": 4,
+        "column": 21
+      },
+      "message": "container_name 'prometheus' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "grafana",
+      "location": {
+        "file": "compose.yaml",
+        "line": 15,
+        "column": 21
+      },
+      "message": "container_name 'grafana' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 8,
+    "info": 2
+  }
+}

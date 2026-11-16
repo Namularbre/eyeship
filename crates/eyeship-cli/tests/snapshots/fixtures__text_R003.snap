@@ -1,0 +1,15 @@
+---
+source: crates/eyeship-cli/tests/fixtures.rs
+expression: stdout(&output)
+---
+api
+  error   R003 bad.yaml:13:7
+          depends_on 'database' names a service that does not exist
+          fix: Fix the name 'database' or declare that service under `services`.
+
+worker
+  error   R003 bad.yaml:31:7
+          dependency cycle: api -> worker -> api
+          fix: Remove one of the `depends_on` entries of the cycle.
+
+2 errors, 0 warnings, 0 info

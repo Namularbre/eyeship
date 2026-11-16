@@ -1,0 +1,24 @@
+---
+source: crates/eyeship-report/src/catalog.rs
+expression: "rendered(|out| render_explain(&HEALTHY, out))"
+---
+R001 depends_on does not wait for a healthy service
+Severity: warning
+
+Scenario:
+    The API starts before the database accepts connections and crashes.
+
+Fix:
+    Add a healthcheck to the dependency and use `condition: service_healthy`.
+
+Bad example:
+    services:
+      api:
+        depends_on: [db]
+
+Good example:
+    services:
+      api:
+        depends_on:
+          db:
+            condition: service_healthy

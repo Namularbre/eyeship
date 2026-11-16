@@ -1,0 +1,226 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "compose.yaml"
+  ],
+  "findings": [
+    {
+      "rule": "R005",
+      "severity": "warning",
+      "service": "elasticsearch",
+      "location": {
+        "file": "compose.yaml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service has no restart policy and stays down after a crash",
+      "fix": "Add `restart: unless-stopped` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "elasticsearch",
+      "location": {
+        "file": "compose.yaml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "elasticsearch",
+      "location": {
+        "file": "compose.yaml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R004",
+      "severity": "warning",
+      "service": "elasticsearch",
+      "location": {
+        "file": "compose.yaml",
+        "line": 14,
+        "column": 16
+      },
+      "message": "healthcheck timeout 10s is not shorter than its interval 10s",
+      "fix": "Set the healthcheck `timeout` strictly below its `interval`."
+    },
+    {
+      "rule": "R005",
+      "severity": "warning",
+      "service": "logstash",
+      "location": {
+        "file": "compose.yaml",
+        "line": 18,
+        "column": 3
+      },
+      "message": "service has no restart policy and stays down after a crash",
+      "fix": "Add `restart: unless-stopped` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "logstash",
+      "location": {
+        "file": "compose.yaml",
+        "line": 18,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "logstash",
+      "location": {
+        "file": "compose.yaml",
+        "line": 18,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "logstash",
+      "location": {
+        "file": "compose.yaml",
+        "line": 25,
+        "column": 9
+      },
+      "message": "bind mount source './logstash/pipeline/logstash-nginx.config' does not exist on the host",
+      "fix": "Create './logstash/pipeline/logstash-nginx.config' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R012",
+      "severity": "warning",
+      "service": "logstash",
+      "location": {
+        "file": "compose.yaml",
+        "line": 26,
+        "column": 9
+      },
+      "message": "bind mount source './logstash/nginx.log' does not exist on the host",
+      "fix": "Create './logstash/nginx.log' before deploying, or fix the path (relative paths start from the Compose file's directory)."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "logstash",
+      "location": {
+        "file": "compose.yaml",
+        "line": 33,
+        "column": 9
+      },
+      "message": "depends_on 'elasticsearch' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'elasticsearch' and give it a healthcheck."
+    },
+    {
+      "rule": "R005",
+      "severity": "warning",
+      "service": "kibana",
+      "location": {
+        "file": "compose.yaml",
+        "line": 37,
+        "column": 3
+      },
+      "message": "service has no restart policy and stays down after a crash",
+      "fix": "Add `restart: unless-stopped` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "kibana",
+      "location": {
+        "file": "compose.yaml",
+        "line": 37,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "kibana",
+      "location": {
+        "file": "compose.yaml",
+        "line": 37,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R001",
+      "severity": "warning",
+      "service": "kibana",
+      "location": {
+        "file": "compose.yaml",
+        "line": 43,
+        "column": 9
+      },
+      "message": "depends_on 'elasticsearch' does not wait for the service to be healthy",
+      "fix": "Use `condition: service_healthy` for 'elasticsearch' and give it a healthcheck."
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "elasticsearch",
+      "location": {
+        "file": "compose.yaml",
+        "line": 4,
+        "column": 21
+      },
+      "message": "container_name 'es' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "logstash",
+      "location": {
+        "file": "compose.yaml",
+        "line": 20,
+        "column": 21
+      },
+      "message": "container_name 'log' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    },
+    {
+      "rule": "R015",
+      "severity": "info",
+      "service": "kibana",
+      "location": {
+        "file": "compose.yaml",
+        "line": 39,
+        "column": 21
+      },
+      "message": "container_name 'kib' prevents scaling the service and collides between projects on the same host",
+      "fix": "remove container_name and reach the service by its service name"
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 14,
+    "info": 3
+  }
+}

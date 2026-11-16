@@ -1,0 +1,118 @@
+---
+source: crates/eyeship-cli/tests/corpus.rs
+expression: "String::from_utf8_lossy(&output.stdout)"
+---
+{
+  "schema_version": 1,
+  "tool": {
+    "name": "eyeship",
+    "version": "0.1.0"
+  },
+  "files": [
+    "docker-compose.yml"
+  ],
+  "findings": [
+    {
+      "rule": "R005",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service has no restart policy and stays down after a crash",
+      "fix": "Add `restart: unless-stopped` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 2,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "redis",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 3,
+        "column": 12
+      },
+      "message": "image 'redis' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'redis' to an explicit version tag or a digest (@sha256:...)."
+    },
+    {
+      "rule": "R005",
+      "severity": "warning",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 8,
+        "column": 3
+      },
+      "message": "service has no restart policy and stays down after a crash",
+      "fix": "Add `restart: unless-stopped` to the service."
+    },
+    {
+      "rule": "R006",
+      "severity": "warning",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 8,
+        "column": 3
+      },
+      "message": "service has no memory limit and can exhaust the host memory",
+      "fix": "Add `mem_limit: 512m` (or `deploy.resources.limits.memory`) sized above the service's normal peak usage."
+    },
+    {
+      "rule": "R007",
+      "severity": "warning",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 8,
+        "column": 3
+      },
+      "message": "service uses the default json-file log driver without rotation",
+      "fix": "Add `logging: {driver: json-file, options: {max-size: 10m, max-file: \"3\"}}` to the service."
+    },
+    {
+      "rule": "R008",
+      "severity": "warning",
+      "service": "postgres",
+      "location": {
+        "file": "docker-compose.yml",
+        "line": 9,
+        "column": 12
+      },
+      "message": "image 'postgres' is not pinned to a version and may change on the next pull",
+      "fix": "Pin 'postgres' to an explicit version tag or a digest (@sha256:...)."
+    }
+  ],
+  "ignored": 0,
+  "summary": {
+    "error": 0,
+    "warning": 8,
+    "info": 0
+  }
+}
