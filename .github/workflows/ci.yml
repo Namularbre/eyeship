@@ -5,6 +5,11 @@ on:
     branches: [main, master]
   pull_request:
 
+# On a PR, a new push cancels the run in progress; on main every commit keeps its verdict.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: -D warnings
@@ -43,3 +48,24 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - run: cargo test --workspace
+
+  msrv:
+    name: msrv (1.89)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.89
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check --workspace --all-targets --locked
+
+  perf:
+    name: perf (ENF1)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --release -p eyeship-cli --test perf -- --ignored
+      - name: install GNU time
+        run: command -v /usr/bin/time || (sudo apt-get update && sudo apt-get install -y time)
+      - run: scripts/bench.sh

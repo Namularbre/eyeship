@@ -9,10 +9,10 @@ Conventions : celles de la [spec 001](../001-audit-compose/tasks.md). Pour un wo
 
 ## Phase 1 : Rapide et sans risque (P2, P3)
 
-- [ ] **T001** [P] `concurrency` dans `ci.yml`. Vérifier : deux pushes rapides sur une PR, la première exécution est annulée ; sur `main`, aucune annulation. [US6] (E7)
-- [ ] **T002** [P] `rust-version = "1.85"` dans le workspace, job `msrv`. Vérifier : le job passe ; un usage d'une API plus récente le fait échouer. [US5] (E5)
-- [ ] **T003** [P] Job `perf` : test ENF1 en release ; `scripts/bench.sh` échoue au-delà de 20 Mo. [US5] (E6)
-- [ ] **T004** [P] `.github/dependabot.yml` (actions, cargo, docker), groupé, hebdomadaire. [US4] (E8)
+- [x] **T001** [P] `concurrency` dans `ci.yml`. Vérifier : deux pushes rapides sur une PR, la première exécution est annulée ; sur `main`, aucune annulation. [US6] (E7)
+- [x] **T002** [P] `rust-version = "1.89"` dans le workspace, job `msrv`, README corrigé (annonçait 1.85, voir plan §6). Vérifié en local : `cargo +1.85 check --locked` échoue (`serde-saphyr` exige 1.89), `cargo +1.89 check --locked` passe. [US5] (E5)
+- [x] **T003** [P] Job `perf` : test ENF1 en release ; `scripts/bench.sh` échoue au-delà de 20 Mo. [US5] (E6)
+- [x] **T004** [P] `.github/dependabot.yml` (actions, cargo, docker), groupé, hebdomadaire. [US4] (E8)
 
 ## Phase 2 : Garde de release (P1)
 

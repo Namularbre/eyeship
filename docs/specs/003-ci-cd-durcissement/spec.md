@@ -99,4 +99,5 @@ Critères d'acceptation :
 
 ## 7. Questions ouvertes
 
+- ~~Q0~~ : la MSRV annoncée (1.85) était fausse, la vraie est 1.89 (voir plan §6).
 - Q1 : Le test de performance sur un runner GitHub partagé est-il assez stable ? Mesure actuelle : ~6 ms pour un budget de 100 ms, la marge semble suffisante (voir plan, décision D4).

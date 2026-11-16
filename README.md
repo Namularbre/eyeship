@@ -13,7 +13,7 @@
 
 **Binaries**: download the archive for your platform (Linux musl x86_64/aarch64, macOS x86_64/aarch64, Windows x86_64) from the [GitHub releases](https://github.com/Namularbre/eyeship/releases).
 
-**From source** (Rust ≥ 1.85):
+**From source** (Rust ≥ 1.89):
 
 ```sh
 cargo install --git https://github.com/Namularbre/eyeship eyeship-cli
