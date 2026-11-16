@@ -281,7 +281,8 @@ mod tests {
             "services:\n  api:\n    image: nginx\n",
         )];
         let project = load_files(&files, &request(Some("api")), &[]).unwrap();
-        assert_eq!(project.files, ["api/compose.yml"]);
+        let expected = Path::new("api").join("compose.yml").display().to_string();
+        assert_eq!(project.files, [expected]);
         assert_eq!(project.services[0].name, "api");
     }
 
