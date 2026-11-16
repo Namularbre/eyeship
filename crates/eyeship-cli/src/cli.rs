@@ -28,7 +28,7 @@ pub enum Command {
 
 #[derive(Debug, Clone, PartialEq, Eq, Args)]
 pub struct ComposeArgs {
-    /// Compose file to audit (default: the Compose lookup in the current directory).
+    /// Compose file, or directory holding one, to audit (default: the current directory).
     #[arg(value_name = "FILE")]
     pub file: Option<PathBuf>,
     /// Additional Compose files, merged in order.

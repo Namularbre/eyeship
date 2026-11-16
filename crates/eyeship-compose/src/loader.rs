@@ -109,9 +109,21 @@ fn locate(
         Ok(request
             .files
             .iter()
-            .map(|file| (request.working_dir.join(file), file.clone()))
+            .map(|file| locate_one(&request.working_dir.join(file), file, fs))
             .collect())
     }
+}
+
+/// A given path, or the default Compose file inside it when it is a
+/// directory (`eyeship compose ./api`).
+fn locate_one(path: &Path, shown: &Path, fs: &dyn FileSystem) -> (PathBuf, PathBuf) {
+    discover(path, fs).map_or_else(
+        || (path.to_path_buf(), shown.to_path_buf()),
+        |found| {
+            let name = found.file_name().map(PathBuf::from).unwrap_or_default();
+            (found, shown.join(name))
+        },
+    )
 }
 
 fn read(fs: &dyn FileSystem, path: &Path, shown: &Path) -> Result<String, LoadError> {
@@ -260,6 +272,17 @@ mod tests {
         let project = load_files(&files, &request(Some("deploy/prod.yaml")), &[]).unwrap();
         assert_eq!(project.files, ["deploy/prod.yaml"]);
         assert!(project.services.is_empty());
+    }
+
+    #[test]
+    fn a_given_directory_discovers_its_default_file() {
+        let files = [(
+            "/work/api/compose.yml",
+            "services:\n  api:\n    image: nginx\n",
+        )];
+        let project = load_files(&files, &request(Some("api")), &[]).unwrap();
+        assert_eq!(project.files, ["api/compose.yml"]);
+        assert_eq!(project.services[0].name, "api");
     }
 
     #[test]
