@@ -116,7 +116,7 @@ Toutes sont référencées par un tag majeur, pas par un SHA de commit.
 
 ## 6. Écarts constatés
 
-Points relevés en documentant l'existant. Ce ne sont **pas** des décisions : chacun demande une spec ou une mise à jour de celle-ci avant d'être traité.
+Points relevés en documentant l'existant. Leur correction est décrite dans la [spec 003](../003-ci-cd-durcissement/spec.md).
 
 | # | Constat | Conséquence possible |
 |---|---|---|

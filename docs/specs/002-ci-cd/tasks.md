@@ -5,7 +5,7 @@
 | Spec | [`spec.md`](./spec.md) |
 | Plan | [`plan.md`](./plan.md) |
 
-> Rétro-documentation : les tâches ci-dessous décrivent ce qui a été réalisé dans le cadre de la spec 001 (tâches d'origine entre parenthèses). Aucune nouvelle tâche n'est ouverte ici : les écarts du [plan §6](./plan.md#6-écarts-constatés) attendent une décision.
+> Rétro-documentation : les tâches ci-dessous décrivent ce qui a été réalisé dans le cadre de la spec 001 (tâches d'origine entre parenthèses). Les écarts du [plan §6](./plan.md#6-écarts-constatés) sont traités par la [spec 003](../003-ci-cd-durcissement/tasks.md).
 
 ## Phase 1 : Intégration continue [US1]
 
