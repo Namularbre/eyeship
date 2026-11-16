@@ -59,7 +59,7 @@ Choix : appeler le workflow plutôt que d'exiger un statut vert sur le commit. L
    - `eyeship --version` contient la version attendue ;
    - `eyeship compose examples/compose.yaml` sort avec le code 1 et sa sortie contient `R013` ;
    - `eyeship compose --format json examples/compose.yaml` produit du JSON valide (`jq -e .`) ;
-3. `upload-rust-binary-action` avec `dry-run: false` et le build déjà fait (l'action réutilise le binaire du dossier `target/`).
+3. archive, SHA-256 et envoi avec `gh release upload` (même nommage qu'aujourd'hui : `eyeship-<tag>-<cible>`). Si `upload-rust-binary-action` permet de réutiliser un build existant, on la garde ; à vérifier dans sa documentation lors de l'implémentation.
 
 Exécution des cibles croisées : `setup-cross-toolchain-action` configure déjà QEMU pour `aarch64-unknown-linux-musl` (variable `CARGO_TARGET_..._RUNNER`). Le script utilise ce *runner* quand il est défini. `x86_64-apple-darwin` tourne via Rosetta sur `macos-latest` (arm64). Windows lance le script avec `bash` (Git Bash, présent sur le runner).
 
