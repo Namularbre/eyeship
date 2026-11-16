@@ -12,7 +12,7 @@
 ```
 PR / push main ──▶ ci.yml ──┬─ fmt
                             ├─ clippy
-                            ├─ msrv (Rust 1.85)                 [E5]
+                            ├─ msrv (Rust 1.89)                 [E5]
                             ├─ test (ubuntu, macos, windows)
                             └─ perf (ubuntu, --release)         [E6]
                   concurrency: annule l'exécution précédente sur une PR [E7]
@@ -83,7 +83,7 @@ tags: |
 
 ## 5. Épinglage et mises à jour [E4, E8]
 
-Chaque `uses:` devient `owner/action@<sha40> # vX.Y.Z`. Exception : `dtolnay/rust-toolchain`, dont la version est le nom de branche (`@stable`, `@1.85`). On l'épingle aussi par SHA et on passe la toolchain en entrée `toolchain:`.
+Chaque `uses:` devient `owner/action@<sha40> # vX.Y.Z`. Exception : `dtolnay/rust-toolchain`, dont la version est le nom de branche (`@stable`, `@1.89`). On l'épingle aussi par SHA et on passe la toolchain en entrée `toolchain:`.
 
 `.github/dependabot.yml` :
 
@@ -97,8 +97,9 @@ Dependabot comprend le format `@sha # vX.Y.Z` et met à jour les deux. Ses PR pa
 
 ## 6. MSRV [E5]
 
-- `rust-version = "1.85"` dans `[workspace.package]`, hérité par chaque crate (`rust-version.workspace = true`). 1.85 est le minimum imposé par l'édition 2024.
-- Job `msrv` : toolchain `1.85`, `cargo check --workspace --all-targets --locked`.
+- `rust-version = "1.89"` dans `[workspace.package]`, hérité par chaque crate (`rust-version.workspace = true`).
+- **Constat à l'implémentation (T002)** : le README annonçait 1.85 (minimum de l'édition 2024), mais `serde-saphyr` 2.1.1 exige Rust 1.89 (`encoding_rs` et `annotate-snippets` exigent 1.88). Sous 1.85, `cargo check --locked` refuse de compiler. La MSRV réelle est donc **1.89** ; le README est corrigé.
+- Job `msrv` : toolchain `1.89`, `cargo check --workspace --all-targets --locked`.
 - `--locked` : on vérifie le `Cargo.lock` livré. Avec `resolver = "3"`, Cargo choisit déjà des versions compatibles avec `rust-version` quand il résout.
 
 ## 7. Performance [E6]

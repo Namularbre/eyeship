@@ -63,6 +63,7 @@ fi
 
 /usr/bin/time -v "$bin" compose "$work/compose.yaml" 2> "$work/time.txt" > /dev/null || true
 grep -E 'Elapsed \(wall clock\)|Maximum resident set size' "$work/time.txt" | sed 's/^[[:space:]]*//'
+rss_kb=$(sed -n 's/^[[:space:]]*Maximum resident set size (kbytes): //p' "$work/time.txt")
 
 best=""
 for _ in $(seq 10); do
@@ -73,3 +74,9 @@ for _ in $(seq 10); do
 done
 printf 'Wall time, best of 10 (ms): %d.%03d\n' $((best / 1000)) $((best % 1000))
 echo "Budget (ENF1, 50 services): < 100 ms, < 20 MB (20480 kB)"
+
+# Exit 1 when the budget is exceeded, so CI fails (spec 003, T003).
+status=0
+if [ "$best" -ge 100000 ]; then echo "FAIL: wall time over budget" >&2; status=1; fi
+if [ -z "$rss_kb" ] || [ "$rss_kb" -ge 20480 ]; then echo "FAIL: peak RSS over budget (${rss_kb:-unknown} kB)" >&2; status=1; fi
+exit "$status"

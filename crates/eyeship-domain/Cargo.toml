@@ -3,6 +3,7 @@ name = "eyeship-domain"
 description = "Pure core of eyeship: model, rules, audit engine and findings."
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 publish.workspace = true
 
 [dependencies]
