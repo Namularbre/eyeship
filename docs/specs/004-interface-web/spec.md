@@ -14,6 +14,7 @@
 
 - Jean a une stack de **staging** et une de **production** (fichiers de surcharge et `.env` différents). Il doit retenir et retaper les bonnes combinaisons `-f … --env-file …` pour chacune.
 - Il n'a **aucune vue d'ensemble** : quel déploiement est sain, lequel a des erreurs, combien de constats par gravité.
+- Il ne **voit pas l'évolution** : le rapport d'hier n'existe plus, il ne sait pas si la dernière modification a corrigé des constats ou en a ajouté.
 - Un rapport texte de 40 constats se lit mal : on ne peut ni filtrer par gravité ou par service, ni passer d'un constat à l'explication de sa règle d'un clic.
 
 La constitution (§2) prévoit une interface web « plus tard ». Ce « plus tard » est maintenant.
@@ -22,6 +23,8 @@ La constitution (§2) prévoit une interface web « plus tard ». Ce « plus tar
 
 - **Déploiement** : un environnement cible nommé (`staging`, `prod`…) défini par la liste de ses fichiers Compose et, éventuellement, son fichier de variables. C'est exactement ce que décrit une ligne `eyeship compose -f … --env-file …`, mais nommé et versionné.
 - **Rapport** : le résultat d'un audit d'un déploiement (constats retenus, constats ignorés, résumé par gravité, statut au regard du seuil).
+- **Rapport en direct** : le rapport calculé à l'instant sur les fichiers actuels.
+- **Rapport enregistré** : un rapport sauvegardé volontairement (en local ou en CI) avec sa date et, si on le fournit, une étiquette (commit, numéro de build). L'ensemble des rapports enregistrés d'un déploiement forme son **historique**.
 
 ## 3. Personas
 
@@ -65,13 +68,42 @@ Critères d'acceptation :
 1. Une page liste toutes les règles (identifiant, gravité par défaut, titre), comme `eyeship rules`.
 2. La page d'une règle montre le même contenu que `eyeship explain <ID>` : scénario de panne, correction, exemple fautif, exemple corrigé.
 
-### US5 (P2) : Auditer un déploiement depuis la CLI par son nom
+### US5 (P1) : Auditer un déploiement depuis la CLI par son nom
 *En tant que Jean, je veux lancer en CI le même audit que celui de l'interface.*
 
 Critères d'acceptation :
 1. `eyeship compose --deployment prod` audite le déploiement `prod` déclaré dans `.eyeship.toml`.
 2. Le résultat (constats, code de sortie) est identique à celui affiché par l'interface pour ce déploiement.
 3. `--deployment` combiné à un fichier, `-f` ou `--env-file` est une erreur d'utilisation (code 2).
+
+### US7 (P1) : Enregistrer un rapport
+*En tant que Jean, je garde une trace de chaque audit de ma CI pour voir l'évolution de mes déploiements.*
+
+Critères d'acceptation :
+1. `eyeship compose --deployment prod --save` audite comme d'habitude **et** enregistre le rapport dans l'historique du déploiement. La sortie standard et le code de sortie sont inchangés (constitution P4).
+2. `--label <texte>` attache une étiquette au rapport enregistré (par exemple le SHA du commit).
+3. Le dossier de l'historique est `.eyeship/reports/` à côté du `.eyeship.toml` par défaut, configurable. Il est créé au besoin.
+4. Un rapport enregistré est un fichier JSON lisible, documenté et versionné, qui contient le rapport complet au format `--format json`, la date, l'étiquette et le nom du déploiement.
+5. L'enregistrement n'a lieu que sur demande explicite. Si l'écriture échoue, l'outil sort en code `2` avec un message clair.
+6. `--save` sans `--deployment` enregistre sous le déploiement implicite `default`.
+
+### US8 (P1) : Consulter l'historique d'un déploiement
+*En tant que Jean, je vois comment l'état d'un déploiement a évolué audit après audit.*
+
+Critères d'acceptation :
+1. La page d'un déploiement montre, sous le rapport en direct, la liste de ses rapports enregistrés, du plus récent au plus ancien : date, étiquette, statut, compteurs par gravité.
+2. Une courbe ou une frise simple montre l'évolution du nombre de constats par gravité dans le temps.
+3. Un clic sur un rapport enregistré l'affiche avec la même présentation et les mêmes filtres qu'un rapport en direct, clairement marqué comme « enregistré le … ».
+4. Le tableau de bord indique pour chaque déploiement la date du dernier rapport enregistré et la tendance depuis celui-ci (plus ou moins de constats).
+5. Un fichier d'historique illisible ou d'un schéma inconnu est signalé et ignoré, sans empêcher l'affichage des autres.
+6. `eyeship serve --reports-dir <dossier>` permet d'afficher un historique récupéré ailleurs (par exemple les artefacts de la CI). Un dossier d'historique sans déploiement déclaré correspondant reste affiché (déploiement « historique seul »).
+
+### US9 (P2) : Comparer deux rapports
+*En tant que Léa, je veux savoir ce que la dernière modification a corrigé ou introduit.*
+
+Critères d'acceptation :
+1. Depuis l'historique, je compare deux rapports d'un même déploiement, ou un rapport enregistré avec le rapport en direct.
+2. La comparaison liste les constats **nouveaux**, **résolus** et **inchangés**. Un constat est le même s'il a la même règle, le même service et le même message, même si sa ligne a bougé.
 
 ### US6 (P2) : Exporter un rapport en HTML
 *En tant que Jean, je veux joindre un rapport lisible aux artefacts de ma CI, pour que Léa le consulte sans installer `eyeship`.*
@@ -84,7 +116,8 @@ Critères d'acceptation :
 
 - **ENF1** : l'interface est servie par le binaire `eyeship` lui-même. Rien d'autre à installer (pas de Node, pas de base de données, pas de second binaire). Constitution §7.
 - **ENF2** : hors ligne. Les pages n'appellent aucune ressource externe (police, CDN, statistiques). Aucun démon Docker requis. Constitution P3.
-- **ENF3** : **lecture seule**. L'interface ne modifie jamais un fichier analysé ni `.eyeship.toml`.
+- **ENF3** : **lecture seule**. L'interface ne modifie jamais un fichier analysé, ni `.eyeship.toml`, ni l'historique. Seule la CLI écrit, dans le dossier d'historique, et seulement avec `--save`.
+- **ENF8** : un historique de 1 000 rapports s'affiche en moins de 300 ms.
 - **ENF4** : **sûre par défaut**. Elle n'écoute que sur la machine locale ; s'ouvrir au réseau demande une option explicite et affiche un avertissement. Tout contenu issu des fichiers analysés est échappé.
 - **ENF5** : légère. Une page de 50 services s'affiche en moins de 100 ms ; le serveur au repos consomme moins de 20 Mo de RAM. Le binaire ne grossit pas de plus de 1 Mo.
 - **ENF6** : utilisable sans JavaScript ; lisible sur mobile ; thème clair et sombre suivant le système ; accessible au clavier.
@@ -95,12 +128,15 @@ Critères d'acceptation :
 - Jean déclare `staging` et `prod`, lance `eyeship serve` et voit leurs statuts en moins d'une minute, sans lire la documentation.
 - Léa corrige un constat en partant de la page d'accueil, sans terminal.
 - Pour chaque fixture de la spec 001, la page d'un déploiement liste exactement les constats de `eyeship compose --format json`.
+- Après une semaine de CI avec `--save`, Jean voit sur une seule page si `prod` s'améliore ou se dégrade, et quel commit a introduit un constat.
 
 ## 7. Hors périmètre de cette spec
 
 | Idée | Pourquoi plus tard |
 |---|---|
-| Historique des rapports (évolution dans le temps, comparaison entre deux audits) | Demande de stocker des rapports. Spec suivante, une fois l'interface en place. |
+| Purge automatique de l'historique, rétention | Les fichiers se suppriment à la main ou par la CI. Une commande dédiée viendra si le besoin apparaît. |
+| Base de données, historique centralisé de plusieurs dépôts | L'historique est un dossier de fichiers JSON, versionnable et archivable par la CI. |
+| Enregistrer un rapport depuis l'interface | Garderait l'interface en écriture (ENF3). L'enregistrement passe par la CLI. |
 | Lire les stacks **en cours d'exécution** via le démon Docker | Contraire à P3 dans le mode par défaut ; ce serait un mode séparé et explicite. |
 | Modifier les fichiers ou `.eyeship.toml` depuis l'interface, `--fix` | ENF3 ; constitution §9. |
 | Authentification, multi-utilisateur, hébergement partagé | L'interface est locale. Pour la partager : l'export HTML (US6). |
@@ -111,12 +147,13 @@ Critères d'acceptation :
 
 §2, troisième point, remplacé par :
 
-> - Sur le web, via une interface **locale** servie par le binaire (`eyeship serve`) : vue des déploiements et lecture des rapports. Lecture seule, hors ligne, sans démon Docker.
+> - Sur le web, via une interface **locale** servie par le binaire (`eyeship serve`) : vue des déploiements et lecture des rapports et de leur historique. L'interface est en lecture seule, hors ligne, sans démon Docker ; seule la CLI enregistre des rapports, sur demande explicite (`--save`).
 
 Aucun autre principe ne change.
 
 ## 9. Questions ouvertes
 
-- **Q1** : source des déploiements. Proposé : déclarés dans `.eyeship.toml` et audités à chaque affichage (§4 US1). Alternatives : afficher des rapports JSON enregistrés (historique), ou les stacks en cours via Docker.
+- **Q1** *(résolue le 2026-11-26)* : les deux dès la v1. Déploiements déclarés dans `.eyeship.toml` et audités à chaque affichage (US1 à US3), **et** historique des rapports enregistrés (US7 à US9). La lecture des stacks en cours via Docker reste hors périmètre.
 - **Q2** : nom de la commande : `eyeship serve` (proposé) ou `eyeship ui` ?
-- **Q3** : US5 et US6 en P2 dans cette spec, ou dans une spec séparée ?
+- **Q3** : US6 (export HTML) et US9 (comparaison) en P2 dans cette spec, ou dans une spec séparée ?
+- **Q4** : faut-il ignorer `.eyeship/reports/` dans Git par défaut (conseil du README), ou encourager à le versionner ?

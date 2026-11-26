@@ -9,37 +9,42 @@
 
 ## 1. Vue d'ensemble
 
-L'interface est un **nouvel adaptateur de sortie**, au même titre que le texte et le JSON. Le domaine ne change pas.
+L'interface est un **nouvel adaptateur de sortie**, au même titre que le texte et le JSON. L'historique est un **adaptateur de stockage** : des fichiers JSON dans un dossier. Le domaine gagne une seule fonction pure, la comparaison de deux rapports.
 
 ```
                     ┌──────────────────────────── eyeship-cli ────────────────────────────┐
 navigateur ──GET──▶ │ serve: boucle HTTP ──▶ route(request) ──▶ Page ──▶ eyeship-report::html│──▶ réponse HTML
                     │                          │                                          │
-                    │                          └─ audit_deployments(config, fs, env)       │
-                    │                               load (eyeship-compose) ▶ audit (domain)│
+                    │                          ├─ audit_deployments(config, fs, env)       │
+                    │                          │    load (eyeship-compose) ▶ audit (domain)│
+                    │                          └─ history.list / read (eyeship-history)    │
                     └──────────────────────────────────────────────────────────────────────┘
+CI ── eyeship compose --deployment prod --save ──▶ .eyeship/reports/prod/2026-11-26T11-47-17.123Z.json
 ```
 
 Le flux reste une suite de fonctions, avec une seule fonction impure au bord (la boucle réseau) :
 
 ```
 .eyeship.toml ──load_config──▶ Config { deployments } ──audit_deployments──▶ Vec<DeploymentResult>
-requête ──parse──▶ Route ──handle(route, results)──▶ Response { status, headers, body }
+requête ──parse──▶ Route ──handle(route, results, history)──▶ Response { status, headers, body }
+Report ──record(deployment, saved_at, label)──▶ Record ──to_json──▶ fichier          (--save)
+fichiers ──parse_record──▶ Vec<Record> ──diff(a, b)──▶ { new, resolved, unchanged }   (US8, US9)
 ```
 
 ## 2. Découpage
 
 ```
 crates/
-├── eyeship-domain/     inchangé
+├── eyeship-domain/     + diff.rs : comparaison pure de deux listes de constats (US9)
 ├── eyeship-compose/    inchangé
 ├── eyeship-report/     + src/html/ : échappement, mise en page, une fonction pure par page
 │   └── assets/         style.css (embarqué par include_str!)
+├── eyeship-history/    NOUVEAU : format d'un rapport enregistré, lecture/écriture via le trait FileSystem
 ├── eyeship-web/        NOUVEAU : routeur (pur) + serveur (bord)
 │   ├── src/route.rs    chemin + query ──▶ Route (pur)
 │   ├── src/handler.rs  Route + données ──▶ Response (pur)
 │   └── src/server.rs   boucle tiny_http, en-têtes de sécurité
-└── eyeship-cli/        + commande `serve`, + `--deployment`, + `[deployments]` dans la config
+└── eyeship-cli/        + commande `serve`, + `--deployment`, `--save`, `--label`, + `[deployments]` dans la config
 ```
 
 Les pages HTML sont un adaptateur de sortie comme le texte et le JSON : elles vivent dans `eyeship-report`, ce qui sert aussi l'export `--format html` (US6). `eyeship-web` dépend de `eyeship-domain` et `eyeship-report` mais pas de `eyeship-compose` : il reçoit des résultats d'audit déjà calculés à travers un port, ce qui permettra de lui donner des résultats Kubernetes plus tard (P7).
@@ -48,6 +53,8 @@ Les pages HTML sont un adaptateur de sortie comme le texte et le JSON : elles vi
 /// Port: what the web adapter needs from the application.
 pub trait DeploymentSource {
     fn deployments(&self) -> Vec<DeploymentResult>;
+    fn history(&self, deployment: &str) -> Vec<HistoryEntry>;      // résumés, du plus récent au plus ancien
+    fn record(&self, deployment: &str, id: &str) -> Option<Record>; // un rapport enregistré complet
 }
 
 pub struct DeploymentResult {
@@ -84,14 +91,64 @@ ignore = ["R006"]
 - Sans section `deployments` : un déploiement implicite `default`, découverte habituelle (US1 §2).
 - `run_compose` est refactoré pour partager une fonction pure de construction de `LoadRequest` et d'`AuditConfig` avec `serve` et `--deployment` (US5 §2 : même résultat par construction).
 
-## 4. Pages et routes
+## 4. Historique des rapports (`eyeship-history`)
+
+### 4.1 Emplacement
+
+```
+.eyeship/reports/            # à côté du .eyeship.toml ; `reports_dir` dans la config, `--reports-dir` pour serve
+├── prod/
+│   ├── 2026-11-25T09-12-03.481Z.json
+│   └── 2026-11-26T11-47-17.123Z.json
+└── staging/
+    └── …
+```
+
+- Un sous-dossier par déploiement, un fichier par rapport. Pas de base de données : les fichiers se versionnent, s'archivent comme artefacts de CI et se suppriment à la main.
+- Nom de fichier = date UTC à la milliseconde, sans `:` (compatible Windows) ; il sert d'identifiant dans l'URL et donne l'ordre chronologique par simple tri. En cas de collision, suffixe `-1`, `-2`.
+- Écriture atomique : fichier temporaire dans le même dossier puis renommage, pour qu'un serveur qui lit en même temps ne voie jamais un fichier tronqué.
+
+### 4.2 Format d'un rapport enregistré
+
+```json
+{
+  "schema_version": 1,
+  "kind": "eyeship-record",
+  "deployment": "prod",
+  "saved_at": "2026-11-26T11:47:17.123Z",
+  "label": "a1b2c3d",
+  "fail_on": "error",
+  "report": { "schema_version": 1, "tool": { … }, "files": [ … ], "findings": [ … ], "ignored": 0, "summary": { … } }
+}
+```
+
+- `report` est **exactement** la sortie de `--format json` (plan 001 §5) : un seul schéma de rapport à maintenir. Pour cela, `eyeship-report` expose aussi la désérialisation de ce schéma vers une vue possédée (`ReportView`, chaînes `String`), que l'interface affiche qu'il s'agisse d'un rapport en direct ou enregistré.
+- La date vient de `SystemTime` et est formatée en RFC 3339 par une fonction pure (algorithme jours → date civile), sans `chrono`. L'horloge est un petit trait `Clock` pour les tests.
+- `schema_version` inconnu ou JSON invalide : l'entrée est signalée « illisible » et ignorée (US8 §5).
+
+### 4.3 Lecture
+
+À chaque requête, comme pour les rapports en direct : lister le dossier du déploiement, lire les en-têtes et résumés. Pour 1 000 fichiers de quelques Ko, la lecture reste sous ENF8 (300 ms) ; si la mesure (T026) dit le contraire, on ajoutera un cache invalidé par la date de modification du dossier, sans changer le format.
+
+### 4.4 Comparaison (US9)
+
+```rust
+pub struct Diff<'a, T> { pub new: Vec<&'a T>, pub resolved: Vec<&'a T>, pub unchanged: Vec<&'a T> }
+pub fn diff<'a, T, K: Ord>(before: &'a [T], after: &'a [T], key: impl Fn(&T) -> K) -> Diff<'a, T>
+```
+
+Fonction pure et générique du domaine (qui ne connaît pas `ReportView`) ; l'appelant fournit la clé `(règle, service, message)`. La ligne n'entre pas dans la clé : déplacer un service dans le fichier ne crée ni constat « nouveau » ni « résolu ». Deux constats de même clé sont appariés dans l'ordre (multiensemble).
+
+## 5. Pages et routes
 
 Uniquement `GET` (et `HEAD`). Toute autre méthode : `405`. Route inconnue : `404` avec une page lisible.
 
 | Route | Page | Récit |
 |---|---|---|
 | `/` | Tableau de bord : un bloc par déploiement (statut, compteurs, fichiers), échecs en premier | US2 |
-| `/deployments/{name}?severity=warning&service=api` | Rapport : résumé, constats groupés par service, filtres | US3 |
+| `/deployments/{name}?severity=warning&service=api` | Rapport en direct : résumé, constats groupés par service, filtres ; puis historique (liste et courbe) | US3, US8 |
+| `/deployments/{name}/reports/{id}` | Rapport enregistré, mêmes filtres, bandeau « enregistré le … » | US8 |
+| `/deployments/{name}/compare?from={id}&to={id\|live}` | Constats nouveaux, résolus, inchangés | US9 |
 | `/rules` | Catalogue des règles | US4 |
 | `/rules/{id}` | Explication d'une règle | US4 |
 | `/assets/style.css` | Feuille de style, en cache long avec hash dans l'URL | |
@@ -100,9 +157,10 @@ Uniquement `GET` (et `HEAD`). Toute autre méthode : `405`. Route inconnue : `40
 - **Sans JavaScript** (ENF6) : les filtres sont un formulaire `GET` ; l'URL porte l'état.
 - **Rendu serveur** par des fonctions pures `fn page(data) -> String`. Chaque valeur issue d'un fichier analysé passe par `escape()` (`& < > " '`). Un test vérifie qu'un nom de service `<script>` ressort échappé sur chaque page.
 - **Style** : une feuille CSS écrite à la main (< 10 Ko), variables CSS, `prefers-color-scheme`, grille fluide pour mobile. Les gravités ont une couleur **et** un libellé (pas de couleur seule).
-- **Déterminisme** : mêmes données, même HTML ; testé par snapshots `insta`.
+- **Courbe d'évolution** : SVG généré côté serveur (polylignes par gravité, axes simples), sans bibliothèque ni JavaScript ; un tableau équivalent l'accompagne pour l'accessibilité.
+- **Déterminisme** : mêmes données, même HTML ; testé par snapshots `insta`. Les dates sont affichées en UTC (le serveur ne connaît pas le fuseau du lecteur sans JavaScript).
 
-## 5. Serveur
+## 6. Serveur
 
 ```
 eyeship serve [--host 127.0.0.1] [--port 7878] [--open]
@@ -116,11 +174,11 @@ eyeship serve [--host 127.0.0.1] [--port 7878] [--open]
 - `--open` (P3 de cette spec, optionnel) : ouvrir le navigateur. Ajouté seulement si on le juge utile, sans dépendance (commande système).
 - Codes de sortie : `0` à l'arrêt normal, `2` si le port est pris ou la configuration invalide au démarrage.
 
-## 6. Export HTML (US6)
+## 7. Export HTML (US6)
 
 `eyeship compose --format html` réutilise la fonction de la page rapport avec une mise en page « autonome » : CSS en ligne dans `<style>`, aucun lien vers `/rules` (les explications des règles concernées sont incluses en bas de page, dépliables avec `<details>`). La sortie n'a ni date ni chemin absolu, pour rester déterministe (P4).
 
-## 7. Dépendances
+## 8. Dépendances
 
 | Crate | Usage | Où | Justification |
 |---|---|---|---|
@@ -128,33 +186,41 @@ eyeship serve [--host 127.0.0.1] [--port 7878] [--open]
 | *(aucune)* | Gabarits HTML | eyeship-report | Fonctions Rust + `format!` + `escape()`. Les pages sont peu nombreuses. Alternative : `maud` (macros, échappement automatique). **D3** |
 | *(aucune)* | Front-end | | HTML + CSS, pas de framework JS ni de WASM, pas de chaîne de build Node. **D3** |
 
+`eyeship-history` n'ajoute rien : `serde` et `serde_json` sont déjà dans le workspace.
+
 Rien d'autre. Pas d'`axum`/`actix` (tirent `tokio`), pas de `rust-embed` (`include_str!` suffit pour un fichier).
 
-## 8. Stratégie de test (TDD)
+## 9. Stratégie de test (TDD)
 
 1. **Pages** : tests unitaires sur des `Report` construits avec les builders existants ; snapshots `insta` du HTML ; test d'échappement sur chaque page ; test « aucune URL externe » (pas de `http://` ni `https://` dans le HTML et le CSS hors liens de documentation).
 2. **Routeur et gestionnaire** : fonctions pures, tables de cas (`/deployments/prod?severity=error` → `Route::Deployment { … }`, chemin inconnu → 404, méthode `POST` → 405, `Host` étranger → 421).
-3. **Configuration** : parsing des `[deployments]`, noms invalides, chemins relatifs, déploiement implicite.
-4. **Équivalence CLI / web** : pour chaque fixture de la spec 001, les constats de la page rapport = ceux de `--format json` (critère de succès §6).
-5. **Bout en bout** : `eyeship serve --port 0` lancé par `assert_cmd`, port lu sur stderr, requêtes HTTP avec `std::net::TcpStream` (pas de client HTTP en dépendance), arrêt du processus.
-6. **Performance** : page rapport du fichier de 50 services du benchmark ENF1 en moins de 100 ms ; taille du binaire release mesurée avant et après (≤ +1 Mo).
+3. **Configuration** : parsing des `[deployments]`, `reports_dir`, noms invalides, chemins relatifs, déploiement implicite.
+4. **Historique** : aller-retour enregistrer/relire avec `MemoryFileSystem` et une horloge fixe ; formatage RFC 3339 (années bissextiles, fin de mois) ; collisions de noms ; fichier illisible ou schéma inconnu ignoré ; `--save` ne change ni stdout ni le code de sortie.
+5. **Comparaison** : constats nouveaux, résolus, inchangés ; ligne déplacée = inchangé ; doublons.
+6. **Équivalence CLI / web** : pour chaque fixture de la spec 001, les constats de la page rapport = ceux de `--format json` (critère de succès §6).
+7. **Bout en bout** : `eyeship serve --port 0` lancé par `assert_cmd`, port lu sur stderr, requêtes HTTP avec `std::net::TcpStream` (pas de client HTTP en dépendance), arrêt du processus.
+8. **Performance** : historique de 1 000 rapports sous 300 ms (ENF8) ; page rapport du fichier de 50 services du benchmark ENF1 en moins de 100 ms ; taille du binaire release mesurée avant et après (≤ +1 Mo).
 
-## 9. Décisions à valider
+## 10. Décisions à valider
 
 | # | Décision | Recommandation | Alternative |
 |---|---|---|---|
-| D1 | Source des déploiements | Déclarés dans `.eyeship.toml`, audités à chaque requête | Rapports JSON enregistrés (historique) ; stacks en cours via Docker (déroge à P3) |
+| D1 | Source des déploiements | **Validé le 2026-11-26 : les deux.** Déploiements déclarés dans `.eyeship.toml` audités à chaque requête, et historique de rapports enregistrés | Stacks en cours via Docker (déroge à P3), écarté |
+| D6 | Stockage de l'historique | Un fichier JSON par rapport dans `.eyeship/reports/<déploiement>/`, enregistré par la CLI (`--save`) | SQLite (`rusqlite`, C embarqué, binaire plus lourd, fichiers non lisibles à la main) ; un fichier JSON Lines par déploiement (ajouts concurrents délicats) |
+| D7 | Dates | `SystemTime` + formatage RFC 3339 écrit à la main, affichage UTC | `time` ou `chrono` (dépendance pour une seule fonction) |
 | D2 | Serveur HTTP | `tiny_http`, synchrone | `axum` + `tokio` (lourd) ; HTTP écrit à la main sur `std::net` (zéro dépendance, risqué) |
 | D3 | Front-end | Rendu serveur, HTML + CSS sans JS, gabarits en fonctions Rust | `maud` pour les gabarits ; SPA (Leptos/WASM ou TypeScript) : chaîne de build et poids sans bénéfice ici |
 | D4 | Servi par la CLI | Sous-commande `eyeship serve` du binaire unique | Binaire séparé `eyeship-web` |
 | D5 | Adresse par défaut | `127.0.0.1:7878` | `0.0.0.0` (exposé au réseau, refusé par ENF4) |
 
-## 10. Risques
+## 11. Risques
 
 | Risque | Parade |
 |---|---|
 | Faille XSS via un nom de service ou un message | Échappement systématique, test dédié par page, CSP stricte sans script. |
 | Lecture de fichiers arbitraires via l'URL | Aucune route ne prend de chemin : seuls les déploiements déclarés sont audités. |
 | Site malveillant qui interroge l'interface locale (DNS rebinding) | Vérification de l'en-tête `Host`, `GET` seulement, aucune action à effets de bord. |
+| Historique qui grossit sans fin | Un fichier fait quelques Ko ; la purge reste manuelle (spec §7). Mesure en T026. |
+| Rapports enregistrés par une version plus récente d'`eyeship` | `schema_version` vérifié ; champs inconnus tolérés, schéma inconnu signalé. |
 | Dérive entre CLI et web | Construction partagée de la requête et de la config (§3), test d'équivalence (§8.4). |
 | `tiny_http` peu actif (dernière version 0.12, un fork `tiny_http_dh` annonce des correctifs de CVE) | Vérifier les avis RustSec en T002 et choisir entre l'original et le fork ; API réduite utilisée derrière `server.rs`, remplaçable sans toucher aux pages ni au routeur. |
