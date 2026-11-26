@@ -8,6 +8,8 @@ publish.workspace = true
 [dependencies]
 eyeship-domain.workspace = true
 eyeship-report.workspace = true
+eyeship-history.workspace = true
+tiny_http.workspace = true
 
 [lints]
 workspace = true

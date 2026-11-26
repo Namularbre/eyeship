@@ -11,6 +11,7 @@ use eyeship_report::{Format, render, render_explain, render_rules};
 use crate::cli::{Command, ComposeArgs, OutputFormat};
 use crate::config::{Config, DEFAULT_DEPLOYMENT, load_config};
 use crate::pipeline::{Target, execute, plan};
+use crate::ui::run_ui;
 
 /// No finding at or above the threshold.
 pub const SUCCESS: u8 = 0;
@@ -37,6 +38,7 @@ pub fn run(command: &Command, context: &Context, out: &mut dyn Write, err: &mut 
         Command::Compose(args) => run_compose(args, context, out, err),
         Command::Rules => run_rules(RULES, out, err),
         Command::Explain { id } => run_explain(rules::find(id), id, out, err),
+        Command::Ui(args) => run_ui(args, context, err),
     }
 }
 
@@ -65,6 +67,7 @@ pub fn run_compose(
                 },
                 OutputFormat::Json => Format::Json,
                 OutputFormat::Sarif => Format::Sarif,
+                OutputFormat::Html => Format::Html,
             };
             if let Err(error) = render(&report, format, TOOL_VERSION, out) {
                 return report_error(err, &format!("cannot write the output: {error}"));
@@ -129,7 +132,7 @@ fn exit_code(written: io::Result<()>, err: &mut dyn Write) -> u8 {
     }
 }
 
-fn report_error(err: &mut dyn Write, message: &str) -> u8 {
+pub(crate) fn report_error(err: &mut dyn Write, message: &str) -> u8 {
     // Nothing more can be done if stderr itself is unwritable.
     let _ = writeln!(err, "error: {message}");
     USAGE_ERROR

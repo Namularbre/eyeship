@@ -66,6 +66,9 @@ pub fn save(
 
 /// The saved reports of a deployment, most recent first.
 pub fn list(store: &dyn Store, root: &Path, deployment: &str) -> Vec<Entry> {
+    if !is_valid_id(deployment) {
+        return Vec::new();
+    }
     let dir = root.join(deployment);
     let mut ids: Vec<String> = store
         .files(&dir)
@@ -86,8 +89,10 @@ pub fn list(store: &dyn Store, root: &Path, deployment: &str) -> Vec<Entry> {
 /// One saved report, if `id` names one.
 pub fn read(store: &dyn Store, root: &Path, deployment: &str, id: &str) -> Option<Entry> {
     let dir = root.join(deployment);
-    (is_valid_id(id) && store.exists(&dir.join(format!("{id}.{EXTENSION}"))))
-        .then(|| read_entry(store, &dir, id.to_owned()))
+    (is_valid_id(deployment)
+        && is_valid_id(id)
+        && store.exists(&dir.join(format!("{id}.{EXTENSION}"))))
+    .then(|| read_entry(store, &dir, id.to_owned()))
 }
 
 /// Names of the deployments that have a history directory, sorted.
@@ -215,6 +220,9 @@ mod tests {
         for id in ["../secret", "..", "", ".hidden", "a/b", "a\\b"] {
             assert!(read(&store, Path::new(ROOT), "prod", id).is_none(), "{id}");
         }
+        let store = MemoryStore::new([(format!("{ROOT}/../x.sarif"), "{}")]);
+        assert!(list(&store, Path::new(ROOT), "..").is_empty());
+        assert!(read(&store, Path::new(ROOT), "..", "x").is_none());
     }
 
     #[test]

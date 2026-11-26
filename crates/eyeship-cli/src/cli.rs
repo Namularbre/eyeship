@@ -1,5 +1,6 @@
 //! Command-line arguments (plan §6).
 
+use std::net::IpAddr;
 use std::path::PathBuf;
 
 use clap::{Args, Parser, Subcommand, ValueEnum};
@@ -24,6 +25,23 @@ pub enum Command {
         /// Rule ID, such as R001 (case-insensitive).
         id: String,
     },
+    /// Open the local web interface: deployments, reports and their history.
+    Ui(UiArgs),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Args)]
+pub struct UiArgs {
+    /// Address to listen on. Anything but a loopback address exposes the
+    /// reports to the network.
+    #[arg(long, default_value = "127.0.0.1")]
+    pub host: IpAddr,
+    /// Port to listen on (0 picks a free one).
+    #[arg(long, default_value_t = 7878)]
+    pub port: u16,
+    /// Directory of saved reports [default: `reports_dir` from `.eyeship.toml`,
+    /// or .eyeship/reports].
+    #[arg(long, value_name = "DIR")]
+    pub reports_dir: Option<PathBuf>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Args)]
@@ -64,6 +82,8 @@ pub enum OutputFormat {
     Json,
     /// SARIF 2.1.0, for GitHub Code Scanning and other SARIF readers.
     Sarif,
+    /// A self-contained HTML page, to read without eyeship.
+    Html,
 }
 
 /// `--fail-on` values, mapped to the domain's [`FailOn`].
@@ -124,6 +144,27 @@ mod tests {
                 label: None,
             }
         );
+    }
+
+    #[test]
+    fn parses_ui() {
+        assert_eq!(
+            parse(&["ui"]).ok(),
+            Some(Command::Ui(UiArgs {
+                host: IpAddr::from([127, 0, 0, 1]),
+                port: 7878,
+                reports_dir: None,
+            }))
+        );
+        assert_eq!(
+            parse(&["ui", "--host", "::1", "--port", "0", "--reports-dir", "ci"]).ok(),
+            Some(Command::Ui(UiArgs {
+                host: "::1".parse().expect("an address"),
+                port: 0,
+                reports_dir: Some(PathBuf::from("ci")),
+            }))
+        );
+        assert!(parse(&["ui", "--host", "localhost"]).is_err());
     }
 
     #[test]

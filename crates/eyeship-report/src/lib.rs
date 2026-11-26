@@ -30,6 +30,8 @@ pub enum Format {
     Json,
     /// SARIF 2.1.0, see `docs/specs/004-interface-web/plan.md` §4.2.
     Sarif,
+    /// A self-contained HTML page (spec 004 US6).
+    Html,
 }
 
 /// Writes `report` to `out` in the chosen format.
@@ -43,6 +45,7 @@ pub fn render(
         Format::Text { color } => render_text(report, color, out),
         Format::Json => render_json(report, tool_version, out),
         Format::Sarif => render_sarif(report, tool_version, None, out),
+        Format::Html => out.write_all(html::standalone_report(report).as_bytes()),
     }
 }
 

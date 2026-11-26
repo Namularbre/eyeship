@@ -94,6 +94,7 @@ select, button {
 button { cursor: pointer; }
 table { width: 100%; border-collapse: collapse; background: var(--surface); }
 th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+td:first-child { white-space: nowrap; }
 th { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
 .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
 .chart { width: 100%; height: auto; max-height: 220px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }

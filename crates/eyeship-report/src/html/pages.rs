@@ -5,7 +5,7 @@ use eyeship_domain::{Diff, FailOn, Rule, Summary};
 use super::chart::evolution;
 use super::report::{Filter, counts, finding_item, report_section, rule_doc, severity_badge};
 use super::{Mode, Nav, escape, layout, plural, short_date};
-use crate::sarif::{SavedContext, fail_on_name};
+use crate::sarif::SavedContext;
 use crate::view::{FindingView, ReportView, Status};
 
 /// One deployment on the dashboard.
@@ -73,6 +73,16 @@ fn status_of(live: Option<Result<(&ReportView, FailOn), &str>>) -> Option<Status
     })
 }
 
+/// The threshold in words.
+fn threshold(fail_on: FailOn) -> &'static str {
+    match fail_on {
+        FailOn::Error => "Fails on errors.",
+        FailOn::Warning => "Fails on warnings and errors.",
+        FailOn::Info => "Fails on any finding.",
+        FailOn::None => "Never fails.",
+    }
+}
+
 fn file_list(files: &[String]) -> String {
     files
         .iter()
@@ -111,9 +121,9 @@ pub fn dashboard_page(cards: &[Card]) -> String {
             );
             let detail = match card.live {
                 Some(Ok((report, fail_on))) => format!(
-                    "{}<p class=\"sub\">Fails on {}.</p>",
+                    "{}<p class=\"sub\">{}</p>",
                     counts(report),
-                    fail_on_name(fail_on)
+                    threshold(fail_on)
                 ),
                 Some(Err(error)) => format!("<p class=\"notice error\">{}</p>", escape(error)),
                 None => String::new(),
@@ -256,8 +266,8 @@ pub fn deployment_page(page: &DeploymentPage) -> String {
         .unwrap_or("<span class=\"badge\">history only</span>");
     let live = match page.live {
         Some(Ok((report, fail_on))) => format!(
-            "<h2>Live report</h2><p class=\"sub\">Audited now, fails on {}.</p>{}",
-            fail_on_name(fail_on),
+            "<h2>Live report</h2><p class=\"sub\">Audited now. {}</p>{}",
+            threshold(fail_on),
             report_section(report, page.filter, Mode::Served)
         ),
         Some(Err(error)) => format!(
@@ -291,11 +301,11 @@ pub fn saved_report_page(page: &SavedPage) -> String {
     let body = format!(
         "<p class=\"sub\"><a href=\"/\">Deployments</a> / <a href=\"/deployments/{name}\">{name}</a></p>\
          <h1>{name} {}</h1>\
-         <p class=\"notice\">Saved report from {}{label}. Fails on {}.</p>\
+         <p class=\"notice\">Saved report from {}{label}. {}</p>\
          <p class=\"sub\">{}</p>{}",
         status_badge(page.report.status(context.fail_on)),
         escape(&short_date(&context.saved_at)),
-        fail_on_name(context.fail_on),
+        threshold(context.fail_on),
         file_list(&page.report.files),
         report_section(page.report, page.filter, Mode::Served)
     );

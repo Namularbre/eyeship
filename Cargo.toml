@@ -21,6 +21,7 @@ assert_cmd = "2"
 serde-saphyr = { version = "2.1", default-features = false, features = ["deserialize"] }
 toml = { version = "0.9", default-features = false, features = ["parse", "serde"] }
 tempfile = "3"
+tiny_http = { version = "0.12", default-features = false }
 jsonschema = { version = "0.63", default-features = false }
 
 [workspace.lints.rust]

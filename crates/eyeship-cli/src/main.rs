@@ -5,6 +5,7 @@ mod cli;
 mod commands;
 mod config;
 mod pipeline;
+mod ui;
 
 use std::env;
 use std::io::{self, IsTerminal};

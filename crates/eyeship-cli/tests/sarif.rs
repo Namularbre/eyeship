@@ -95,3 +95,15 @@ fn the_schema_rejects_an_invalid_document() {
     document["runs"][0]["results"][0]["level"] = Value::from("fatal");
     assert!(!validator().is_valid(&document));
 }
+
+#[test]
+fn html_output_is_a_deterministic_standalone_page() {
+    let first = audit("R009", "bad.yaml", "html");
+    let second = audit("R009", "bad.yaml", "html");
+    assert_eq!(first.stdout, second.stdout);
+    assert_eq!(first.status.code(), Some(1));
+    let page = String::from_utf8_lossy(&first.stdout);
+    assert!(page.starts_with("<!doctype html>"));
+    assert!(page.contains("<style>") && page.contains("R009"));
+    assert!(!page.contains("href=\"/") && !page.contains("<script"));
+}
