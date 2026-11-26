@@ -1,0 +1,236 @@
+---
+source: crates/eyeship-report/src/sarif.rs
+expression: "sarif(&real_report(), Some(&context()))"
+---
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "eyeship",
+          "version": "0.1.0",
+          "informationUri": "https://github.com/Namularbre/eyeship",
+          "rules": [
+            {
+              "id": "R001",
+              "shortDescription": {
+                "text": "depends_on without health condition"
+              },
+              "fullDescription": {
+                "text": "With the short list syntax or `condition: service_started`, the dependent service starts as soon as its dependency is launched, not when it is ready. It gets connection refused at startup and crashes."
+              },
+              "help": {
+                "text": "Use `condition: service_healthy` and give the dependency a healthcheck."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            },
+            {
+              "id": "R006",
+              "shortDescription": {
+                "text": "No memory limit"
+              },
+              "fullDescription": {
+                "text": "Without `mem_limit` or `deploy.resources.limits.memory`, a memory leak in one container fills the host RAM, and the kernel OOM killer may kill other services (often the database) instead of the leaking one."
+              },
+              "help": {
+                "text": "Set `mem_limit` (or `deploy.resources.limits.memory`) to a value above the normal peak usage of the service."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              }
+            },
+            {
+              "id": "R009",
+              "shortDescription": {
+                "text": "Published port conflict"
+              },
+              "fullDescription": {
+                "text": "Two containers publish the same host port with the same protocol on overlapping host IPs. Only one can bind it: the other fails to start with 'port is already allocated', and the deployment is left half up."
+              },
+              "help": {
+                "text": "Publish each host port once: pick a different host port, bind to distinct host IPs, or let a single reverse proxy publish the port."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              }
+            },
+            {
+              "id": "R017",
+              "shortDescription": {
+                "text": "Obsolete version key"
+              },
+              "fullDescription": {
+                "text": "The root `version` key is ignored by Compose v2, which prints a warning on every command: it is noise that hides real warnings and suggests a file format that no longer exists."
+              },
+              "help": {
+                "text": "Remove the root `version` key."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              }
+            }
+          ]
+        }
+      },
+      "automationDetails": {
+        "id": "prod/2026-11-26T11-47-17.123Z"
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true,
+          "endTimeUtc": "2026-11-26T11:47:17.123Z"
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "infra/compose%20prod.yaml"
+          }
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "R009",
+          "ruleIndex": 2,
+          "level": "error",
+          "message": {
+            "text": "message of R009"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "infra/compose%20prod.yaml"
+                },
+                "region": {
+                  "startLine": 12,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "web",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "eyeship/v1": "f2ac5010a929967d"
+          },
+          "properties": {
+            "fix": "fix of R009"
+          }
+        },
+        {
+          "ruleId": "R001",
+          "ruleIndex": 0,
+          "level": "warning",
+          "message": {
+            "text": "message of R001"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "infra/compose%20prod.yaml"
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "api",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "partialFingerprints": {
+            "eyeship/v1": "aab11422c56da483"
+          },
+          "properties": {
+            "fix": "fix of R001"
+          }
+        },
+        {
+          "ruleId": "R017",
+          "ruleIndex": 3,
+          "level": "note",
+          "message": {
+            "text": "message of R017"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "infra/compose%20prod.yaml"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 7
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "eyeship/v1": "f197a2c8ce87e4e1"
+          },
+          "properties": {
+            "fix": "fix of R017"
+          }
+        },
+        {
+          "ruleId": "R006",
+          "ruleIndex": 1,
+          "level": "warning",
+          "message": {
+            "text": "message of R006"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "infra/compose%20prod.yaml"
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "name": "api",
+                  "kind": "module"
+                }
+              ]
+            }
+          ],
+          "suppressions": [
+            {
+              "kind": "external",
+              "justification": "ignored by eyeship configuration"
+            }
+          ],
+          "partialFingerprints": {
+            "eyeship/v1": "a06fc8126bb2889b"
+          },
+          "properties": {
+            "fix": "fix of R006"
+          }
+        }
+      ],
+      "properties": {
+        "deployment": "prod",
+        "label": "a1b2c3d",
+        "failOn": "warning"
+      }
+    }
+  ]
+}

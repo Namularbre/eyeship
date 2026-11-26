@@ -58,6 +58,7 @@ pub fn run_compose(
                     color: context.color,
                 },
                 OutputFormat::Json => Format::Json,
+                OutputFormat::Sarif => Format::Sarif,
             };
             match render(&report, format, env!("CARGO_PKG_VERSION"), out) {
                 Ok(()) => report.exit_code(plan.fail_on),

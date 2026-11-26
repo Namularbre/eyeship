@@ -56,6 +56,8 @@ pub struct ComposeArgs {
 pub enum OutputFormat {
     Text,
     Json,
+    /// SARIF 2.1.0, for GitHub Code Scanning and other SARIF readers.
+    Sarif,
 }
 
 /// `--fail-on` values, mapped to the domain's [`FailOn`].

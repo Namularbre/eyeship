@@ -1,9 +1,11 @@
-//! Output adapters: render an [`eyeship_domain`] report as text or JSON.
+//! Output adapters: render an [`eyeship_domain`] report as text, JSON or SARIF.
 #![forbid(unsafe_code)]
 
 mod catalog;
 mod json;
+mod sarif;
 mod text;
+mod view;
 
 #[cfg(test)]
 mod fixtures;
@@ -14,7 +16,9 @@ use eyeship_domain::{FileId, Report};
 
 pub use catalog::{render_explain, render_rules};
 pub use json::render_json;
+pub use sarif::{SarifRecord, SavedContext, fail_on_name, fingerprint, parse_sarif, render_sarif};
 pub use text::{render_text, should_color};
+pub use view::{FindingView, ReportView};
 
 /// Output format of an audit report.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -23,6 +27,8 @@ pub enum Format {
     Text { color: bool },
     /// Versioned JSON, see `docs/specs/001-audit-compose/plan.md` §5.
     Json,
+    /// SARIF 2.1.0, see `docs/specs/004-interface-web/plan.md` §4.2.
+    Sarif,
 }
 
 /// Writes `report` to `out` in the chosen format.
@@ -35,6 +41,7 @@ pub fn render(
     match format {
         Format::Text { color } => render_text(report, color, out),
         Format::Json => render_json(report, tool_version, out),
+        Format::Sarif => render_sarif(report, tool_version, None, out),
     }
 }
 
