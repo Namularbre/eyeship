@@ -1,0 +1,40 @@
+---
+source: crates/eyeship-report/src/html/pages.rs
+expression: rule
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R001 depends_on without health condition · eyeship</title>
+<link rel="stylesheet" href="/assets/style.b6f3a01e.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><a class="brand" href="/">eyeship</a><nav aria-label="Main"><a href="/">Deployments</a><a href="/rules" aria-current="page">Rules</a></nav></header>
+<main id="main">
+<p class="sub"><a href="/rules">Rules</a></p><h1><code>R001</code> depends_on without health condition</h1><p>Default severity: <span class="badge warning">warning</span></p><h3>Failure scenario</h3><p>With the short list syntax or `condition: service_started`, the dependent service starts as soon as its dependency is launched, not when it is ready. It gets connection refused at startup and crashes.</p><h3>Fix</h3><p>Use `condition: service_healthy` and give the dependency a healthcheck.</p><h3>Bad example</h3><pre><code>services:
+  api:
+    image: acme/api:1.4.2
+    depends_on:
+      - db
+  db:
+    image: postgres:16.4
+</code></pre><h3>Good example</h3><pre><code>services:
+  api:
+    image: acme/api:1.4.2
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16.4
+    healthcheck:
+      test: [&quot;CMD-SHELL&quot;, &quot;pg_isready -U postgres&quot;]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+</code></pre></main>
+<footer>eyeship 0.1.0 · static audit, nothing was run</footer>
+</body>
+</html>

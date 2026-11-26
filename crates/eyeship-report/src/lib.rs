@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 
 mod catalog;
+pub mod html;
 mod json;
 mod sarif;
 mod text;
@@ -18,7 +19,7 @@ pub use catalog::{render_explain, render_rules};
 pub use json::render_json;
 pub use sarif::{SarifRecord, SavedContext, fail_on_name, fingerprint, parse_sarif, render_sarif};
 pub use text::{render_text, should_color};
-pub use view::{FindingView, ReportView};
+pub use view::{FindingView, ReportView, Status};
 
 /// Output format of an audit report.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

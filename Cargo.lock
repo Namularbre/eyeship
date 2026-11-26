@@ -308,6 +308,7 @@ name = "eyeship-web"
 version = "0.1.0"
 dependencies = [
  "eyeship-domain",
+ "eyeship-report",
 ]
 
 [[package]]

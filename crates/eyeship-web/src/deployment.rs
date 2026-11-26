@@ -3,6 +3,7 @@
 use std::cmp::Reverse;
 
 use eyeship_domain::{FailOn, Report};
+use eyeship_report::Status;
 
 /// The live audit of one deployment.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -13,14 +14,6 @@ pub struct DeploymentResult {
     pub fail_on: FailOn,
     /// The report, or why the deployment could not be read.
     pub outcome: Result<Report, String>,
-}
-
-/// Whether a deployment is ready for production.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum Status {
-    Pass,
-    Fail,
-    Unreadable,
 }
 
 impl DeploymentResult {

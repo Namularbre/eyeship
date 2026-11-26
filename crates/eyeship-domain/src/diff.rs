@@ -16,7 +16,11 @@ pub struct Diff<'a, T> {
 /// Compares two lists of findings by `key`, as multisets: two findings with
 /// the same key are paired in order, so a duplicate that disappears counts
 /// as resolved. Each output list keeps the order of its source.
-pub fn diff<'a, T, K: Ord>(before: &'a [T], after: &'a [T], key: impl Fn(&T) -> K) -> Diff<'a, T> {
+pub fn diff<'a, T, K: Ord>(
+    before: &'a [T],
+    after: &'a [T],
+    key: impl Fn(&'a T) -> K,
+) -> Diff<'a, T> {
     let count = |items: &'a [T]| {
         items.iter().fold(BTreeMap::new(), |mut counts, item| {
             *counts.entry(key(item)).or_insert(0usize) += 1;
@@ -30,7 +34,7 @@ pub fn diff<'a, T, K: Ord>(before: &'a [T], after: &'a [T], key: impl Fn(&T) -> 
         items
             .iter()
             .filter(|item| {
-                let k = key(item);
+                let k = key(*item);
                 let shared = limit(&k);
                 let rank = seen.entry(k).or_insert(0);
                 *rank += 1;

@@ -4,4 +4,5 @@
 
 mod deployment;
 
-pub use deployment::{DeploymentResult, Status, sort_deployments};
+pub use deployment::{DeploymentResult, sort_deployments};
+pub use eyeship_report::Status;

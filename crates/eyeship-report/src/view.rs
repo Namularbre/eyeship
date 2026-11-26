@@ -3,6 +3,14 @@
 
 use eyeship_domain::{FailOn, Finding, Report, Severity, Summary};
 
+/// Whether a deployment is ready for production.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Status {
+    Pass,
+    Fail,
+    Unreadable,
+}
+
 /// One finding, with its file name resolved.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FindingView {
@@ -92,6 +100,15 @@ impl ReportView {
                 .iter()
                 .any(|finding| finding.severity >= threshold)
         })
+    }
+
+    /// Pass or fail against a threshold.
+    pub fn status(&self, fail_on: FailOn) -> Status {
+        if self.fails(fail_on) {
+            Status::Fail
+        } else {
+            Status::Pass
+        }
     }
 
     /// Services that have at least one retained finding, sorted.
