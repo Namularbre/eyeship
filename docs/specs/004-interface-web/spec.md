@@ -24,7 +24,7 @@ La constitution (§2) prévoit une interface web « plus tard ». Ce « plus tar
 - **Déploiement** : un environnement cible nommé (`staging`, `prod`…) défini par la liste de ses fichiers Compose et, éventuellement, son fichier de variables. C'est exactement ce que décrit une ligne `eyeship compose -f … --env-file …`, mais nommé et versionné.
 - **Rapport** : le résultat d'un audit d'un déploiement (constats retenus, constats ignorés, résumé par gravité, statut au regard du seuil).
 - **Rapport en direct** : le rapport calculé à l'instant sur les fichiers actuels.
-- **Rapport enregistré** : un rapport sauvegardé volontairement (en local ou en CI) avec sa date et, si on le fournit, une étiquette (commit, numéro de build). L'ensemble des rapports enregistrés d'un déploiement forme son **historique**.
+- **Rapport enregistré** : un rapport sauvegardé volontairement (en local ou en CI) avec sa date et, si on le fournit, une étiquette (commit, numéro de build), au format standard **SARIF**. L'ensemble des rapports enregistrés d'un déploiement forme son **historique**.
 
 ## 3. Personas
 
@@ -83,7 +83,7 @@ Critères d'acceptation :
 1. `eyeship compose --deployment prod --save` audite comme d'habitude **et** enregistre le rapport dans l'historique du déploiement. La sortie standard et le code de sortie sont inchangés (constitution P4).
 2. `--label <texte>` attache une étiquette au rapport enregistré (par exemple le SHA du commit).
 3. Le dossier de l'historique est `.eyeship/reports/` à côté du `.eyeship.toml` par défaut, configurable. Il est créé au besoin.
-4. Un rapport enregistré est un fichier JSON lisible, documenté et versionné, qui contient le rapport complet au format `--format json`, la date, l'étiquette et le nom du déploiement.
+4. Un rapport enregistré est un fichier **SARIF 2.1.0** (le format standard d'échange des analyseurs statiques, prévu par la constitution P4), identique à `--format sarif` (US10) plus la date, l'étiquette et le nom du déploiement. Il est donc lisible par d'autres outils, et peut être envoyé tel quel à GitHub Code Scanning.
 5. L'enregistrement n'a lieu que sur demande explicite. Si l'écriture échoue, l'outil sort en code `2` avec un message clair.
 6. `--save` sans `--deployment` enregistre sous le déploiement implicite `default`.
 
@@ -97,6 +97,17 @@ Critères d'acceptation :
 4. Le tableau de bord indique pour chaque déploiement la date du dernier rapport enregistré et la tendance depuis celui-ci (plus ou moins de constats).
 5. Un fichier d'historique illisible ou d'un schéma inconnu est signalé et ignoré, sans empêcher l'affichage des autres.
 6. `eyeship serve --reports-dir <dossier>` permet d'afficher un historique récupéré ailleurs (par exemple les artefacts de la CI). Un dossier d'historique sans déploiement déclaré correspondant reste affiché (déploiement « historique seul »).
+
+### US10 (P1) : Sortie SARIF
+*En tant que Jean, je veux une sortie au format standard SARIF, pour l'historique d'`eyeship` comme pour les outils qui le lisent (GitHub Code Scanning, IDE).*
+
+Critères d'acceptation :
+1. `eyeship compose --format sarif` écrit sur la sortie standard un document SARIF 2.1.0 valide (schéma officiel), sans texte parasite.
+2. Chaque constat devient un résultat avec : identifiant de règle, niveau (`error`, `warning`, `note` pour `info`), message, fichier, ligne et colonne, service, correction proposée.
+3. Les règles déclenchées sont décrites dans le document (titre, scénario de panne, correction), pour qu'un lecteur SARIF les explique sans `eyeship`.
+4. Les constats ignorés par configuration figurent dans le document, marqués comme supprimés (*suppressions*), jamais retirés (constitution P6).
+5. La sortie est déterministe ; le code de sortie suit le seuil comme pour `text` et `json`.
+6. Le fichier est accepté par l'action GitHub `upload-sarif` (vérifié une fois sur un dépôt de test).
 
 ### US9 (P2) : Comparer deux rapports
 *En tant que Léa, je veux savoir ce que la dernière modification a corrigé ou introduit.*
@@ -135,7 +146,8 @@ Critères d'acceptation :
 | Idée | Pourquoi plus tard |
 |---|---|
 | Purge automatique de l'historique, rétention | Les fichiers se suppriment à la main ou par la CI. Une commande dédiée viendra si le besoin apparaît. |
-| Base de données, historique centralisé de plusieurs dépôts | L'historique est un dossier de fichiers JSON, versionnable et archivable par la CI. |
+| Base de données, historique centralisé de plusieurs dépôts | L'historique est un dossier de fichiers SARIF, versionnable et archivable par la CI. |
+| Afficher des fichiers SARIF produits par d'autres outils (Trivy, Hadolint…) | Le format le permettra (constitution §3 : agréger plutôt que réécrire), mais l'interface ne lit d'abord que les SARIF d'`eyeship`. |
 | Enregistrer un rapport depuis l'interface | Garderait l'interface en écriture (ENF3). L'enregistrement passe par la CLI. |
 | Lire les stacks **en cours d'exécution** via le démon Docker | Contraire à P3 dans le mode par défaut ; ce serait un mode séparé et explicite. |
 | Modifier les fichiers ou `.eyeship.toml` depuis l'interface, `--fix` | ENF3 ; constitution §9. |
@@ -153,7 +165,7 @@ Aucun autre principe ne change.
 
 ## 9. Questions ouvertes
 
-- **Q1** *(résolue le 2026-11-26)* : les deux dès la v1. Déploiements déclarés dans `.eyeship.toml` et audités à chaque affichage (US1 à US3), **et** historique des rapports enregistrés (US7 à US9). La lecture des stacks en cours via Docker reste hors périmètre.
+- **Q1** *(résolue le 2026-11-26)* : les deux dès la v1. Déploiements déclarés dans `.eyeship.toml` et audités à chaque affichage (US1 à US3), **et** historique des rapports enregistrés (US7 à US9), au format SARIF (US10, retenu le 2026-11-26 : c'est le format machine prévu par la constitution P4). La lecture des stacks en cours via Docker reste hors périmètre.
 - **Q2** : nom de la commande : `eyeship serve` (proposé) ou `eyeship ui` ?
 - **Q3** : US6 (export HTML) et US9 (comparaison) en P2 dans cette spec, ou dans une spec séparée ?
 - **Q4** : faut-il ignorer `.eyeship/reports/` dans Git par défaut (conseil du README), ou encourager à le versionner ?

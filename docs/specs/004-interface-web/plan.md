@@ -9,7 +9,7 @@
 
 ## 1. Vue d'ensemble
 
-L'interface est un **nouvel adaptateur de sortie**, au même titre que le texte et le JSON. L'historique est un **adaptateur de stockage** : des fichiers JSON dans un dossier. Le domaine gagne une seule fonction pure, la comparaison de deux rapports.
+L'interface est un **nouvel adaptateur de sortie**, au même titre que le texte et le JSON. L'historique est un **adaptateur de stockage** : des fichiers SARIF dans un dossier. Le domaine gagne une seule fonction pure, la comparaison de deux rapports.
 
 ```
                     ┌──────────────────────────── eyeship-cli ────────────────────────────┐
@@ -19,7 +19,7 @@ navigateur ──GET──▶ │ serve: boucle HTTP ──▶ route(request) �
                     │                          │    load (eyeship-compose) ▶ audit (domain)│
                     │                          └─ history.list / read (eyeship-history)    │
                     └──────────────────────────────────────────────────────────────────────┘
-CI ── eyeship compose --deployment prod --save ──▶ .eyeship/reports/prod/2026-11-26T11-47-17.123Z.json
+CI ── eyeship compose --deployment prod --save ──▶ .eyeship/reports/prod/2026-11-26T11-47-17.123Z.sarif
 ```
 
 Le flux reste une suite de fonctions, avec une seule fonction impure au bord (la boucle réseau) :
@@ -27,8 +27,8 @@ Le flux reste une suite de fonctions, avec une seule fonction impure au bord (la
 ```
 .eyeship.toml ──load_config──▶ Config { deployments } ──audit_deployments──▶ Vec<DeploymentResult>
 requête ──parse──▶ Route ──handle(route, results, history)──▶ Response { status, headers, body }
-Report ──record(deployment, saved_at, label)──▶ Record ──to_json──▶ fichier          (--save)
-fichiers ──parse_record──▶ Vec<Record> ──diff(a, b)──▶ { new, resolved, unchanged }   (US8, US9)
+Report ──to_sarif(+ deployment, saved_at, label)──▶ fichier .sarif                    (--save)
+fichiers ──parse_sarif──▶ Vec<Record> ──diff(a, b)──▶ { new, resolved, unchanged }   (US8, US9)
 ```
 
 ## 2. Découpage
@@ -37,9 +37,10 @@ fichiers ──parse_record──▶ Vec<Record> ──diff(a, b)──▶ { new
 crates/
 ├── eyeship-domain/     + diff.rs : comparaison pure de deux listes de constats (US9)
 ├── eyeship-compose/    inchangé
-├── eyeship-report/     + src/html/ : échappement, mise en page, une fonction pure par page
+├── eyeship-report/     + sarif.rs : écriture et lecture SARIF 2.1.0 (US10)
+│                       + src/html/ : échappement, mise en page, une fonction pure par page
 │   └── assets/         style.css (embarqué par include_str!)
-├── eyeship-history/    NOUVEAU : format d'un rapport enregistré, lecture/écriture via le trait FileSystem
+├── eyeship-history/    NOUVEAU : dossier d'historique (nommage, écriture atomique, liste) via le trait FileSystem
 ├── eyeship-web/        NOUVEAU : routeur (pur) + serveur (bord)
 │   ├── src/route.rs    chemin + query ──▶ Route (pur)
 │   ├── src/handler.rs  Route + données ──▶ Response (pur)
@@ -98,33 +99,72 @@ ignore = ["R006"]
 ```
 .eyeship/reports/            # à côté du .eyeship.toml ; `reports_dir` dans la config, `--reports-dir` pour serve
 ├── prod/
-│   ├── 2026-11-25T09-12-03.481Z.json
-│   └── 2026-11-26T11-47-17.123Z.json
+│   ├── 2026-11-25T09-12-03.481Z.sarif
+│   └── 2026-11-26T11-47-17.123Z.sarif
 └── staging/
     └── …
 ```
 
-- Un sous-dossier par déploiement, un fichier par rapport. Pas de base de données : les fichiers se versionnent, s'archivent comme artefacts de CI et se suppriment à la main.
+- Un sous-dossier par déploiement, un fichier par rapport. Pas de base de données : les fichiers se lisent avec n'importe quel visualiseur SARIF, se versionnent, s'archivent comme artefacts de CI et se suppriment à la main.
 - Nom de fichier = date UTC à la milliseconde, sans `:` (compatible Windows) ; il sert d'identifiant dans l'URL et donne l'ordre chronologique par simple tri. En cas de collision, suffixe `-1`, `-2`.
 - Écriture atomique : fichier temporaire dans le même dossier puis renommage, pour qu'un serveur qui lit en même temps ne voie jamais un fichier tronqué.
 
-### 4.2 Format d'un rapport enregistré
+### 4.2 Format : SARIF 2.1.0
+
+Le format machine prévu par la constitution (P4) et la spec 001 (« sortie SARIF juste après le MVP »). Un rapport enregistré est la sortie de `--format sarif` (US10) complétée de trois informations de contexte. Un seul format à maintenir pour la CI, GitHub Code Scanning et l'historique.
 
 ```json
 {
-  "schema_version": 1,
-  "kind": "eyeship-record",
-  "deployment": "prod",
-  "saved_at": "2026-11-26T11:47:17.123Z",
-  "label": "a1b2c3d",
-  "fail_on": "error",
-  "report": { "schema_version": 1, "tool": { … }, "files": [ … ], "findings": [ … ], "ignored": 0, "summary": { … } }
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [{
+    "tool": { "driver": {
+      "name": "eyeship", "version": "0.1.0", "informationUri": "https://github.com/Namularbre/eyeship",
+      "rules": [{
+        "id": "R001", "name": "DependsOnWithoutHealthCondition",
+        "shortDescription": { "text": "depends_on without a health condition" },
+        "fullDescription": { "text": "<scénario de panne>" },
+        "help": { "text": "<correction>" },
+        "defaultConfiguration": { "level": "warning" }
+      }]
+    }},
+    "automationDetails": { "id": "prod/2026-11-26T11-47-17.123Z" },
+    "invocations": [{ "executionSuccessful": true, "endTimeUtc": "2026-11-26T11:47:17.123Z" }],
+    "originalUriBaseIds": { "PROJECTROOT": { "uri": "file:///" } },
+    "results": [{
+      "ruleId": "R001", "ruleIndex": 0, "level": "warning",
+      "message": { "text": "depends_on 'db' does not wait for the service to be healthy" },
+      "locations": [{
+        "physicalLocation": { "artifactLocation": { "uri": "compose.yaml", "uriBaseId": "PROJECTROOT" },
+                              "region": { "startLine": 12, "startColumn": 7 } },
+        "logicalLocations": [{ "name": "api", "kind": "module" }]
+      }],
+      "partialFingerprints": { "eyeship/v1": "<hash(règle, service, message)>" },
+      "properties": { "fix": "Use `condition: service_healthy` for 'db' and give it a healthcheck." }
+    }],
+    "properties": { "deployment": "prod", "label": "a1b2c3d", "failOn": "error" }
+  }]
 }
 ```
 
-- `report` est **exactement** la sortie de `--format json` (plan 001 §5) : un seul schéma de rapport à maintenir. Pour cela, `eyeship-report` expose aussi la désérialisation de ce schéma vers une vue possédée (`ReportView`, chaînes `String`), que l'interface affiche qu'il s'agisse d'un rapport en direct ou enregistré.
+Correspondances retenues :
+
+| eyeship | SARIF |
+|---|---|
+| Sévérité `error` / `warning` / `info` | `level` `error` / `warning` / `note` |
+| Service | `logicalLocations[].name` (`kind: "module"`) |
+| Correction d'un constat | `properties.fix` (l'objet SARIF `fixes` exige des remplacements de texte, que `eyeship` ne calcule pas) |
+| Constat ignoré (P6) | résultat présent avec `suppressions: [{ "kind": "external", "justification": "ignored by .eyeship.toml" }]` |
+| Documentation de règle (`explain`) | `tool.driver.rules[]`, seulement les règles déclenchées |
+| Identité d'un constat pour la comparaison | `partialFingerprints["eyeship/v1"]` = empreinte de (règle, service, message) |
+| Déploiement, étiquette, seuil | `run.properties` ; `automationDetails.id` = `<déploiement>/<identifiant>` |
+| Date d'enregistrement | `invocations[0].endTimeUtc` |
+
+- **Déterminisme** (P4) : `--format sarif` sur la sortie standard n'a ni `invocations`, ni `automationDetails`, ni `run.properties` ; ils ne sont ajoutés que par `--save`. Chemins relatifs au dossier du projet, jamais absolus.
+- **Lecture** : `eyeship-report` désérialise le sous-ensemble SARIF qu'il écrit vers une vue possédée (`ReportView`, chaînes `String`), que l'interface affiche qu'il s'agisse d'un rapport en direct ou enregistré. Un fichier qui n'est pas un SARIF 2.1.0 produit par `eyeship` (`tool.driver.name`) est signalé « illisible » et ignoré (US8 §5).
+- **Validation** : un test compare la sortie au schéma officiel SARIF 2.1.0, copié dans `tests/fixtures/sarif/` (dépendance de test `jsonschema`, **D8**), et le fichier est envoyé une fois à `github/codeql-action/upload-sarif` sur un dépôt de test (US10 §6).
+- **Empreinte** : hachage FNV-1a 64 bits écrit à la main (quelques lignes, stable entre versions de Rust, contrairement à `DefaultHasher`).
 - La date vient de `SystemTime` et est formatée en RFC 3339 par une fonction pure (algorithme jours → date civile), sans `chrono`. L'horloge est un petit trait `Clock` pour les tests.
-- `schema_version` inconnu ou JSON invalide : l'entrée est signalée « illisible » et ignorée (US8 §5).
 
 ### 4.3 Lecture
 
@@ -137,7 +177,7 @@ pub struct Diff<'a, T> { pub new: Vec<&'a T>, pub resolved: Vec<&'a T>, pub unch
 pub fn diff<'a, T, K: Ord>(before: &'a [T], after: &'a [T], key: impl Fn(&T) -> K) -> Diff<'a, T>
 ```
 
-Fonction pure et générique du domaine (qui ne connaît pas `ReportView`) ; l'appelant fournit la clé `(règle, service, message)`. La ligne n'entre pas dans la clé : déplacer un service dans le fichier ne crée ni constat « nouveau » ni « résolu ». Deux constats de même clé sont appariés dans l'ordre (multiensemble).
+Fonction pure et générique du domaine (qui ne connaît pas `ReportView`) ; l'appelant fournit la clé, l'empreinte `eyeship/v1` (règle, service, message). La ligne n'entre pas dans la clé : déplacer un service dans le fichier ne crée ni constat « nouveau » ni « résolu ». Deux constats de même clé sont appariés dans l'ordre (multiensemble).
 
 ## 5. Pages et routes
 
@@ -186,7 +226,7 @@ eyeship serve [--host 127.0.0.1] [--port 7878] [--open]
 | *(aucune)* | Gabarits HTML | eyeship-report | Fonctions Rust + `format!` + `escape()`. Les pages sont peu nombreuses. Alternative : `maud` (macros, échappement automatique). **D3** |
 | *(aucune)* | Front-end | | HTML + CSS, pas de framework JS ni de WASM, pas de chaîne de build Node. **D3** |
 
-`eyeship-history` n'ajoute rien : `serde` et `serde_json` sont déjà dans le workspace.
+`eyeship-history` et la sortie SARIF n'ajoutent rien : `serde` et `serde_json` sont déjà dans le workspace. `jsonschema` n'est qu'une dépendance de test (D8).
 
 Rien d'autre. Pas d'`axum`/`actix` (tirent `tokio`), pas de `rust-embed` (`include_str!` suffit pour un fichier).
 
@@ -195,19 +235,21 @@ Rien d'autre. Pas d'`axum`/`actix` (tirent `tokio`), pas de `rust-embed` (`inclu
 1. **Pages** : tests unitaires sur des `Report` construits avec les builders existants ; snapshots `insta` du HTML ; test d'échappement sur chaque page ; test « aucune URL externe » (pas de `http://` ni `https://` dans le HTML et le CSS hors liens de documentation).
 2. **Routeur et gestionnaire** : fonctions pures, tables de cas (`/deployments/prod?severity=error` → `Route::Deployment { … }`, chemin inconnu → 404, méthode `POST` → 405, `Host` étranger → 421).
 3. **Configuration** : parsing des `[deployments]`, `reports_dir`, noms invalides, chemins relatifs, déploiement implicite.
-4. **Historique** : aller-retour enregistrer/relire avec `MemoryFileSystem` et une horloge fixe ; formatage RFC 3339 (années bissextiles, fin de mois) ; collisions de noms ; fichier illisible ou schéma inconnu ignoré ; `--save` ne change ni stdout ni le code de sortie.
-5. **Comparaison** : constats nouveaux, résolus, inchangés ; ligne déplacée = inchangé ; doublons.
-6. **Équivalence CLI / web** : pour chaque fixture de la spec 001, les constats de la page rapport = ceux de `--format json` (critère de succès §6).
-7. **Bout en bout** : `eyeship serve --port 0` lancé par `assert_cmd`, port lu sur stderr, requêtes HTTP avec `std::net::TcpStream` (pas de client HTTP en dépendance), arrêt du processus.
-8. **Performance** : historique de 1 000 rapports sous 300 ms (ENF8) ; page rapport du fichier de 50 services du benchmark ENF1 en moins de 100 ms ; taille du binaire release mesurée avant et après (≤ +1 Mo).
+4. **SARIF** : snapshot de la sortie pour chaque fixture, validation par le schéma officiel, aller-retour écrire/relire, constats ignorés en `suppressions`, déterminisme.
+5. **Historique** : aller-retour enregistrer/relire avec `MemoryFileSystem` et une horloge fixe ; formatage RFC 3339 (années bissextiles, fin de mois) ; collisions de noms ; fichier illisible ou schéma inconnu ignoré ; `--save` ne change ni stdout ni le code de sortie.
+6. **Comparaison** : constats nouveaux, résolus, inchangés ; ligne déplacée = inchangé ; doublons.
+7. **Équivalence CLI / web** : pour chaque fixture de la spec 001, les constats de la page rapport = ceux de `--format json` (critère de succès §6).
+8. **Bout en bout** : `eyeship serve --port 0` lancé par `assert_cmd`, port lu sur stderr, requêtes HTTP avec `std::net::TcpStream` (pas de client HTTP en dépendance), arrêt du processus.
+9. **Performance** : historique de 1 000 rapports sous 300 ms (ENF8) ; page rapport du fichier de 50 services du benchmark ENF1 en moins de 100 ms ; taille du binaire release mesurée avant et après (≤ +1 Mo).
 
 ## 10. Décisions à valider
 
 | # | Décision | Recommandation | Alternative |
 |---|---|---|---|
 | D1 | Source des déploiements | **Validé le 2026-11-26 : les deux.** Déploiements déclarés dans `.eyeship.toml` audités à chaque requête, et historique de rapports enregistrés | Stacks en cours via Docker (déroge à P3), écarté |
-| D6 | Stockage de l'historique | Un fichier JSON par rapport dans `.eyeship/reports/<déploiement>/`, enregistré par la CLI (`--save`) | SQLite (`rusqlite`, C embarqué, binaire plus lourd, fichiers non lisibles à la main) ; un fichier JSON Lines par déploiement (ajouts concurrents délicats) |
+| D6 | Stockage de l'historique | **Retenu le 2026-11-26 : un fichier SARIF 2.1.0 par rapport** dans `.eyeship/reports/<déploiement>/`, enregistré par la CLI (`--save`) | Enveloppe JSON maison autour de `--format json` (second format à maintenir, illisible par les autres outils) ; SQLite (`rusqlite`, C embarqué, binaire plus lourd) |
 | D7 | Dates | `SystemTime` + formatage RFC 3339 écrit à la main, affichage UTC | `time` ou `chrono` (dépendance pour une seule fonction) |
+| D8 | Validation SARIF | `jsonschema` en dépendance **de test** uniquement, schéma officiel copié dans le dépôt (tests hors ligne) | Validation manuelle seulement |
 | D2 | Serveur HTTP | `tiny_http`, synchrone | `axum` + `tokio` (lourd) ; HTTP écrit à la main sur `std::net` (zéro dépendance, risqué) |
 | D3 | Front-end | Rendu serveur, HTML + CSS sans JS, gabarits en fonctions Rust | `maud` pour les gabarits ; SPA (Leptos/WASM ou TypeScript) : chaîne de build et poids sans bénéfice ici |
 | D4 | Servi par la CLI | Sous-commande `eyeship serve` du binaire unique | Binaire séparé `eyeship-web` |
@@ -221,6 +263,7 @@ Rien d'autre. Pas d'`axum`/`actix` (tirent `tokio`), pas de `rust-embed` (`inclu
 | Lecture de fichiers arbitraires via l'URL | Aucune route ne prend de chemin : seuls les déploiements déclarés sont audités. |
 | Site malveillant qui interroge l'interface locale (DNS rebinding) | Vérification de l'en-tête `Host`, `GET` seulement, aucune action à effets de bord. |
 | Historique qui grossit sans fin | Un fichier fait quelques Ko ; la purge reste manuelle (spec §7). Mesure en T026. |
-| Rapports enregistrés par une version plus récente d'`eyeship` | `schema_version` vérifié ; champs inconnus tolérés, schéma inconnu signalé. |
+| Rapports enregistrés par une version plus récente d'`eyeship` | `version` SARIF et `tool.driver.name` vérifiés ; champs inconnus tolérés ; empreinte versionnée (`eyeship/v1`). |
+| SARIF verbeux (rapport plus gros que le JSON maison) | Quelques Ko par rapport ; seules les règles déclenchées sont décrites. |
 | Dérive entre CLI et web | Construction partagée de la requête et de la config (§3), test d'équivalence (§8.4). |
 | `tiny_http` peu actif (dernière version 0.12, un fork `tiny_http_dh` annonce des correctifs de CVE) | Vérifier les avis RustSec en T002 et choisir entre l'original et le fork ; API réduite utilisée derrière `server.rs`, remplaçable sans toucher aux pages ni au routeur. |

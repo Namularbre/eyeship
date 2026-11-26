@@ -19,11 +19,11 @@ Conventions : celles de la [spec 001](../001-audit-compose/tasks.md). `[P]` = pa
 - [ ] **T005** `audit_deployments(config, fs, env) -> Vec<DeploymentResult>` : un déploiement illisible donne `Err(message)` sans bloquer les autres ; tri échecs d'abord puis par nom. Tests avec `MemoryFileSystem`. [US1, US2]
 - [ ] **T006** [P] Option `eyeship compose --deployment <name>`, incompatible avec `FILE`, `-f`, `--env-file` (code 2). Tests de bout en bout. **Jalon : les déploiements sont utilisables en CI.** [US5]
 
-## Phase 2 : Historique (US7)
+## Phase 2 : SARIF et historique (US10, US7)
 
 - [ ] **T007** [P] Formatage RFC 3339 pur depuis `SystemTime` (D7) et trait `Clock`. Tests : époque, années bissextiles, fin de mois, millisecondes, nom de fichier sans `:`.
-- [ ] **T008** [P] `ReportView` : désérialisation du schéma JSON v1 dans `eyeship-report`, et conversion `Report → ReportView`. Test aller-retour sur chaque fixture de la spec 001.
-- [ ] **T009** Format `Record` (plan §4.2) : sérialisation, lecture, `schema_version` inconnu ou JSON invalide → illisible. Tests.
+- [ ] **T008** `--format sarif` (plan §4.2) : règles déclenchées, résultats, niveaux, service, correction, empreinte FNV-1a, constats ignorés en `suppressions`. Snapshots sur chaque fixture, validation par le schéma officiel (D8), déterminisme. Envoi manuel à `upload-sarif` sur un dépôt de test. **Jalon : sortie SARIF utilisable en CI.** [US10]
+- [ ] **T009** Lecture SARIF vers `ReportView` (sous-ensemble écrit par `eyeship`), conversion `Report → ReportView`, ajout du contexte d'enregistrement (`invocations`, `automationDetails`, `run.properties`) ; fichier étranger ou invalide → illisible. Test aller-retour sur chaque fixture.
 - [ ] **T010** Écriture atomique dans `<reports_dir>/<déploiement>/`, création du dossier, collisions de noms ; liste et lecture d'un historique trié. Tests avec `MemoryFileSystem` (étendre le trait `FileSystem` si besoin : écrire, renommer, lister).
 - [ ] **T011** Options `--save` et `--label` sur `eyeship compose` : stdout et code de sortie inchangés, code 2 si l'écriture échoue. Tests de bout en bout dans un dossier temporaire. **Jalon : la CI peut construire un historique.** [US7]
 - [ ] **T012** [P] `diff` générique dans le domaine (plan §4.4) : nouveaux, résolus, inchangés, ligne déplacée, doublons. [US9]
@@ -54,5 +54,5 @@ Conventions : celles de la [spec 001](../001-audit-compose/tasks.md). `[P]` = pa
 
 - [ ] **T026** [P] Performance : page rapport de 50 services < 100 ms, serveur au repos < 20 Mo, binaire ≤ +1 Mo (ENF5) ; historique de 1 000 rapports < 300 ms (ENF8).
 - [ ] **T027** [P] Accessibilité : navigation clavier, contrastes, `lang="en"`, titres hiérarchisés (ENF6). Vérification manuelle avec capture d'écran clair et sombre.
-- [ ] **T028** [P] README : section « Web interface » (déclarer des déploiements, `eyeship serve`, `--save` en CI et historique, `--format html`, conseils de sécurité). Exemple `examples/.eyeship.toml`.
+- [ ] **T028** [P] README : section « Web interface » (déclarer des déploiements, `eyeship serve`, `--format sarif` et exemple GitHub Code Scanning, `--save` en CI et historique, `--format html`, conseils de sécurité). Exemple `examples/.eyeship.toml`.
 - [ ] **T029** Passer spec et plan au statut « Validé », cocher les tâches.
