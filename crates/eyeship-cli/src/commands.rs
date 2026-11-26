@@ -5,10 +5,11 @@ use std::path::PathBuf;
 
 use eyeship_compose::{Env, FileSystem};
 use eyeship_domain::{FailOn, RULES, Rule, rules};
+use eyeship_history::{Clock, SaveRequest, Store, save};
 use eyeship_report::{Format, render, render_explain, render_rules};
 
 use crate::cli::{Command, ComposeArgs, OutputFormat};
-use crate::config::{Config, load_config};
+use crate::config::{Config, DEFAULT_DEPLOYMENT, load_config};
 use crate::pipeline::{Target, execute, plan};
 
 /// No finding at or above the threshold.
@@ -16,10 +17,15 @@ pub const SUCCESS: u8 = 0;
 /// Usage or read error.
 pub const USAGE_ERROR: u8 = 2;
 
+const TOOL_VERSION: &str = env!("CARGO_PKG_VERSION");
+
 /// What the commands need from the outside world.
 pub struct Context<'a> {
     pub fs: &'a dyn FileSystem,
     pub env: &'a dyn Env,
+    /// Where saved reports are written.
+    pub store: &'a dyn Store,
+    pub clock: &'a dyn Clock,
     pub working_dir: PathBuf,
     /// Whether text output may use colors.
     pub color: bool,
@@ -60,10 +66,26 @@ pub fn run_compose(
                 OutputFormat::Json => Format::Json,
                 OutputFormat::Sarif => Format::Sarif,
             };
-            match render(&report, format, env!("CARGO_PKG_VERSION"), out) {
-                Ok(()) => report.exit_code(plan.fail_on),
-                Err(error) => report_error(err, &format!("cannot write the output: {error}")),
+            if let Err(error) = render(&report, format, TOOL_VERSION, out) {
+                return report_error(err, &format!("cannot write the output: {error}"));
             }
+            if args.save {
+                let request = SaveRequest {
+                    deployment: args.deployment.as_deref().unwrap_or(DEFAULT_DEPLOYMENT),
+                    fail_on: plan.fail_on,
+                    label: args.label.as_deref(),
+                    now_millis: context.clock.now_millis(),
+                    tool_version: TOOL_VERSION,
+                };
+                let root = context.working_dir.join(config.reports_dir());
+                if let Err(error) = save(context.store, &root, &report, &request) {
+                    return report_error(
+                        err,
+                        &format!("cannot save the report in {}: {error}", root.display()),
+                    );
+                }
+            }
+            report.exit_code(plan.fail_on)
         }
     }
 }
@@ -121,6 +143,7 @@ mod tests {
     use std::path::PathBuf;
 
     use eyeship_compose::{MemoryEnv, MemoryFileSystem};
+    use eyeship_history::{FixedClock, MemoryStore};
 
     use crate::cli::{OutputFormat, Threshold};
 
@@ -195,6 +218,8 @@ mod tests {
             fail_on: None,
             ignore: Vec::new(),
             deployment: None,
+            save: false,
+            label: None,
         }
     }
 
@@ -203,6 +228,15 @@ mod tests {
     }
 
     fn run_with_config(content: &str, config: Option<&str>, args: &ComposeArgs) -> Output {
+        run_with_store(content, config, args, &MemoryStore::default())
+    }
+
+    fn run_with_store(
+        content: &str,
+        config: Option<&str>,
+        args: &ComposeArgs,
+        store: &dyn Store,
+    ) -> Output {
         let fs = MemoryFileSystem::new(
             std::iter::once(("/work/compose.yaml", content))
                 .chain(config.map(|config| ("/work/.eyeship.toml", config))),
@@ -211,10 +245,84 @@ mod tests {
         let context = Context {
             fs: &fs,
             env: &env,
+            store,
+            clock: &FixedClock(1_764_157_637_123),
             working_dir: PathBuf::from("/work"),
             color: false,
         };
         capture(|out, err| run(&Command::Compose(args.clone()), &context, out, err))
+    }
+
+    #[test]
+    fn save_writes_the_report_without_changing_the_output() {
+        let store = MemoryStore::default();
+        let args = ComposeArgs {
+            save: true,
+            label: Some("abc".into()),
+            ..deployment_args("prod")
+        };
+        let saved = run_with_store(CONFLICT, Some(DEPLOYMENTS), &args, &store);
+        let plain = run_with_config(CONFLICT, Some(DEPLOYMENTS), &deployment_args("prod"));
+        assert_eq!((saved.code, &saved.out), (plain.code, &plain.out));
+        assert!(saved.err.is_empty(), "{}", saved.err);
+        assert_eq!(
+            store.paths(),
+            [PathBuf::from(
+                "/work/.eyeship/reports/prod/2025-11-26T11-47-17.123Z.sarif"
+            )]
+        );
+    }
+
+    #[test]
+    fn save_without_a_deployment_uses_the_default_one_and_the_configured_dir() {
+        let store = MemoryStore::default();
+        let args = ComposeArgs {
+            save: true,
+            ..compose_args(None)
+        };
+        let output = run_with_store(CLEAN, Some("reports_dir = \"out\"\n"), &args, &store);
+        assert_eq!(output.code, SUCCESS, "{}", output.err);
+        assert_eq!(
+            store.paths(),
+            [PathBuf::from(
+                "/work/out/default/2025-11-26T11-47-17.123Z.sarif"
+            )]
+        );
+    }
+
+    struct ReadOnly;
+
+    impl Store for ReadOnly {
+        fn files(&self, _: &std::path::Path) -> io::Result<Vec<String>> {
+            Ok(Vec::new())
+        }
+        fn dirs(&self, _: &std::path::Path) -> io::Result<Vec<String>> {
+            Ok(Vec::new())
+        }
+        fn read(&self, _: &std::path::Path) -> io::Result<String> {
+            Err(io::Error::from(io::ErrorKind::NotFound))
+        }
+        fn exists(&self, _: &std::path::Path) -> bool {
+            false
+        }
+        fn write_atomically(&self, _: &std::path::Path, _: &str) -> io::Result<()> {
+            Err(io::Error::from(io::ErrorKind::PermissionDenied))
+        }
+    }
+
+    #[test]
+    fn a_failed_save_is_a_usage_error() {
+        let args = ComposeArgs {
+            save: true,
+            ..compose_args(None)
+        };
+        let output = run_with_store(CLEAN, None, &args, &ReadOnly);
+        assert_eq!(output.code, USAGE_ERROR);
+        assert!(
+            output.err.contains("cannot save the report"),
+            "{}",
+            output.err
+        );
     }
 
     #[test]

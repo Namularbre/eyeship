@@ -260,6 +260,7 @@ dependencies = [
  "clap",
  "eyeship-compose",
  "eyeship-domain",
+ "eyeship-history",
  "eyeship-report",
  "eyeship-web",
  "insta",
@@ -282,6 +283,15 @@ dependencies = [
 [[package]]
 name = "eyeship-domain"
 version = "0.1.0"
+
+[[package]]
+name = "eyeship-history"
+version = "0.1.0"
+dependencies = [
+ "eyeship-domain",
+ "eyeship-report",
+ "tempfile",
+]
 
 [[package]]
 name = "eyeship-report"

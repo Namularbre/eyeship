@@ -50,6 +50,12 @@ pub struct ComposeArgs {
     /// Rule IDs to ignore, comma-separated (added to those of `.eyeship.toml`).
     #[arg(long, value_name = "IDS", value_delimiter = ',')]
     pub ignore: Vec<String>,
+    /// Also save the report (SARIF) in the deployment's history.
+    #[arg(long)]
+    pub save: bool,
+    /// Label of the saved report, such as a commit SHA.
+    #[arg(long, value_name = "TEXT", requires = "save")]
+    pub label: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
@@ -114,8 +120,18 @@ mod tests {
                 fail_on: None,
                 ignore: Vec::new(),
                 deployment: None,
+                save: false,
+                label: None,
             }
         );
+    }
+
+    #[test]
+    fn a_label_requires_save() {
+        assert!(parse(&["compose", "--label", "abc"]).is_err());
+        let args = compose(&["--save", "--label", "abc"]);
+        assert!(args.save);
+        assert_eq!(args.label, Some("abc".into()));
     }
 
     #[test]
