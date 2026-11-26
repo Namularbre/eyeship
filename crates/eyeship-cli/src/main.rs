@@ -4,6 +4,8 @@
 mod cli;
 mod commands;
 mod config;
+mod pipeline;
+mod ui;
 
 use std::env;
 use std::io::{self, IsTerminal};
@@ -11,6 +13,7 @@ use std::process::ExitCode;
 
 use clap::Parser;
 use eyeship_compose::{ProcessEnv, RealFileSystem};
+use eyeship_history::{RealStore, SystemClock};
 use eyeship_report::should_color;
 
 fn main() -> ExitCode {
@@ -19,6 +22,8 @@ fn main() -> ExitCode {
     let context = commands::Context {
         fs: &RealFileSystem,
         env: &ProcessEnv,
+        store: &RealStore,
+        clock: &SystemClock,
         working_dir: env::current_dir().unwrap_or_default(),
         color: should_color(io::stdout().is_terminal(), no_color.as_deref()),
     };

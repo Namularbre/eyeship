@@ -14,5 +14,6 @@ RUN cargo build --release --locked -p eyeship-cli \
 FROM scratch
 COPY --from=builder /eyeship /eyeship
 WORKDIR /work
+EXPOSE 7878
 ENTRYPOINT ["/eyeship"]
 CMD ["--help"]

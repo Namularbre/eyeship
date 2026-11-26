@@ -14,7 +14,7 @@ L'outil répond à une seule question : *« Qu'est-ce qui, dans cette configurat
 
 - Sur son PC, en local, pour tester avant de déployer.
 - Dans un pipeline CI/CD, pour bloquer automatiquement une configuration risquée.
-- Plus tard, sur le web via une interface (dashboard). Hors MVP : l'architecture hexagonale doit simplement le rendre possible sans réécriture.
+- Sur le web, via une interface **locale** servie par le binaire (`eyeship ui`) : vue des déploiements et lecture des rapports et de leur historique. L'interface est en lecture seule, hors ligne, sans démon Docker ; seule la CLI enregistre des rapports, sur demande explicite (`--save`). *(Amendement du 2026-11-26, spec 004.)*
 
 ## 3. Positionnement
 

@@ -33,6 +33,11 @@ eyeship compose infra/compose.yaml              # a specific file
 eyeship compose -f compose.yaml -f compose.prod.yaml   # several files, merged in order
 eyeship compose --env-file .env.prod            # variables used for interpolation
 eyeship compose --format json                   # machine-readable output
+eyeship compose --format sarif                  # SARIF 2.1.0 (GitHub Code Scanning, IDEs)
+eyeship compose --format html > report.html     # a self-contained page to share
+eyeship compose --deployment prod               # a deployment declared in .eyeship.toml
+eyeship compose --deployment prod --save        # also save the report in the history
+eyeship ui                                      # local web interface on http://127.0.0.1:7878
 eyeship compose --fail-on warning               # failure threshold: error (default), warning, info, none
 eyeship compose --ignore R015,R016              # ignore rules (ignored findings are still counted)
 eyeship rules                                   # list the rules
@@ -94,10 +99,61 @@ $ echo $?
 1
 ```
 
+## Deployments and history
+
+Declare each target environment once in `.eyeship.toml`; paths are relative to this file:
+
+```toml
+reports_dir = ".eyeship/reports"   # optional, where saved reports go (this is the default)
+
+[deployments.staging]
+files = ["compose.yaml", "compose.staging.yaml"]
+
+[deployments.prod]
+files = ["compose.yaml", "compose.prod.yaml"]
+env_file = ".env.prod"             # optional
+fail_on = "warning"                # optional, overrides the global threshold
+```
+
+`eyeship compose --deployment prod` then runs exactly the same audit as
+`eyeship compose -f compose.yaml -f compose.prod.yaml --env-file .env.prod`.
+Without any `[deployments]` section, there is a single `default` deployment: the Compose file found in the current directory.
+
+`--save` (with an optional `--label`, such as a commit SHA) also writes the report as a SARIF file in
+`<reports_dir>/<deployment>/<date>.sarif`. The standard output and the exit code do not change.
+eyeship never deletes, archives or versions these files: keeping them is up to you.
+
+## Web interface
+
+```sh
+eyeship ui                         # http://127.0.0.1:7878
+eyeship ui --port 0                # any free port
+eyeship ui --reports-dir ci-reports   # show a history downloaded from your CI
+```
+
+- **Deployments**: every declared deployment, audited when the page loads (edit a file, reload), failing ones first, with the trend since the last saved report.
+- **Report**: findings grouped by service, filterable by severity and service; each rule links to its explanation.
+- **History**: saved reports, a chart of findings per severity, and a comparison of two reports (new, resolved and unchanged findings).
+- **Rules**: the same content as `eyeship rules` and `eyeship explain`.
+
+The interface is read-only, works offline and runs no JavaScript. It listens on `127.0.0.1` by default and only answers
+requests addressed to `localhost`. `--host 0.0.0.0` exposes your reports to anyone who can reach the machine: eyeship
+prints a warning, and there is no authentication. In Docker, publish the port on the loopback only:
+`docker run --rm -p 127.0.0.1:7878:7878 -v "$PWD:/work" ghcr.io/namularbre/eyeship ui --host 0.0.0.0`.
+
 ## GitHub Actions integration
 
 ```yaml
 - run: docker run --rm -v "$PWD:/work" ghcr.io/namularbre/eyeship compose --fail-on warning
+```
+
+To show findings in GitHub Code Scanning, upload the SARIF output:
+
+```yaml
+- run: docker run --rm -v "$PWD:/work" ghcr.io/namularbre/eyeship compose --format sarif --fail-on none > eyeship.sarif
+- uses: github/codeql-action/upload-sarif@v3
+  with:
+    sarif_file: eyeship.sarif
 ```
 
 ## Rules

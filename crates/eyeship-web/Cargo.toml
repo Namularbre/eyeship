@@ -1,0 +1,15 @@
+[package]
+name = "eyeship-web"
+description = "Local web interface of eyeship: routes, pages wiring and HTTP server."
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+eyeship-domain.workspace = true
+eyeship-report.workspace = true
+eyeship-history.workspace = true
+tiny_http.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,16 @@
+[package]
+name = "eyeship-history"
+description = "Saved reports of eyeship: one SARIF file per audit, per deployment."
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+eyeship-domain.workspace = true
+eyeship-report.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

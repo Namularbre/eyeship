@@ -1,0 +1,208 @@
+---
+source: crates/eyeship-report/src/html/report.rs
+expression: page
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audit report · eyeship</title>
+<style>
+/* eyeship web interface. No external resource (spec 004 ENF2). */
+:root {
+  color-scheme: light dark;
+  --bg: #f7f7f5;
+  --surface: #ffffff;
+  --border: #dcdcd6;
+  --text: #1c1d1f;
+  --muted: #5d6066;
+  --link: #1f5fbf;
+  --error: #b3261e;
+  --error-bg: #fbe9e7;
+  --warning: #8a5300;
+  --warning-bg: #fdf1dc;
+  --info: #335f8a;
+  --info-bg: #e7eff8;
+  --pass: #1e6b3a;
+  --pass-bg: #e3f3e8;
+  --focus: #1f5fbf;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141517;
+    --surface: #1d1f22;
+    --border: #34373c;
+    --text: #e8e8e6;
+    --muted: #a3a6ad;
+    --link: #8ab4f8;
+    --error: #f2b8b5;
+    --error-bg: #3c1d1b;
+    --warning: #f5c97a;
+    --warning-bg: #3a2c12;
+    --info: #a8c7fa;
+    --info-bg: #1c2b3d;
+    --pass: #9fd8b0;
+    --pass-bg: #17301f;
+    --focus: #8ab4f8;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 var(--sans);
+}
+a { color: var(--link); }
+a:focus-visible, button:focus-visible, select:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+code, .mono { font-family: var(--mono); font-size: 0.92em; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 16px; top: 8px; background: var(--surface); padding: 4px 8px; }
+header.top {
+  display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline;
+  padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--surface);
+}
+header.top .brand { font-weight: 700; color: var(--text); text-decoration: none; }
+header.top nav a { margin-right: 16px; }
+header.top nav a[aria-current="page"] { color: var(--text); font-weight: 600; text-decoration: none; }
+main { max-width: 1040px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 1.5rem; margin: 8px 0 4px; }
+h2 { font-size: 1.15rem; margin: 28px 0 8px; }
+h3 { font-size: 1rem; margin: 16px 0 6px; }
+.sub { color: var(--muted); margin: 0 0 12px; }
+.cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); padding: 0; list-style: none; }
+.card, .finding, .panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px;
+}
+.card h2 { margin: 0 0 6px; font-size: 1.1rem; }
+.card .files { color: var(--muted); font-size: 0.85rem; word-break: break-all; }
+.badge {
+  display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 0.8rem; font-weight: 600;
+  border: 1px solid currentColor;
+}
+.badge.pass { color: var(--pass); background: var(--pass-bg); }
+.badge.fail, .badge.error { color: var(--error); background: var(--error-bg); }
+.badge.unreadable, .badge.warning { color: var(--warning); background: var(--warning-bg); }
+.badge.info { color: var(--info); background: var(--info-bg); }
+.counts { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; padding: 0; list-style: none; }
+.findings { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.finding .head { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+.finding .where { color: var(--muted); font-size: 0.85rem; }
+.finding p { margin: 6px 0 0; }
+.finding .fix { color: var(--muted); }
+.filters { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: end; margin: 8px 0 16px; }
+.filters label { display: grid; gap: 2px; font-size: 0.85rem; color: var(--muted); }
+select, button {
+  font: inherit; color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px;
+}
+button { cursor: pointer; }
+table { width: 100%; border-collapse: collapse; background: var(--surface); }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+td:first-child { white-space: nowrap; }
+th { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+.chart { width: 100%; height: auto; max-height: 220px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+.chart .axis { stroke: var(--border); }
+.chart .line { fill: none; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.chart .line.error { stroke: var(--error); }
+.chart .line.warning { stroke: var(--warning); stroke-dasharray: 6 3; }
+.chart .line.info { stroke: var(--info); stroke-dasharray: 2 3; }
+.legend { display: flex; gap: 16px; font-size: 0.85rem; color: var(--muted); margin: 4px 0 0; padding: 0; list-style: none; }
+.notice { border-left: 4px solid var(--info); padding: 8px 12px; background: var(--info-bg); border-radius: 4px; }
+.notice.error { border-color: var(--error); background: var(--error-bg); }
+pre { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; overflow-x: auto; }
+details summary { cursor: pointer; }
+.empty { color: var(--muted); }
+footer { color: var(--muted); font-size: 0.8rem; text-align: center; padding: 24px 16px; }
+@media (max-width: 600px) {
+  body { font-size: 14px; }
+  main { padding: 12px; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><span class="brand">eyeship</span></header>
+<main id="main">
+<h1>Audit report</h1><p class="sub"><code>compose.yaml</code>, <code>compose.override.yaml</code></p><ul class="counts" aria-label="Findings per severity"><li><span class="badge error">2 errors</span></li><li><span class="badge warning">1 warning</span></li><li><span class="badge info">1 info</span></li><li><span class="badge">2 ignored by configuration</span></li></ul><h3>Project</h3><ul class="findings"><li class="finding"><div class="head"><span class="badge info">info</span> <a href="#rule-R017"><code>R017</code></a> <span class="where mono">compose.yaml:1:1</span></div><p>the root `version` key is obsolete</p><p class="fix">Fix: Remove the `version` key</p></li></ul><h3>Service <code>api</code></h3><ul class="findings"><li class="finding"><div class="head"><span class="badge error">error</span> <a href="#rule-R005"><code>R005</code></a> <span class="where mono">compose.yaml:4:5</span></div><p>volume &#39;data&#39; is not declared at the root</p><p class="fix">Fix: Declare &#39;data&#39; under the root `volumes:` key</p></li><li class="finding"><div class="head"><span class="badge warning">warning</span> <a href="#rule-R001"><code>R001</code></a> <span class="where mono">compose.override.yaml:3:7</span></div><p>depends_on &#39;db&#39; does not wait for the service to be healthy</p><p class="fix">Fix: Use `condition: service_healthy` and add a healthcheck to &#39;db&#39;</p></li></ul><h3>Service <code>db</code></h3><ul class="findings"><li class="finding"><div class="head"><span class="badge error">error</span> <a href="#rule-R002"><code>R002</code></a> <span class="where mono">compose.yaml:9:12</span></div><p>image &#39;postgres&#39; has no tag</p><p class="fix">Fix: Pin a version, e.g. `postgres:16.4`</p></li></ul><h2>Rules</h2><details id="rule-R001"><summary><code>R001</code> depends_on without health condition</summary><p>Default severity: <span class="badge warning">warning</span></p><h3>Failure scenario</h3><p>With the short list syntax or `condition: service_started`, the dependent service starts as soon as its dependency is launched, not when it is ready. It gets connection refused at startup and crashes.</p><h3>Fix</h3><p>Use `condition: service_healthy` and give the dependency a healthcheck.</p><h3>Bad example</h3><pre><code>services:
+  api:
+    image: acme/api:1.4.2
+    depends_on:
+      - db
+  db:
+    image: postgres:16.4
+</code></pre><h3>Good example</h3><pre><code>services:
+  api:
+    image: acme/api:1.4.2
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16.4
+    healthcheck:
+      test: [&quot;CMD-SHELL&quot;, &quot;pg_isready -U postgres&quot;]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+</code></pre></details><details id="rule-R002"><summary><code>R002</code> depends_on towards a service without healthcheck</summary><p>Default severity: <span class="badge error">error</span></p><h3>Failure scenario</h3><p>`condition: service_healthy` towards a service that has no healthcheck (or whose healthcheck is disabled): the dependency never becomes healthy and the deployment fails.</p><h3>Fix</h3><p>Add a healthcheck to the dependency, or remove `disable: true` from it.</p><h3>Bad example</h3><pre><code>services:
+  api:
+    image: acme/api:1.4.2
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16.4
+</code></pre><h3>Good example</h3><pre><code>services:
+  api:
+    image: acme/api:1.4.2
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16.4
+    healthcheck:
+      test: [&quot;CMD-SHELL&quot;, &quot;pg_isready -U postgres&quot;]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+</code></pre></details><details id="rule-R004"><summary><code>R004</code> Inconsistent healthcheck</summary><p>Default severity: <span class="badge warning">warning</span></p><h3>Failure scenario</h3><p>A `timeout` greater than or equal to `interval` makes checks overlap and flags the service unhealthy by mistake; `retries: 0` means the service is never reliably detected as unhealthy.</p><h3>Fix</h3><p>Keep `timeout` strictly below `interval` and set `retries` to at least 1 (3 is common).</p><h3>Bad example</h3><pre><code>services:
+  api:
+    image: acme/api:1.4.2
+    healthcheck:
+      test: [&quot;CMD&quot;, &quot;curl&quot;, &quot;-f&quot;, &quot;http://localhost:8080/health&quot;]
+      interval: 10s
+      timeout: 30s
+      retries: 0
+</code></pre><h3>Good example</h3><pre><code>services:
+  api:
+    image: acme/api:1.4.2
+    healthcheck:
+      test: [&quot;CMD&quot;, &quot;curl&quot;, &quot;-f&quot;, &quot;http://localhost:8080/health&quot;]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+</code></pre></details><details id="rule-R005"><summary><code>R005</code> No restart policy</summary><p>Default severity: <span class="badge warning">warning</span></p><h3>Failure scenario</h3><p>Without a restart policy (or with `restart: &quot;no&quot;`), a single crash leaves the service down until someone restarts it by hand, and it does not come back after a host reboot. One-shot jobs awaited with `service_completed_successfully` are exempt.</p><h3>Fix</h3><p>Set `restart: unless-stopped` (or `always`, or `on-failure` for jobs that may fail).</p><h3>Bad example</h3><pre><code>services:
+  api:
+    image: ghcr.io/acme/api:1.4.2
+</code></pre><h3>Good example</h3><pre><code>services:
+  api:
+    image: ghcr.io/acme/api:1.4.2
+    restart: unless-stopped
+</code></pre></details><details id="rule-R017"><summary><code>R017</code> Obsolete version key</summary><p>Default severity: <span class="badge info">info</span></p><h3>Failure scenario</h3><p>The root `version` key is ignored by Compose v2, which prints a warning on every command: it is noise that hides real warnings and suggests a file format that no longer exists.</p><h3>Fix</h3><p>Remove the root `version` key.</p><h3>Bad example</h3><pre><code>version: &quot;3.8&quot;
+services:
+  api:
+    image: ghcr.io/acme/api:1.4.2
+</code></pre><h3>Good example</h3><pre><code>services:
+  api:
+    image: ghcr.io/acme/api:1.4.2
+</code></pre></details></main>
+<footer>eyeship 0.1.0 · static audit, nothing was run</footer>
+</body>
+</html>

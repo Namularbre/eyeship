@@ -3,22 +3,30 @@
 use std::io::{self, Write};
 use std::path::PathBuf;
 
-use eyeship_compose::{Env, FileSystem, LoadRequest, load};
-use eyeship_domain::{AuditConfig, FailOn, RULES, Rule, audit, rules};
+use eyeship_compose::{Env, FileSystem};
+use eyeship_domain::{FailOn, RULES, Rule, rules};
+use eyeship_history::{Clock, SaveRequest, Store, save};
 use eyeship_report::{Format, render, render_explain, render_rules};
 
 use crate::cli::{Command, ComposeArgs, OutputFormat};
-use crate::config::load_config;
+use crate::config::{Config, DEFAULT_DEPLOYMENT, load_config};
+use crate::pipeline::{Target, execute, plan};
+use crate::ui::run_ui;
 
 /// No finding at or above the threshold.
 pub const SUCCESS: u8 = 0;
 /// Usage or read error.
 pub const USAGE_ERROR: u8 = 2;
 
+const TOOL_VERSION: &str = env!("CARGO_PKG_VERSION");
+
 /// What the commands need from the outside world.
 pub struct Context<'a> {
     pub fs: &'a dyn FileSystem,
     pub env: &'a dyn Env,
+    /// Where saved reports are written.
+    pub store: &'a dyn Store,
+    pub clock: &'a dyn Clock,
     pub working_dir: PathBuf,
     /// Whether text output may use colors.
     pub color: bool,
@@ -30,6 +38,7 @@ pub fn run(command: &Command, context: &Context, out: &mut dyn Write, err: &mut 
         Command::Compose(args) => run_compose(args, context, out, err),
         Command::Rules => run_rules(RULES, out, err),
         Command::Explain { id } => run_explain(rules::find(id), id, out, err),
+        Command::Ui(args) => run_ui(args, context, err),
     }
 }
 
@@ -44,40 +53,62 @@ pub fn run_compose(
         Ok(config) => config,
         Err(error) => return report_error(err, &error.to_string()),
     };
-    let request = LoadRequest {
-        files: args.file.iter().chain(&args.files).cloned().collect(),
-        env_file: args.env_file.clone(),
-        working_dir: context.working_dir.clone(),
+    let target = match target(args, &config) {
+        Ok(target) => target,
+        Err(message) => return report_error(err, &message),
     };
-    match load(&request, context.fs, context.env) {
+    let plan = plan(&target, &config, &context.working_dir);
+    match execute(&plan, context.fs, context.env) {
         Err(error) => report_error(err, &error.to_string()),
-        Ok(project) => {
-            let fail_on = args
-                .fail_on
-                .map(FailOn::from)
-                .or(config.fail_on)
-                .unwrap_or_default();
-            let audit_config = AuditConfig {
-                ignored_rules: config
-                    .ignored_rules
-                    .into_iter()
-                    .chain(args.ignore.iter().map(|id| id.trim().to_uppercase()))
-                    .collect(),
-                ignored_for_service: config.ignored_for_service,
-            };
-            let report = audit(&project, RULES, &audit_config);
+        Ok(report) => {
             let format = match args.format {
                 OutputFormat::Text => Format::Text {
                     color: context.color,
                 },
                 OutputFormat::Json => Format::Json,
+                OutputFormat::Sarif => Format::Sarif,
+                OutputFormat::Html => Format::Html,
             };
-            match render(&report, format, env!("CARGO_PKG_VERSION"), out) {
-                Ok(()) => report.exit_code(fail_on),
-                Err(error) => report_error(err, &format!("cannot write the output: {error}")),
+            if let Err(error) = render(&report, format, TOOL_VERSION, out) {
+                return report_error(err, &format!("cannot write the output: {error}"));
             }
+            if args.save {
+                let request = SaveRequest {
+                    deployment: args.deployment.as_deref().unwrap_or(DEFAULT_DEPLOYMENT),
+                    fail_on: plan.fail_on,
+                    label: args.label.as_deref(),
+                    now_millis: context.clock.now_millis(),
+                    tool_version: TOOL_VERSION,
+                };
+                let root = context.working_dir.join(config.reports_dir());
+                if let Err(error) = save(context.store, &root, &report, &request) {
+                    return report_error(
+                        err,
+                        &format!("cannot save the report in {}: {error}", root.display()),
+                    );
+                }
+            }
+            report.exit_code(plan.fail_on)
         }
     }
+}
+
+/// What the arguments ask to audit: explicit files, or a declared deployment.
+/// Command-line options override the deployment's threshold and add ignores.
+fn target(args: &ComposeArgs, config: &Config) -> Result<Target, String> {
+    let base = match &args.deployment {
+        Some(name) => Target::from(&config.deployment(name)?),
+        None => Target {
+            files: args.file.iter().chain(&args.files).cloned().collect(),
+            env_file: args.env_file.clone(),
+            ..Target::default()
+        },
+    };
+    Ok(Target {
+        fail_on: args.fail_on.map(FailOn::from).or(base.fail_on),
+        ignore: args.ignore.clone(),
+        ..base
+    })
 }
 
 fn run_rules(rules: &[Rule], out: &mut dyn Write, err: &mut dyn Write) -> u8 {
@@ -101,7 +132,7 @@ fn exit_code(written: io::Result<()>, err: &mut dyn Write) -> u8 {
     }
 }
 
-fn report_error(err: &mut dyn Write, message: &str) -> u8 {
+pub(crate) fn report_error(err: &mut dyn Write, message: &str) -> u8 {
     // Nothing more can be done if stderr itself is unwritable.
     let _ = writeln!(err, "error: {message}");
     USAGE_ERROR
@@ -115,6 +146,7 @@ mod tests {
     use std::path::PathBuf;
 
     use eyeship_compose::{MemoryEnv, MemoryFileSystem};
+    use eyeship_history::{FixedClock, MemoryStore};
 
     use crate::cli::{OutputFormat, Threshold};
 
@@ -188,6 +220,9 @@ mod tests {
             format: OutputFormat::Text,
             fail_on: None,
             ignore: Vec::new(),
+            deployment: None,
+            save: false,
+            label: None,
         }
     }
 
@@ -196,6 +231,15 @@ mod tests {
     }
 
     fn run_with_config(content: &str, config: Option<&str>, args: &ComposeArgs) -> Output {
+        run_with_store(content, config, args, &MemoryStore::default())
+    }
+
+    fn run_with_store(
+        content: &str,
+        config: Option<&str>,
+        args: &ComposeArgs,
+        store: &dyn Store,
+    ) -> Output {
         let fs = MemoryFileSystem::new(
             std::iter::once(("/work/compose.yaml", content))
                 .chain(config.map(|config| ("/work/.eyeship.toml", config))),
@@ -204,10 +248,84 @@ mod tests {
         let context = Context {
             fs: &fs,
             env: &env,
+            store,
+            clock: &FixedClock(1_764_157_637_123),
             working_dir: PathBuf::from("/work"),
             color: false,
         };
         capture(|out, err| run(&Command::Compose(args.clone()), &context, out, err))
+    }
+
+    #[test]
+    fn save_writes_the_report_without_changing_the_output() {
+        let store = MemoryStore::default();
+        let args = ComposeArgs {
+            save: true,
+            label: Some("abc".into()),
+            ..deployment_args("prod")
+        };
+        let saved = run_with_store(CONFLICT, Some(DEPLOYMENTS), &args, &store);
+        let plain = run_with_config(CONFLICT, Some(DEPLOYMENTS), &deployment_args("prod"));
+        assert_eq!((saved.code, &saved.out), (plain.code, &plain.out));
+        assert!(saved.err.is_empty(), "{}", saved.err);
+        assert_eq!(
+            store.paths(),
+            [PathBuf::from(
+                "/work/.eyeship/reports/prod/2025-11-26T11-47-17.123Z.sarif"
+            )]
+        );
+    }
+
+    #[test]
+    fn save_without_a_deployment_uses_the_default_one_and_the_configured_dir() {
+        let store = MemoryStore::default();
+        let args = ComposeArgs {
+            save: true,
+            ..compose_args(None)
+        };
+        let output = run_with_store(CLEAN, Some("reports_dir = \"out\"\n"), &args, &store);
+        assert_eq!(output.code, SUCCESS, "{}", output.err);
+        assert_eq!(
+            store.paths(),
+            [PathBuf::from(
+                "/work/out/default/2025-11-26T11-47-17.123Z.sarif"
+            )]
+        );
+    }
+
+    struct ReadOnly;
+
+    impl Store for ReadOnly {
+        fn files(&self, _: &std::path::Path) -> io::Result<Vec<String>> {
+            Ok(Vec::new())
+        }
+        fn dirs(&self, _: &std::path::Path) -> io::Result<Vec<String>> {
+            Ok(Vec::new())
+        }
+        fn read(&self, _: &std::path::Path) -> io::Result<String> {
+            Err(io::Error::from(io::ErrorKind::NotFound))
+        }
+        fn exists(&self, _: &std::path::Path) -> bool {
+            false
+        }
+        fn write_atomically(&self, _: &std::path::Path, _: &str) -> io::Result<()> {
+            Err(io::Error::from(io::ErrorKind::PermissionDenied))
+        }
+    }
+
+    #[test]
+    fn a_failed_save_is_a_usage_error() {
+        let args = ComposeArgs {
+            save: true,
+            ..compose_args(None)
+        };
+        let output = run_with_store(CLEAN, None, &args, &ReadOnly);
+        assert_eq!(output.code, USAGE_ERROR);
+        assert!(
+            output.err.contains("cannot save the report"),
+            "{}",
+            output.err
+        );
     }
 
     #[test]
@@ -317,6 +435,57 @@ mod tests {
             output.err
         );
         assert!(output.err.contains("R999"), "{}", output.err);
+    }
+
+    const DEPLOYMENTS: &str = "[deployments.prod]\nfiles = [\"compose.yaml\"]\n\
+        [deployments.lenient]\nfiles = [\"compose.yaml\"]\nfail_on = \"none\"\n";
+
+    fn deployment_args(name: &str) -> ComposeArgs {
+        ComposeArgs {
+            deployment: Some(name.into()),
+            ..compose_args(None)
+        }
+    }
+
+    #[test]
+    fn a_declared_deployment_is_audited_by_name() {
+        let output = run_with_config(CONFLICT, Some(DEPLOYMENTS), &deployment_args("prod"));
+        assert_eq!(output.code, 1, "{}", output.err);
+        assert!(output.out.contains("R009"));
+    }
+
+    #[test]
+    fn the_deployment_threshold_applies_unless_overridden() {
+        let lenient = deployment_args("lenient");
+        assert_eq!(
+            run_with_config(CONFLICT, Some(DEPLOYMENTS), &lenient).code,
+            SUCCESS
+        );
+        let overridden = ComposeArgs {
+            fail_on: Some(Threshold::Error),
+            ..lenient
+        };
+        assert_eq!(
+            run_with_config(CONFLICT, Some(DEPLOYMENTS), &overridden).code,
+            1
+        );
+    }
+
+    #[test]
+    fn an_unknown_deployment_is_a_usage_error() {
+        let output = run_with_config(CLEAN, Some(DEPLOYMENTS), &deployment_args("dev"));
+        assert_eq!(output.code, USAGE_ERROR);
+        assert!(output.out.is_empty());
+        assert_eq!(
+            output.err,
+            "error: unknown deployment 'dev' (declared: lenient, prod)\n"
+        );
+    }
+
+    #[test]
+    fn the_implicit_default_deployment_is_the_discovered_file() {
+        let output = run_on(CONFLICT, &deployment_args("default"));
+        assert_eq!(output.code, 1, "{}", output.err);
     }
 
     struct Broken;
