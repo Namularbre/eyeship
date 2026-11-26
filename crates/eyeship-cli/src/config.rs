@@ -5,6 +5,12 @@
 //! ignore = ["R015", "R016"]    # optional, every service
 //! [services.api]
 //! ignore = ["R006"]            # one service only
+//!
+//! reports_dir = ".eyeship/reports"   # optional, where `--save` writes
+//! [deployments.prod]                 # named deployments (spec 004)
+//! files = ["compose.yaml", "compose.prod.yaml"]
+//! env_file = ".env.prod"             # optional
+//! fail_on = "error"                  # optional, overrides the global threshold
 //! ```
 //!
 //! Unknown keys, unknown thresholds and unknown rule IDs are errors, so a
@@ -21,12 +27,69 @@ use serde::Deserialize;
 /// Name of the configuration file.
 pub const FILE_NAME: &str = ".eyeship.toml";
 
+/// Default directory of saved reports, relative to the configuration file.
+pub const DEFAULT_REPORTS_DIR: &str = ".eyeship/reports";
+
 /// A validated configuration: canonical rule IDs and a parsed threshold.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Config {
     pub fail_on: Option<FailOn>,
     pub ignored_rules: Vec<String>,
     pub ignored_for_service: Vec<(String, String)>,
+    /// Declared deployments, sorted by name.
+    pub deployments: Vec<Deployment>,
+    /// Where saved reports go, relative to the configuration file.
+    pub reports_dir: Option<PathBuf>,
+}
+
+/// A named deployment: the Compose files and variables of one target environment.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct Deployment {
+    pub name: String,
+    /// Compose files, merged in order; empty discovers the default file.
+    pub files: Vec<PathBuf>,
+    pub env_file: Option<PathBuf>,
+    pub fail_on: Option<FailOn>,
+}
+
+/// Name of the implicit deployment used when none is declared.
+pub const DEFAULT_DEPLOYMENT: &str = "default";
+
+impl Config {
+    /// The deployments to show: the declared ones, or the implicit `default`.
+    pub fn effective_deployments(&self) -> Vec<Deployment> {
+        if self.deployments.is_empty() {
+            vec![Deployment {
+                name: DEFAULT_DEPLOYMENT.into(),
+                ..Deployment::default()
+            }]
+        } else {
+            self.deployments.clone()
+        }
+    }
+
+    /// Finds a deployment by name, or explains which names exist.
+    pub fn deployment(&self, name: &str) -> Result<Deployment, String> {
+        let deployments = self.effective_deployments();
+        deployments
+            .iter()
+            .find(|deployment| deployment.name == name)
+            .cloned()
+            .ok_or_else(|| {
+                let known: Vec<&str> = deployments.iter().map(|d| d.name.as_str()).collect();
+                format!(
+                    "unknown deployment '{name}' (declared: {})",
+                    known.join(", ")
+                )
+            })
+    }
+
+    /// The directory of saved reports, relative to the configuration file.
+    pub fn reports_dir(&self) -> PathBuf {
+        self.reports_dir
+            .clone()
+            .unwrap_or_else(|| PathBuf::from(DEFAULT_REPORTS_DIR))
+    }
 }
 
 /// A configuration file that cannot be read or is invalid.
@@ -55,6 +118,18 @@ struct RawConfig {
     ignore: Vec<String>,
     #[serde(default)]
     services: BTreeMap<String, RawService>,
+    reports_dir: Option<String>,
+    #[serde(default)]
+    deployments: BTreeMap<String, RawDeployment>,
+}
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct RawDeployment {
+    #[serde(default)]
+    files: Vec<String>,
+    env_file: Option<String>,
+    fail_on: Option<String>,
 }
 
 #[derive(Debug, Default, Deserialize)]
@@ -92,11 +167,42 @@ pub fn parse_config(content: &str) -> Result<Config, String> {
         })
         .collect::<Result<Vec<Vec<_>>, _>>()?
         .concat();
+    let deployments = raw
+        .deployments
+        .into_iter()
+        .map(|(name, raw)| deployment(name, raw))
+        .collect::<Result<_, _>>()?;
     Ok(Config {
         fail_on,
         ignored_rules,
         ignored_for_service,
+        deployments,
+        reports_dir: raw.reports_dir.map(PathBuf::from),
     })
+}
+
+fn deployment(name: String, raw: RawDeployment) -> Result<Deployment, String> {
+    if !is_valid_deployment_name(&name) {
+        return Err(format!(
+            "invalid deployment name '{name}' (expected lowercase letters, digits and '-', starting with a letter or digit)"
+        ));
+    }
+    let fail_on = raw.fail_on.as_deref().map(str::parse).transpose()?;
+    Ok(Deployment {
+        name,
+        files: raw.files.into_iter().map(PathBuf::from).collect(),
+        env_file: raw.env_file.map(PathBuf::from),
+        fail_on,
+    })
+}
+
+/// Deployment names appear in URLs and file paths: `[a-z0-9][a-z0-9-]*`.
+pub fn is_valid_deployment_name(name: &str) -> bool {
+    let mut chars = name.chars();
+    chars
+        .next()
+        .is_some_and(|first| first.is_ascii_lowercase() || first.is_ascii_digit())
+        && chars.all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
 }
 
 fn canonical_ids(ids: &[String]) -> Result<Vec<String>, String> {
@@ -132,8 +238,89 @@ mod tests {
                 fail_on: Some(FailOn::Warning),
                 ignored_rules: vec!["R015".into(), "R016".into()],
                 ignored_for_service: vec![("api".into(), "R006".into())],
+                ..Config::default()
             })
         );
+    }
+
+    #[test]
+    fn parses_deployments_sorted_by_name() {
+        let config = parse_config(
+            "reports_dir = \"out/reports\"\n\
+             [deployments.staging]\nfiles = [\"compose.yaml\", \"compose.staging.yaml\"]\n\
+             [deployments.prod]\nfiles = [\"compose.yaml\"]\nenv_file = \".env.prod\"\nfail_on = \"warning\"\n",
+        )
+        .expect("valid configuration");
+        assert_eq!(config.reports_dir(), PathBuf::from("out/reports"));
+        assert_eq!(
+            config.deployments,
+            [
+                Deployment {
+                    name: "prod".into(),
+                    files: vec![PathBuf::from("compose.yaml")],
+                    env_file: Some(PathBuf::from(".env.prod")),
+                    fail_on: Some(FailOn::Warning),
+                },
+                Deployment {
+                    name: "staging".into(),
+                    files: vec![
+                        PathBuf::from("compose.yaml"),
+                        PathBuf::from("compose.staging.yaml")
+                    ],
+                    env_file: None,
+                    fail_on: None,
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn without_deployments_there_is_an_implicit_default() {
+        let config = Config::default();
+        assert_eq!(
+            config.effective_deployments(),
+            [Deployment {
+                name: "default".into(),
+                ..Deployment::default()
+            }]
+        );
+        assert_eq!(config.reports_dir(), PathBuf::from(".eyeship/reports"));
+        assert!(config.deployment("default").is_ok());
+    }
+
+    #[test]
+    fn an_unknown_deployment_lists_the_known_ones() {
+        let config = parse_config("[deployments.prod]\n[deployments.staging]\n").expect("valid");
+        assert_eq!(
+            config.deployment("dev"),
+            Err("unknown deployment 'dev' (declared: prod, staging)".into())
+        );
+        assert!(config.deployment("default").is_err());
+    }
+
+    #[test]
+    fn rejects_an_invalid_deployment_name() {
+        for name in ["Prod", "-prod", "pr od", "\"\"", "prod/1", "été"] {
+            let error = parse_config(&format!("[deployments.{name}]\n"))
+                .expect_err(&format!("'{name}' must be rejected"));
+            assert!(
+                error.contains("deployment name") || error.contains("TOML"),
+                "{name}: {error}"
+            );
+        }
+        assert!(is_valid_deployment_name("prod-eu-1"));
+        assert!(is_valid_deployment_name("2024"));
+    }
+
+    #[test]
+    fn rejects_an_unknown_deployment_key() {
+        let error = parse_config("[deployments.prod]\nfile = [\"a.yaml\"]\n").unwrap_err();
+        assert!(error.contains("file"), "{error}");
+    }
+
+    #[test]
+    fn rejects_an_unknown_deployment_threshold() {
+        assert!(parse_config("[deployments.prod]\nfail_on = \"loud\"\n").is_err());
     }
 
     #[test]

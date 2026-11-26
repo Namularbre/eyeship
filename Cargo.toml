@@ -11,6 +11,7 @@ publish = false
 eyeship-domain = { path = "crates/eyeship-domain" }
 eyeship-compose = { path = "crates/eyeship-compose" }
 eyeship-report = { path = "crates/eyeship-report" }
+eyeship-web = { path = "crates/eyeship-web" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 clap = { version = "4", default-features = false, features = ["std", "derive", "help", "usage", "error-context"] }

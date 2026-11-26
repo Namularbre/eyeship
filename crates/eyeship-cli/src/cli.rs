@@ -31,6 +31,9 @@ pub struct ComposeArgs {
     /// Compose file, or directory holding one, to audit (default: the current directory).
     #[arg(value_name = "FILE")]
     pub file: Option<PathBuf>,
+    /// Audit a deployment declared in `.eyeship.toml` instead of explicit files.
+    #[arg(long, value_name = "NAME", conflicts_with_all = ["file", "files", "env_file"])]
+    pub deployment: Option<String>,
     /// Additional Compose files, merged in order.
     #[arg(short = 'f', long = "file", value_name = "FILE")]
     pub files: Vec<PathBuf>,
@@ -108,8 +111,29 @@ mod tests {
                 format: OutputFormat::Text,
                 fail_on: None,
                 ignore: Vec::new(),
+                deployment: None,
             }
         );
+    }
+
+    #[test]
+    fn parses_a_deployment() {
+        assert_eq!(
+            compose(&["--deployment", "prod"]).deployment,
+            Some("prod".into())
+        );
+    }
+
+    #[test]
+    fn a_deployment_excludes_explicit_files() {
+        for extra in [
+            &["compose.yaml"][..],
+            &["-f", "a.yaml"],
+            &["--env-file", ".env"],
+        ] {
+            let args = [&["compose", "--deployment", "prod"][..], extra].concat();
+            assert!(parse(&args).is_err(), "{extra:?} must conflict");
+        }
     }
 
     #[test]

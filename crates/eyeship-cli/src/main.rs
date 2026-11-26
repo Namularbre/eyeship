@@ -4,6 +4,7 @@
 mod cli;
 mod commands;
 mod config;
+mod pipeline;
 
 use std::env;
 use std::io::{self, IsTerminal};

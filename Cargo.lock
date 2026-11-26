@@ -178,6 +178,7 @@ dependencies = [
  "eyeship-compose",
  "eyeship-domain",
  "eyeship-report",
+ "eyeship-web",
  "insta",
  "serde",
  "serde_json",
@@ -206,6 +207,13 @@ dependencies = [
  "insta",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "eyeship-web"
+version = "0.1.0"
+dependencies = [
+ "eyeship-domain",
 ]
 
 [[package]]

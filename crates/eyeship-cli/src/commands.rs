@@ -3,12 +3,13 @@
 use std::io::{self, Write};
 use std::path::PathBuf;
 
-use eyeship_compose::{Env, FileSystem, LoadRequest, load};
-use eyeship_domain::{AuditConfig, FailOn, RULES, Rule, audit, rules};
+use eyeship_compose::{Env, FileSystem};
+use eyeship_domain::{FailOn, RULES, Rule, rules};
 use eyeship_report::{Format, render, render_explain, render_rules};
 
 use crate::cli::{Command, ComposeArgs, OutputFormat};
-use crate::config::load_config;
+use crate::config::{Config, load_config};
+use crate::pipeline::{Target, execute, plan};
 
 /// No finding at or above the threshold.
 pub const SUCCESS: u8 = 0;
@@ -44,28 +45,14 @@ pub fn run_compose(
         Ok(config) => config,
         Err(error) => return report_error(err, &error.to_string()),
     };
-    let request = LoadRequest {
-        files: args.file.iter().chain(&args.files).cloned().collect(),
-        env_file: args.env_file.clone(),
-        working_dir: context.working_dir.clone(),
+    let target = match target(args, &config) {
+        Ok(target) => target,
+        Err(message) => return report_error(err, &message),
     };
-    match load(&request, context.fs, context.env) {
+    let plan = plan(&target, &config, &context.working_dir);
+    match execute(&plan, context.fs, context.env) {
         Err(error) => report_error(err, &error.to_string()),
-        Ok(project) => {
-            let fail_on = args
-                .fail_on
-                .map(FailOn::from)
-                .or(config.fail_on)
-                .unwrap_or_default();
-            let audit_config = AuditConfig {
-                ignored_rules: config
-                    .ignored_rules
-                    .into_iter()
-                    .chain(args.ignore.iter().map(|id| id.trim().to_uppercase()))
-                    .collect(),
-                ignored_for_service: config.ignored_for_service,
-            };
-            let report = audit(&project, RULES, &audit_config);
+        Ok(report) => {
             let format = match args.format {
                 OutputFormat::Text => Format::Text {
                     color: context.color,
@@ -73,11 +60,29 @@ pub fn run_compose(
                 OutputFormat::Json => Format::Json,
             };
             match render(&report, format, env!("CARGO_PKG_VERSION"), out) {
-                Ok(()) => report.exit_code(fail_on),
+                Ok(()) => report.exit_code(plan.fail_on),
                 Err(error) => report_error(err, &format!("cannot write the output: {error}")),
             }
         }
     }
+}
+
+/// What the arguments ask to audit: explicit files, or a declared deployment.
+/// Command-line options override the deployment's threshold and add ignores.
+fn target(args: &ComposeArgs, config: &Config) -> Result<Target, String> {
+    let base = match &args.deployment {
+        Some(name) => Target::from(&config.deployment(name)?),
+        None => Target {
+            files: args.file.iter().chain(&args.files).cloned().collect(),
+            env_file: args.env_file.clone(),
+            ..Target::default()
+        },
+    };
+    Ok(Target {
+        fail_on: args.fail_on.map(FailOn::from).or(base.fail_on),
+        ignore: args.ignore.clone(),
+        ..base
+    })
 }
 
 fn run_rules(rules: &[Rule], out: &mut dyn Write, err: &mut dyn Write) -> u8 {
@@ -188,6 +193,7 @@ mod tests {
             format: OutputFormat::Text,
             fail_on: None,
             ignore: Vec::new(),
+            deployment: None,
         }
     }
 
@@ -317,6 +323,57 @@ mod tests {
             output.err
         );
         assert!(output.err.contains("R999"), "{}", output.err);
+    }
+
+    const DEPLOYMENTS: &str = "[deployments.prod]\nfiles = [\"compose.yaml\"]\n\
+        [deployments.lenient]\nfiles = [\"compose.yaml\"]\nfail_on = \"none\"\n";
+
+    fn deployment_args(name: &str) -> ComposeArgs {
+        ComposeArgs {
+            deployment: Some(name.into()),
+            ..compose_args(None)
+        }
+    }
+
+    #[test]
+    fn a_declared_deployment_is_audited_by_name() {
+        let output = run_with_config(CONFLICT, Some(DEPLOYMENTS), &deployment_args("prod"));
+        assert_eq!(output.code, 1, "{}", output.err);
+        assert!(output.out.contains("R009"));
+    }
+
+    #[test]
+    fn the_deployment_threshold_applies_unless_overridden() {
+        let lenient = deployment_args("lenient");
+        assert_eq!(
+            run_with_config(CONFLICT, Some(DEPLOYMENTS), &lenient).code,
+            SUCCESS
+        );
+        let overridden = ComposeArgs {
+            fail_on: Some(Threshold::Error),
+            ..lenient
+        };
+        assert_eq!(
+            run_with_config(CONFLICT, Some(DEPLOYMENTS), &overridden).code,
+            1
+        );
+    }
+
+    #[test]
+    fn an_unknown_deployment_is_a_usage_error() {
+        let output = run_with_config(CLEAN, Some(DEPLOYMENTS), &deployment_args("dev"));
+        assert_eq!(output.code, USAGE_ERROR);
+        assert!(output.out.is_empty());
+        assert_eq!(
+            output.err,
+            "error: unknown deployment 'dev' (declared: lenient, prod)\n"
+        );
+    }
+
+    #[test]
+    fn the_implicit_default_deployment_is_the_discovered_file() {
+        let output = run_on(CONFLICT, &deployment_args("default"));
+        assert_eq!(output.code, 1, "{}", output.err);
     }
 
     struct Broken;
