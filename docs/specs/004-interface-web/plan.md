@@ -53,9 +53,9 @@ Les pages HTML sont un adaptateur de sortie comme le texte et le JSON : elles vi
 ```rust
 /// Port: what the web adapter needs from the application.
 pub trait DeploymentSource {
-    fn deployments(&self) -> Vec<DeploymentResult>;
-    fn history(&self, deployment: &str) -> Vec<HistoryEntry>;      // résumés, du plus récent au plus ancien
-    fn record(&self, deployment: &str, id: &str) -> Option<Record>; // un rapport enregistré complet
+    fn deployments(&self) -> Result<Vec<DeploymentResult>, String>; // Err : configuration illisible
+    fn history_names(&self) -> Vec<String>;                         // déploiements qui ont un historique
+    fn history(&self, name: &str) -> Vec<Entry>;                    // du plus récent au plus ancien
 }
 
 pub struct DeploymentResult {
@@ -121,7 +121,7 @@ Le format machine prévu par la constitution (P4) et la spec 001 (« sortie SARI
     "tool": { "driver": {
       "name": "eyeship", "version": "0.1.0", "informationUri": "https://github.com/Namularbre/eyeship",
       "rules": [{
-        "id": "R001", "name": "DependsOnWithoutHealthCondition",
+        "id": "R001",
         "shortDescription": { "text": "depends_on without a health condition" },
         "fullDescription": { "text": "<scénario de panne>" },
         "help": { "text": "<correction>" },
@@ -130,12 +130,12 @@ Le format machine prévu par la constitution (P4) et la spec 001 (« sortie SARI
     }},
     "automationDetails": { "id": "prod/2026-11-26T11-47-17.123Z" },
     "invocations": [{ "executionSuccessful": true, "endTimeUtc": "2026-11-26T11:47:17.123Z" }],
-    "originalUriBaseIds": { "PROJECTROOT": { "uri": "file:///" } },
+    "artifacts": [{ "location": { "uri": "compose.yaml" } }],
     "results": [{
       "ruleId": "R001", "ruleIndex": 0, "level": "warning",
       "message": { "text": "depends_on 'db' does not wait for the service to be healthy" },
       "locations": [{
-        "physicalLocation": { "artifactLocation": { "uri": "compose.yaml", "uriBaseId": "PROJECTROOT" },
+        "physicalLocation": { "artifactLocation": { "uri": "compose.yaml" },
                               "region": { "startLine": 12, "startColumn": 7 } },
         "logicalLocations": [{ "name": "api", "kind": "module" }]
       }],
@@ -266,4 +266,24 @@ Rien d'autre. Pas d'`axum`/`actix` (tirent `tokio`), pas de `rust-embed` (`inclu
 | Rapports enregistrés par une version plus récente d'`eyeship` | `version` SARIF et `tool.driver.name` vérifiés ; champs inconnus tolérés ; empreinte versionnée (`eyeship/v1`). |
 | SARIF verbeux (rapport plus gros que le JSON maison) | Quelques Ko par rapport ; seules les règles déclenchées sont décrites. |
 | Dérive entre CLI et web | Construction partagée de la requête et de la config (§3), test d'équivalence (§8.4). |
-| `tiny_http` peu actif (dernière version 0.12, un fork `tiny_http_dh` annonce des correctifs de CVE) | Vérifier les avis RustSec en T002 et choisir entre l'original et le fork ; API réduite utilisée derrière `server.rs`, remplaçable sans toucher aux pages ni au routeur. |
+| `tiny_http` peu actif (dernière version 0.12) | Vérifié le 2026-11-26 : la base RustSec ne contient qu'un avis (RUSTSEC-2020-0031, corrigé en 0.8). Le fork `tiny_http_dh` demande Rust 1.98 : écarté. API réduite utilisée derrière `server.rs`, remplaçable sans toucher aux pages ni au routeur. |
+
+## 12. Mesures (2026-11-26, build release, Linux x86_64)
+
+| Exigence | Budget | Mesure |
+|---|---|---|
+| ENF5 : page rapport, 50 services avec un constat chacun | < 100 ms | 11 ms |
+| ENF8 : page d'un déploiement avec 1 000 rapports enregistrés | < 300 ms | 145 ms |
+| Tableau de bord, même historique | < 300 ms | 128 ms |
+| ENF5 : mémoire du serveur après quelques requêtes | < 20 Mo | 5 Mo |
+| ENF5 : taille du binaire | ≤ +1 Mo | 2,54 Mo → 3,14 Mo (+0,6 Mo) |
+
+Reproduire : `cargo test --release -p eyeship-cli --test perf -- --ignored --nocapture`.
+
+## 13. Écarts avec ce plan à l'implémentation
+
+- Les pages vivent dans `eyeship-report::html` ; `eyeship-web` contient le modèle de déploiement, le routeur, le gestionnaire et le serveur, et dépend de `eyeship-history`.
+- Pas de `uriBaseId` ni de `name` de règle dans le SARIF : des chemins relatifs suffisent à GitHub et le schéma ne les exige pas. Les fichiers audités sont listés dans `run.artifacts`, pour retrouver la liste complète à la relecture.
+- `diff` prend sa clé par référence (`Fn(&'a T) -> K`), pour comparer sans copier.
+- `--open` (ouvrir le navigateur) n'est pas implémenté : jugé inutile pour l'instant.
+
