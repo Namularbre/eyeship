@@ -1,0 +1,2 @@
+# Embedded in the binary and hashed into its URL: same bytes on every OS.
+crates/eyeship-report/assets/* text eol=lf
