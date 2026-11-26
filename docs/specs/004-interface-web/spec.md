@@ -2,7 +2,7 @@
 
 | Champ | Valeur |
 |---|---|
-| Statut | Brouillon, à valider |
+| Statut | Validé le 2026-11-26 |
 | Date | 2026-11-26 |
 | Constitution | [`docs/constitution.md`](../../constitution.md) (amendement §2 proposé, voir §8) |
 
@@ -46,10 +46,10 @@ Critères d'acceptation :
 *En tant que Jean, j'ouvre une page et je vois lesquels de mes déploiements sont prêts pour la production.*
 
 Critères d'acceptation :
-1. `eyeship serve` lance l'interface et affiche l'adresse à ouvrir.
+1. `eyeship ui` lance l'interface et affiche l'adresse à ouvrir.
 2. La page d'accueil liste les déploiements, chacun avec : son statut (**passe** ou **échoue** au regard de son seuil, ou **illisible**), le nombre de constats par gravité, le nombre de constats ignorés et la liste de ses fichiers.
 3. Les déploiements en échec apparaissent en premier ; l'ordre est ensuite alphabétique et stable.
-4. Après une modification d'un fichier Compose, recharger la page montre le nouveau résultat, sans relancer `eyeship serve`.
+4. Après une modification d'un fichier Compose, recharger la page montre le nouveau résultat, sans relancer `eyeship ui`.
 
 ### US3 (P1) : Lire le rapport d'un déploiement
 *En tant que Léa, je lis les constats d'un déploiement, je les filtre et je comprends comment corriger chacun.*
@@ -96,7 +96,7 @@ Critères d'acceptation :
 3. Un clic sur un rapport enregistré l'affiche avec la même présentation et les mêmes filtres qu'un rapport en direct, clairement marqué comme « enregistré le … ».
 4. Le tableau de bord indique pour chaque déploiement la date du dernier rapport enregistré et la tendance depuis celui-ci (plus ou moins de constats).
 5. Un fichier d'historique illisible ou d'un schéma inconnu est signalé et ignoré, sans empêcher l'affichage des autres.
-6. `eyeship serve --reports-dir <dossier>` permet d'afficher un historique récupéré ailleurs (par exemple les artefacts de la CI). Un dossier d'historique sans déploiement déclaré correspondant reste affiché (déploiement « historique seul »).
+6. `eyeship ui --reports-dir <dossier>` permet d'afficher un historique récupéré ailleurs (par exemple les artefacts de la CI). Un dossier d'historique sans déploiement déclaré correspondant reste affiché (déploiement « historique seul »).
 
 ### US10 (P1) : Sortie SARIF
 *En tant que Jean, je veux une sortie au format standard SARIF, pour l'historique d'`eyeship` comme pour les outils qui le lisent (GitHub Code Scanning, IDE).*
@@ -136,7 +136,7 @@ Critères d'acceptation :
 
 ## 6. Critères de succès
 
-- Jean déclare `staging` et `prod`, lance `eyeship serve` et voit leurs statuts en moins d'une minute, sans lire la documentation.
+- Jean déclare `staging` et `prod`, lance `eyeship ui` et voit leurs statuts en moins d'une minute, sans lire la documentation.
 - Léa corrige un constat en partant de la page d'accueil, sans terminal.
 - Pour chaque fixture de la spec 001, la page d'un déploiement liste exactement les constats de `eyeship compose --format json`.
 - Après une semaine de CI avec `--save`, Jean voit sur une seule page si `prod` s'améliore ou se dégrade, et quel commit a introduit un constat.
@@ -145,8 +145,8 @@ Critères d'acceptation :
 
 | Idée | Pourquoi plus tard |
 |---|---|
-| Purge automatique de l'historique, rétention | Les fichiers se suppriment à la main ou par la CI. Une commande dédiée viendra si le besoin apparaît. |
-| Base de données, historique centralisé de plusieurs dépôts | L'historique est un dossier de fichiers SARIF, versionnable et archivable par la CI. |
+| Purge automatique de l'historique, rétention, versionnement | La gestion des fichiers enregistrés appartient à l'utilisateur (Q4). |
+| Base de données, historique centralisé de plusieurs dépôts | L'historique est un dossier de fichiers SARIF, que l'utilisateur archive comme il veut. |
 | Afficher des fichiers SARIF produits par d'autres outils (Trivy, Hadolint…) | Le format le permettra (constitution §3 : agréger plutôt que réécrire), mais l'interface ne lit d'abord que les SARIF d'`eyeship`. |
 | Enregistrer un rapport depuis l'interface | Garderait l'interface en écriture (ENF3). L'enregistrement passe par la CLI. |
 | Lire les stacks **en cours d'exécution** via le démon Docker | Contraire à P3 dans le mode par défaut ; ce serait un mode séparé et explicite. |
@@ -159,13 +159,13 @@ Critères d'acceptation :
 
 §2, troisième point, remplacé par :
 
-> - Sur le web, via une interface **locale** servie par le binaire (`eyeship serve`) : vue des déploiements et lecture des rapports et de leur historique. L'interface est en lecture seule, hors ligne, sans démon Docker ; seule la CLI enregistre des rapports, sur demande explicite (`--save`).
+> - Sur le web, via une interface **locale** servie par le binaire (`eyeship ui`) : vue des déploiements et lecture des rapports et de leur historique. L'interface est en lecture seule, hors ligne, sans démon Docker ; seule la CLI enregistre des rapports, sur demande explicite (`--save`).
 
 Aucun autre principe ne change.
 
 ## 9. Questions ouvertes
 
 - **Q1** *(résolue le 2026-11-26)* : les deux dès la v1. Déploiements déclarés dans `.eyeship.toml` et audités à chaque affichage (US1 à US3), **et** historique des rapports enregistrés (US7 à US9), au format SARIF (US10, retenu le 2026-11-26 : c'est le format machine prévu par la constitution P4). La lecture des stacks en cours via Docker reste hors périmètre.
-- **Q2** : nom de la commande : `eyeship serve` (proposé) ou `eyeship ui` ?
-- **Q3** : US6 (export HTML) et US9 (comparaison) en P2 dans cette spec, ou dans une spec séparée ?
-- **Q4** : faut-il ignorer `.eyeship/reports/` dans Git par défaut (conseil du README), ou encourager à le versionner ?
+- **Q2** *(résolue)* : la commande s'appelle `eyeship ui`. `serve` reste libre pour la future API.
+- **Q3** *(résolue)* : US6 (export HTML) et US9 (comparaison) restent dans cette spec, en P2. L'export HTML sert à qui n'utilise que la CLI.
+- **Q4** *(résolue)* : les rapports ne sont pas pensés pour être versionnés. Leur conservation (archivage, purge, `.gitignore`) est l'affaire de l'utilisateur : `eyeship` n'impose aucun processus et ne touche pas à `.gitignore`.

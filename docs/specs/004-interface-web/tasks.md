@@ -9,7 +9,7 @@ Conventions : celles de la [spec 001](../001-audit-compose/tasks.md). `[P]` = pa
 
 ## Phase 0 : Préalables
 
-- [ ] **T001** Amender la constitution §2 (spec §8) une fois la spec validée.
+- [x] **T001** Amender la constitution §2 (spec §8) une fois la spec validée.
 - [ ] **T002** Créer les crates `eyeship-history` et `eyeship-web` (`#![forbid(unsafe_code)]`, lints du workspace), ajouter `tiny_http` (D2) après vérification des avis RustSec. Mesurer la taille du binaire release avant ajout, pour ENF5.
 
 ## Phase 1 : Déploiements déclarés (US1, US5)
@@ -43,8 +43,8 @@ Conventions : celles de la [spec 001](../001-audit-compose/tasks.md). `[P]` = pa
 
 - [ ] **T021** Routeur pur : chemin + query → `Route` ; 404, 405, filtres invalides ignorés. Tables de cas.
 - [ ] **T022** Gestionnaire pur : `Route` + `DeploymentSource` → `Response` ; en-têtes de sécurité (CSP, `nosniff`, `no-referrer`, `no-store`) ; vérification de `Host` (421). Tests.
-- [ ] **T023** Boucle `tiny_http` dans `server.rs`, sous-commande `eyeship serve [--host] [--port]`, message d'adresse sur stderr, avertissement hors boucle locale, code 2 si le port est pris. [US2]
-- [ ] **T024** Bout en bout : `serve --port 0`, requêtes par `TcpStream` sur `/`, une page rapport, un rapport enregistré, une comparaison, `/rules/R001`, `/health`, une 404 ; modification d'un fichier puis rechargement (US2 §4). **Jalon : l'interface est utilisable.**
+- [ ] **T023** Boucle `tiny_http` dans `server.rs`, sous-commande `eyeship ui [--host] [--port]`, message d'adresse sur stderr, avertissement hors boucle locale, code 2 si le port est pris. [US2]
+- [ ] **T024** Bout en bout : `ui --port 0`, requêtes par `TcpStream` sur `/`, une page rapport, un rapport enregistré, une comparaison, `/rules/R001`, `/health`, une 404 ; modification d'un fichier puis rechargement (US2 §4). **Jalon : l'interface est utilisable.**
 
 ## Phase 5 : Export HTML (US6)
 
@@ -54,5 +54,5 @@ Conventions : celles de la [spec 001](../001-audit-compose/tasks.md). `[P]` = pa
 
 - [ ] **T026** [P] Performance : page rapport de 50 services < 100 ms, serveur au repos < 20 Mo, binaire ≤ +1 Mo (ENF5) ; historique de 1 000 rapports < 300 ms (ENF8).
 - [ ] **T027** [P] Accessibilité : navigation clavier, contrastes, `lang="en"`, titres hiérarchisés (ENF6). Vérification manuelle avec capture d'écran clair et sombre.
-- [ ] **T028** [P] README : section « Web interface » (déclarer des déploiements, `eyeship serve`, `--format sarif` et exemple GitHub Code Scanning, `--save` en CI et historique, `--format html`, conseils de sécurité). Exemple `examples/.eyeship.toml`.
+- [ ] **T028** [P] README : section « Web interface » (déclarer des déploiements, `eyeship ui`, `--format sarif` et exemple GitHub Code Scanning, `--save` en CI et historique, `--format html`, conseils de sécurité). Exemple `examples/.eyeship.toml`.
 - [ ] **T029** Passer spec et plan au statut « Validé », cocher les tâches.

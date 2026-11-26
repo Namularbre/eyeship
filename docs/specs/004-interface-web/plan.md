@@ -3,7 +3,7 @@
 | Champ | Valeur |
 |---|---|
 | Spec | [`spec.md`](./spec.md) |
-| Statut | Brouillon, à valider |
+| Statut | Validé le 2026-11-26 |
 
 > Ce plan décrit **comment** livrer la spec 004 en respectant la [constitution](../../constitution.md) : Rust idiomatique, sans `unsafe`, fonctionnel, hexagonal, TDD, dépendances légères, un seul binaire.
 
@@ -13,7 +13,7 @@ L'interface est un **nouvel adaptateur de sortie**, au même titre que le texte 
 
 ```
                     ┌──────────────────────────── eyeship-cli ────────────────────────────┐
-navigateur ──GET──▶ │ serve: boucle HTTP ──▶ route(request) ──▶ Page ──▶ eyeship-report::html│──▶ réponse HTML
+navigateur ──GET──▶ │ ui: boucle HTTP    ──▶ route(request) ──▶ Page ──▶ eyeship-report::html│──▶ réponse HTML
                     │                          │                                          │
                     │                          ├─ audit_deployments(config, fs, env)       │
                     │                          │    load (eyeship-compose) ▶ audit (domain)│
@@ -45,7 +45,7 @@ crates/
 │   ├── src/route.rs    chemin + query ──▶ Route (pur)
 │   ├── src/handler.rs  Route + données ──▶ Response (pur)
 │   └── src/server.rs   boucle tiny_http, en-têtes de sécurité
-└── eyeship-cli/        + commande `serve`, + `--deployment`, `--save`, `--label`, + `[deployments]` dans la config
+└── eyeship-cli/        + commande `ui`, + `--deployment`, `--save`, `--label`, + `[deployments]` dans la config
 ```
 
 Les pages HTML sont un adaptateur de sortie comme le texte et le JSON : elles vivent dans `eyeship-report`, ce qui sert aussi l'export `--format html` (US6). `eyeship-web` dépend de `eyeship-domain` et `eyeship-report` mais pas de `eyeship-compose` : il reçoit des résultats d'audit déjà calculés à travers un port, ce qui permettra de lui donner des résultats Kubernetes plus tard (P7).
@@ -90,14 +90,14 @@ ignore = ["R006"]
 - Chemins relatifs au dossier du `.eyeship.toml`.
 - Noms de déploiement : `[a-z0-9][a-z0-9-]*` (ils apparaissent dans les URL). Clé inconnue ou nom invalide : erreur de configuration, comme aujourd'hui (`deny_unknown_fields`).
 - Sans section `deployments` : un déploiement implicite `default`, découverte habituelle (US1 §2).
-- `run_compose` est refactoré pour partager une fonction pure de construction de `LoadRequest` et d'`AuditConfig` avec `serve` et `--deployment` (US5 §2 : même résultat par construction).
+- `run_compose` est refactoré pour partager une fonction pure de construction de `LoadRequest` et d'`AuditConfig` avec `ui` et `--deployment` (US5 §2 : même résultat par construction).
 
 ## 4. Historique des rapports (`eyeship-history`)
 
 ### 4.1 Emplacement
 
 ```
-.eyeship/reports/            # à côté du .eyeship.toml ; `reports_dir` dans la config, `--reports-dir` pour serve
+.eyeship/reports/            # à côté du .eyeship.toml ; `reports_dir` dans la config, `--reports-dir` pour `ui`
 ├── prod/
 │   ├── 2026-11-25T09-12-03.481Z.sarif
 │   └── 2026-11-26T11-47-17.123Z.sarif
@@ -105,7 +105,7 @@ ignore = ["R006"]
     └── …
 ```
 
-- Un sous-dossier par déploiement, un fichier par rapport. Pas de base de données : les fichiers se lisent avec n'importe quel visualiseur SARIF, se versionnent, s'archivent comme artefacts de CI et se suppriment à la main.
+- Un sous-dossier par déploiement, un fichier par rapport. Pas de base de données : les fichiers se lisent avec n'importe quel visualiseur SARIF. Leur conservation (archivage, purge, versionnement) est laissée à l'utilisateur (spec Q4).
 - Nom de fichier = date UTC à la milliseconde, sans `:` (compatible Windows) ; il sert d'identifiant dans l'URL et donne l'ordre chronologique par simple tri. En cas de collision, suffixe `-1`, `-2`.
 - Écriture atomique : fichier temporaire dans le même dossier puis renommage, pour qu'un serveur qui lit en même temps ne voie jamais un fichier tronqué.
 
@@ -203,7 +203,7 @@ Uniquement `GET` (et `HEAD`). Toute autre méthode : `405`. Route inconnue : `40
 ## 6. Serveur
 
 ```
-eyeship serve [--host 127.0.0.1] [--port 7878] [--open]
+eyeship ui [--host 127.0.0.1] [--port 7878] [--open]
 ```
 
 - Écoute sur `127.0.0.1:7878` par défaut ; `--port 0` choisit un port libre. Affiche `eyeship: serving http://127.0.0.1:7878 (Ctrl+C to stop)` sur stderr.
@@ -239,7 +239,7 @@ Rien d'autre. Pas d'`axum`/`actix` (tirent `tokio`), pas de `rust-embed` (`inclu
 5. **Historique** : aller-retour enregistrer/relire avec `MemoryFileSystem` et une horloge fixe ; formatage RFC 3339 (années bissextiles, fin de mois) ; collisions de noms ; fichier illisible ou schéma inconnu ignoré ; `--save` ne change ni stdout ni le code de sortie.
 6. **Comparaison** : constats nouveaux, résolus, inchangés ; ligne déplacée = inchangé ; doublons.
 7. **Équivalence CLI / web** : pour chaque fixture de la spec 001, les constats de la page rapport = ceux de `--format json` (critère de succès §6).
-8. **Bout en bout** : `eyeship serve --port 0` lancé par `assert_cmd`, port lu sur stderr, requêtes HTTP avec `std::net::TcpStream` (pas de client HTTP en dépendance), arrêt du processus.
+8. **Bout en bout** : `eyeship ui --port 0` lancé par `assert_cmd`, port lu sur stderr, requêtes HTTP avec `std::net::TcpStream` (pas de client HTTP en dépendance), arrêt du processus.
 9. **Performance** : historique de 1 000 rapports sous 300 ms (ENF8) ; page rapport du fichier de 50 services du benchmark ENF1 en moins de 100 ms ; taille du binaire release mesurée avant et après (≤ +1 Mo).
 
 ## 10. Décisions à valider
@@ -247,13 +247,13 @@ Rien d'autre. Pas d'`axum`/`actix` (tirent `tokio`), pas de `rust-embed` (`inclu
 | # | Décision | Recommandation | Alternative |
 |---|---|---|---|
 | D1 | Source des déploiements | **Validé le 2026-11-26 : les deux.** Déploiements déclarés dans `.eyeship.toml` audités à chaque requête, et historique de rapports enregistrés | Stacks en cours via Docker (déroge à P3), écarté |
-| D2 | Serveur HTTP | `tiny_http`, synchrone | `axum` + `tokio` (lourd) ; HTTP écrit à la main sur `std::net` (zéro dépendance, risqué) |
-| D3 | Front-end | Rendu serveur, HTML + CSS sans JS, gabarits en fonctions Rust | `maud` pour les gabarits ; SPA (Leptos/WASM ou TypeScript) : chaîne de build et poids sans bénéfice ici |
-| D4 | Servi par la CLI | Sous-commande `eyeship serve` du binaire unique | Binaire séparé `eyeship-web` |
-| D5 | Adresse par défaut | `127.0.0.1:7878` | `0.0.0.0` (exposé au réseau, refusé par ENF4) |
+| D2 | Serveur HTTP | **Validé** : `tiny_http`, synchrone | `axum` + `tokio` (lourd) ; HTTP écrit à la main sur `std::net` (zéro dépendance, risqué) |
+| D3 | Front-end | **Validé** : Rendu serveur, HTML + CSS sans JS, gabarits en fonctions Rust | `maud` pour les gabarits ; SPA (Leptos/WASM ou TypeScript) : chaîne de build et poids sans bénéfice ici |
+| D4 | Servi par la CLI | **Validé** : sous-commande `eyeship ui` du binaire unique (`serve` réservé à la future API) | Binaire séparé `eyeship-web` |
+| D5 | Adresse par défaut | **Validé** : `127.0.0.1:7878` | `0.0.0.0` (exposé au réseau, refusé par ENF4) |
 | D6 | Stockage de l'historique | **Retenu le 2026-11-26 : un fichier SARIF 2.1.0 par rapport** dans `.eyeship/reports/<déploiement>/`, enregistré par la CLI (`--save`) | Enveloppe JSON maison autour de `--format json` (second format à maintenir, illisible par les autres outils) ; SQLite (`rusqlite`, C embarqué, binaire plus lourd) |
-| D7 | Dates | `SystemTime` + formatage RFC 3339 écrit à la main, affichage UTC | `time` ou `chrono` (dépendance pour une seule fonction) |
-| D8 | Validation SARIF | `jsonschema` en dépendance **de test** uniquement, schéma officiel copié dans le dépôt (tests hors ligne) | Validation manuelle seulement |
+| D7 | Dates | **Validé** : `SystemTime` + formatage RFC 3339 écrit à la main, affichage UTC | `time` ou `chrono` (dépendance pour une seule fonction) |
+| D8 | Validation SARIF | **Validé** : `jsonschema` en dépendance **de test** uniquement, schéma officiel copié dans le dépôt (tests hors ligne) | Validation manuelle seulement |
 
 ## 11. Risques
 
