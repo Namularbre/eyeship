@@ -247,13 +247,13 @@ Rien d'autre. Pas d'`axum`/`actix` (tirent `tokio`), pas de `rust-embed` (`inclu
 | # | Décision | Recommandation | Alternative |
 |---|---|---|---|
 | D1 | Source des déploiements | **Validé le 2026-11-26 : les deux.** Déploiements déclarés dans `.eyeship.toml` audités à chaque requête, et historique de rapports enregistrés | Stacks en cours via Docker (déroge à P3), écarté |
-| D6 | Stockage de l'historique | **Retenu le 2026-11-26 : un fichier SARIF 2.1.0 par rapport** dans `.eyeship/reports/<déploiement>/`, enregistré par la CLI (`--save`) | Enveloppe JSON maison autour de `--format json` (second format à maintenir, illisible par les autres outils) ; SQLite (`rusqlite`, C embarqué, binaire plus lourd) |
-| D7 | Dates | `SystemTime` + formatage RFC 3339 écrit à la main, affichage UTC | `time` ou `chrono` (dépendance pour une seule fonction) |
-| D8 | Validation SARIF | `jsonschema` en dépendance **de test** uniquement, schéma officiel copié dans le dépôt (tests hors ligne) | Validation manuelle seulement |
 | D2 | Serveur HTTP | `tiny_http`, synchrone | `axum` + `tokio` (lourd) ; HTTP écrit à la main sur `std::net` (zéro dépendance, risqué) |
 | D3 | Front-end | Rendu serveur, HTML + CSS sans JS, gabarits en fonctions Rust | `maud` pour les gabarits ; SPA (Leptos/WASM ou TypeScript) : chaîne de build et poids sans bénéfice ici |
 | D4 | Servi par la CLI | Sous-commande `eyeship serve` du binaire unique | Binaire séparé `eyeship-web` |
 | D5 | Adresse par défaut | `127.0.0.1:7878` | `0.0.0.0` (exposé au réseau, refusé par ENF4) |
+| D6 | Stockage de l'historique | **Retenu le 2026-11-26 : un fichier SARIF 2.1.0 par rapport** dans `.eyeship/reports/<déploiement>/`, enregistré par la CLI (`--save`) | Enveloppe JSON maison autour de `--format json` (second format à maintenir, illisible par les autres outils) ; SQLite (`rusqlite`, C embarqué, binaire plus lourd) |
+| D7 | Dates | `SystemTime` + formatage RFC 3339 écrit à la main, affichage UTC | `time` ou `chrono` (dépendance pour une seule fonction) |
+| D8 | Validation SARIF | `jsonschema` en dépendance **de test** uniquement, schéma officiel copié dans le dépôt (tests hors ligne) | Validation manuelle seulement |
 
 ## 11. Risques
 
